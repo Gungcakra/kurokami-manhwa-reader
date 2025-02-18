@@ -1,4 +1,6 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { truncateTitle } from "../../utils/function";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 interface ListCardProps {
   index: number;
@@ -20,23 +22,21 @@ const ListCard: React.FC<ListCardProps> = ({
   return (
     <a
       href={`/manhwa/${link.split("/")[4]}`}
-      className="flex items-start justify-start m-1 w-[280px] max-h-[120px] rounded-md text-center"
+      className="flex items-start justify-start m-1 xl:w-[280px] xl:max-h-[120px] rounded-md text-center"
     >
-      <p className="text-white h-full px-1 border-2 text-center flex items-center justify-center">
-        {index}
-      </p>
+ 
       <img
-        src={img}
+        src={img.split('?')[0]}
         alt="cover"
-        className="max-w-[60px] max-h[80px] rounded-md"
+        className="xl:max-w-[60px] lg:max-w-[100px] md:max-w-[100px] sm:max-w-[80px] max-w-[80px] min-h-full max-h-full rounded-md"
       />
 
-      <div className="flex flex-col items-start ml-1">
-        <p className="text-wrap font-bold truncate">
-          {truncateTitle(title)}
+      <div className="flex flex-col items-start ml-2">
+        <p className="text-wrap text-start font-semibold truncate xl:text-md lg:text-md md:text-md sm:text-md">
+          {title}
         </p>
         <p>{chapter}</p>
-        <p>{rating}</p>
+        <p><FontAwesomeIcon icon={faStar} className="text-yellow-300"/> {rating}</p>
         {/* <p className="ListCard-description">Description</p> */}
       </div>
     </a>

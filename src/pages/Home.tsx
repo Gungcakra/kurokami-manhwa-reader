@@ -4,6 +4,7 @@ import Navbar from "../components/common/Navbar";
 import Card from "../components/ui/Card";
 import ListCard from "../components/ui/ListCard";
 import CardSkeleton from "../components/ui/CardSkeleton";
+import ListCardSkeleton from "../components/ui/ListCardSkeleton";
 
 interface Manhwa {
   link: string;
@@ -11,7 +12,7 @@ interface Manhwa {
   title: string;
   chapter?: string;
 
-  rating?: number;
+  rating?: string;
 }
 
 const Home = () => {
@@ -37,16 +38,16 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="bg-[#181B20] text-white w-full min-h-full m-auto">
+    <div className="bg-[#09090B] text-white w-full min-h-full m-auto">
       <Navbar />
-      <div className="flex flex-col md:flex-row lg:flex-row xl:flex-row justify-center">
-        <div className="flex flex-col new-manhwa-container w-full md:w-8/10 lg:w-8/10 xl:w-8/10">
+      <div className="grid xl:grid-cols-5 grid-rows-5 md:grid-cols-1 mt-4 px-4 gap-2">
+        <div className="xl:col-span-4 xl:row-span-5 md:col-span-1 md:row-span-1 w-full new-manhwa-container rounded-xl bg-[#18181B]">
           <p className="text-2xl text-white m-1 text-center">Manhwa Baru</p>
           <div className="flex flex-wrap justify-center">
             {loading ? (
-              Array.from({ length: 30 }).map((_, index) => <CardSkeleton />)
+              Array.from({ length: 28 }).map((_, index) => <CardSkeleton />)
             ) : (
-              newManhwa?.map((manhwa: Manhwa) => (
+              newManhwa?.slice(0,28).map((manhwa: Manhwa) => (
                 <Card
                   key={manhwa.link}
                   img={manhwa.imageSrc}
@@ -57,20 +58,25 @@ const Home = () => {
             )}
           </div>
         </div>
-        <div className="flex flex-col popular-container w-full md:w-2/10 lg:w-2/10 xl:w-2/10">
-          <p className="text-2xl text-white m-1">Populer</p>
+        <div className="xl:row-span-5 xl:col-start-5 md:col-span-1 md:row-span-1 w-full popular-container overflow-hidden rounded-xl bg-[#18181B]">
+          <p className="text-2xl text-white m-1 md:text-center lg:text-center xl:text-start sm:text-center text-center">Populer</p>
           <div className="flex flex-col">
-            {popularManhwa?.slice(0, 10).map((manhwa, index) => (
-              <ListCard
-                key={index}
-                index={index + 1}
-                img={manhwa.imageSrc}
-                title={manhwa.title}
-                link={manhwa.link}
-                chapter={manhwa.chapter}
-                rating={manhwa.rating}
-              />
-            ))}
+            {loading ? (
+              
+              Array.from({ length: 10 }).map((_, index) => <ListCardSkeleton />)
+            ) : (
+              popularManhwa?.slice(0,10).map((manhwa: Manhwa, index) => (
+                <ListCard
+                  key={manhwa.link}
+                  index={index}
+                  img={manhwa.imageSrc}
+                  title={manhwa.title}
+                  link={manhwa.link}
+                  chapter={manhwa.chapter || '-'}
+                  rating={manhwa.rating || '-'}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>
