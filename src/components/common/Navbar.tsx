@@ -1,60 +1,50 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch, faBars } from "@fortawesome/free-solid-svg-icons";
+import logo from "../../assets/images/logos/logo.png"
 const Navbar = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  // Function to toggle sidebar
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const [showSearch, setShowSearch] = useState(false);
 
   return (
-    <div>
-      {/* Navbar */}
-      <nav className="flex items-center p-4 bg-[#181B20] text-white justify-between">
-        <div className="w-[85%] flex justify-between items-center">
-          {/* Logo */}
-          <h1 className="text-xl font-bold">Kurokami</h1>
+    <nav className="bg-zinc-900 fixed w-full z-50 top-0 start-0 border-b border-zinc-800">
+      <div className="container flex flex-wrap items-center justify-around py-2">
+        <a href="https://kurokami-id.vercel.app" className="flex items-center space-x-3">
+          <img src={logo.src} className="w-8" alt="Kurokami Logo" />
+          <h1 className="text-xl font-semibold text-white">Kurokami</h1>
+        </a>
 
-          {/* Navbar Links (desktop only) */}
-          <div className="space-x-4 hidden md:flex">
-            <a href="/" className="hover:text-gray-400">Home</a>
-            <a href="/manhwa-list" className="hover:text-gray-400">Daftar Manhwa</a>
-            <a href="/history" className="hover:text-gray-400">History</a>
-          </div>
-
-          {/* Search Input (desktop only) */}
-          <div className="">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="px-3 py-2 bg-gray-700 text-white rounded-md"
-            />
-          </div>
-
-          {/* Hamburger Icon for Mobile */}
-            <button 
-            onClick={toggleSidebar} 
-            className="text-white text-2xl p-2 focus:outline-none block md:hidden z-50"
-            >
-            <FontAwesomeIcon icon={faBars} className="text-white" />
-            </button>
+        <div className="flex md:order-2 space-x-2">
+          <button
+            onClick={() => setShowSearch(!showSearch)}
+            className="p-2 w-10 h-10 text-zinc-200 rounded-lg hover:bg-zinc-700"
+          >
+            <FontAwesomeIcon icon={faSearch} className="w-5 h-5" />
+          </button>
+          <button className="md:hidden p-2 w-10 h-10 text-zinc-200 rounded-lg hover:bg-zinc-700">
+            <FontAwesomeIcon icon={faBars} className="w-5 h-5" />
+          </button>
         </div>
-      </nav>
 
-      {/* Sidebar (Mobile only) */}
-      {isSidebarOpen && (
-        <div className="fixed top-0 left-0 z-50 bg-[#181B20] text-white w-64 h-full p-4 md:hidden">
-          <div className="space-y-4">
-            <a href="/" className="block hover:text-gray-400">Home</a>
-            <a href="/manhwa-list" className="block hover:text-gray-400">Daftar Manhwa</a>
-            <a href="/history" className="block hover:text-gray-400">History</a>
-          </div>
+        <div className="hidden md:flex md:w-auto md:order-1">
+          <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-zinc-700 rounded-lg bg-zinc-800 md:space-x-8 md:flex-row md:mt-0 md:border-0 md:bg-zinc-900">
+            <li><a href="/" className="navbar-link-item text-white">Home</a></li>
+            <li><a href="/ongoing" className="navbar-link-item text-white">Ongoing</a></li>
+            <li><a href="/completed" className="navbar-link-item text-white">Completed</a></li>
+            <li><a href="/anime" className="navbar-link-item text-white">Daftar Manhwa</a></li>
+          </ul>
+        </div>
+      </div>
+
+      {showSearch && (
+        <div className="bg-zinc-900 p-4 border-t border-zinc-800">
+          <input
+            type="search"
+            className="w-full p-2 rounded-lg bg-zinc-800 border border-zinc-700 text-white"
+            placeholder="Cari Anime..."
+          />
         </div>
       )}
-    </div>
+    </nav>
   );
 };
 
