@@ -5,6 +5,7 @@ import Card from "../components/ui/Card";
 import ListCard from "../components/ui/ListCard";
 import CardSkeleton from "../components/ui/CardSkeleton";
 import ListCardSkeleton from "../components/ui/ListCardSkeleton";
+import Footer from "../components/common/Footer";
 
 interface Manhwa {
   link: string;
@@ -37,10 +38,10 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="bg-[#09090B] text-white w-full min-h-full m-auto pt-7">
+    <div className="bg-[#09090B] text-white w-full min-h-full m-auto pt-10 mt-5">
       <Navbar />
-      <div className="grid xl:grid-cols-5 grid-rows-5 md:grid-cols-1 mt-4 px-4 gap-2">
-        <div className="xl:col-span-4 xl:row-span-5 md:col-span-1 md:row-span-1 w-full new-manhwa-container rounded-xl bg-[#18181B]">
+      <div className="grid xl:grid-cols-5 grid-cols-1 mt-4 px-4 gap-2 ">
+        <div className="xl:col-span-4 md:col-span-1 w-full new-manhwa-container rounded-xl bg-[#18181B]">
           <p className="text-2xl text-white m-1 text-center">Manhwa Baru</p>
           <div className="flex flex-wrap justify-center">
             {loading
@@ -57,12 +58,12 @@ const Home = () => {
                   ))}
           </div>
           <div className="flex justify-center">
-            <a className="bg-[#C11B25] text-white rounded-md p-2 m-2 mt-4  text-xl font-bold">
+            <a className="bg-[#C11B25] text-white rounded-md p-2 m-2 mt-4 text-xl font-bold">
               Lihat Semua
             </a>
           </div>
         </div>
-        <div className="xl:row-span-5 xl:col-start-5 md:col-span-1 md:row-span-1 w-full popular-container overflow-hidden rounded-xl bg-[#18181B]">
+        <div className="xl:col-span-1 md:col-span-1 w-full popular-container overflow-hidden rounded-xl bg-[#18181B]">
           <p className="text-2xl text-white m-1 md:text-center lg:text-center xl:text-start sm:text-center text-center">
             Populer
           </p>
@@ -87,6 +88,8 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };
