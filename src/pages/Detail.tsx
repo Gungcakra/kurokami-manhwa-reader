@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchManhwaDetail } from "../utils/api";
 import { removeTextTitle } from "../utils/function";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowDownUpAcrossLine } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDownUpAcrossLine, faDownload } from "@fortawesome/free-solid-svg-icons";
 import ButtonCorner from "../components/ui/ButtonCorner";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
@@ -112,13 +112,13 @@ const Detail = ({ id }: DetailProps) => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
             {chapters?.map((chapter) => (
-              <a
+              <div
                 key={chapter.chapterTitle}
-                href={chapter.chapterLink}
-                className="bg-[#C11B25] duration-300 ease-in-out hover:bg-[#c11b26ae] text-white rounded-md p-3 text-xl font-bold text-center"
+                className="bg-[#3b3b3d] duration-300 ease-in-out text-white rounded-md p-3 font-bold flex justify-between items-center"
               >
-                {chapter.chapterNum}
-              </a>
+                <a className="xl:text-lg lg:text-lg text-md" href={chapter.chapterLink}>{chapter.chapterNum}</a>
+                <a href={chapter.downloadLink}><FontAwesomeIcon icon={faDownload} /></a>
+              </div>
             ))}
           </div>
         </div>
