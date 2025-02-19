@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { fetchNewManhwa, fetchPopularManhwa } from "../utils/api";
-import Navbar from "../components/common/Navbar";
 import Card from "../components/ui/Card";
 import ListCard from "../components/ui/ListCard";
 import CardSkeleton from "../components/ui/CardSkeleton";
 import ListCardSkeleton from "../components/ui/ListCardSkeleton";
 import Footer from "../components/common/Footer";
+import Navbar from "../components/common/Navbar";
 
 interface Manhwa {
   link: string;
@@ -58,7 +58,7 @@ const Home = () => {
                   ))}
           </div>
           <div className="flex justify-center">
-            <a className="bg-[#C11B25] text-white rounded-md p-2 m-2 mt-4 text-xl font-bold">
+            <a className="bg-[#C11B25] duration-300 ease-in-out hover:bg-[#c11b26ae] hover:cursor-pointer text-white rounded-md p-2 m-2 mt-4 text-xl font-bold">
               Lihat Semua
             </a>
           </div>
@@ -88,8 +88,6 @@ const Home = () => {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 };

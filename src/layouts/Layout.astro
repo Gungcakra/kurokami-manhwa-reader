@@ -1,6 +1,13 @@
+---
+import {SEO} from 'astro-seo'
+
+const {title} = Astro.props;
+---
+
 <!doctype html>
 <html lang="en">
   <head>
+    <SEO title={title} />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -8,10 +15,9 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="generator" content={Astro.generator} />
-    <title>Kurokami</title>
   </head>
   <body>
-    <slot />
+    <slot name="body" />
   </body>
 </html>
 

@@ -4,3 +4,7 @@ export function truncateTitle(title: string): string {
     }
     return title;
   }
+
+export function removeTextTitle(title: string, removeTextTitle: string): string {
+    return title.replace(removeTextTitle, '');
+}

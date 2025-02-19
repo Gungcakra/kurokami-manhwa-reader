@@ -39,7 +39,7 @@ const Navbar = () => {
               { name: "Daftar Manhwa", link: "/anime" },
             ].map((item, index) => (
               <li key={index} className="mb-4 md:mb-0">
-              <a href={item.link} className="navbar-link-item text-white">
+              <a href={item.link} className="navbar-link-item transition-all  text-white duration-300 ease-in-out hover:text-[#C11B25]">
                 {item.name}
               </a>
               </li>
