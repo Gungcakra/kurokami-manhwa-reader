@@ -46,17 +46,16 @@ const Detail = ({ id }: DetailProps) => {
       <Navbar />
       {loading ? (
         <div className="bg-[#18181B] flex flex-col lg:flex-row w-full m-4 p-4 rounded-2xl justify-center items-center lg:items-start gap-6">
-          {/* Gambar Placeholder */}
+          
           <div className="flex-shrink-0 flex justify-center lg:justify-start w-full lg:w-auto">
             <div className="w-40 h-56 lg:w-48 xl:w-56 bg-gray-700 animate-pulse rounded-2xl"></div>
           </div>
 
-          {/* Informasi Placeholder */}
+
           <div className="flex flex-col justify-start flex-grow min-w-0 text-center lg:text-left w-full">
-            {/* Title */}
+            
             <div className="h-8 bg-gray-700 animate-pulse w-4/5 lg:w-3/4 rounded-md mb-3 mx-auto lg:mx-0"></div>
 
-            {/* Detail Informasi */}
             <div className="flex flex-col p-4 rounded-lg w-full gap-y-3 text-start max-w-full lg:max-w-2/3">
               {[...Array(7)].map((_, index) => (
                 <div
@@ -151,7 +150,7 @@ const Detail = ({ id }: DetailProps) => {
               >
                 <a
                   className="xl:text-lg lg:text-lg text-md"
-                  href={chapter.chapterLink}
+                  href={`/chapter/${chapter.chapterLink.split("/")[3]}?idManhwa=${id}`}
                 >
                   {chapter.chapterNum}
                 </a>

@@ -1,0 +1,31 @@
+---
+import "../../styles/global.css";
+// @ts-expect-error yes, I know what I'm doing
+import { Astro } from "astro";
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/common/Navbar";
+import { fetchChapterDetail, fetchManhwaDetail } from "../../utils/api";
+import { removeTextTitle } from "../../utils/function";
+import Chapter from "../Chapter";
+export const prerender = false; 
+
+const { id } = Astro.params;
+const url = new URL(Astro.url);
+let idManhwa = url.searchParams.get("idManhwa") || "";
+
+
+
+let chapterTitle = "";
+
+try {
+    const chapterDetail = await fetchChapterDetail(id);
+    chapterTitle = chapterDetail.title;
+} catch (error) {
+    console.error("Failed to fetch manhwa details:", error);
+}
+---
+
+<Layout title={removeTextTitle(chapterTitle, "Bahasa Indonesia") + " - Kurokami"}>
+  <Navbar slot="body" client:only="react" />
+  <Chapter slot="body" idChapter={id} idManhwa={idManhwa} client:only="react" />
+</Layout>

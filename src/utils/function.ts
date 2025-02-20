@@ -8,3 +8,9 @@ export function truncateTitle(title: string): string {
 export function removeTextTitle(title: string, removeTextTitle: string): string {
     return title.replace(removeTextTitle, '');
 }
+export function changeToSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/ /g, '-')
+    .replace(/[^\w-]+/g, '');
+}
