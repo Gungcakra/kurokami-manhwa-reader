@@ -150,7 +150,7 @@ const Detail = ({ id }: DetailProps) => {
               >
                 <a
                   className="xl:text-lg lg:text-lg text-md"
-                  href={`/chapter/${chapter.chapterLink.split("/")[3]}?idManhwa=${id}`}
+                  href={`/chapter/${chapter.chapterLink.split("/")[3]}`}
                 >
                   {chapter.chapterNum}
                 </a>

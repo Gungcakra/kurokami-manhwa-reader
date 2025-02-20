@@ -10,8 +10,6 @@ import Chapter from "../Chapter";
 export const prerender = false; 
 
 const { id } = Astro.params;
-const url = new URL(Astro.url);
-let idManhwa = url.searchParams.get("idManhwa") || "";
 
 
 
@@ -27,5 +25,6 @@ try {
 
 <Layout title={removeTextTitle(chapterTitle, "Bahasa Indonesia") + " - Kurokami"}>
   <Navbar slot="body" client:only="react" />
-  <Chapter slot="body" idChapter={id} idManhwa={idManhwa} client:only="react" />
+  <Chapter slot="body" idChapter={id} client:only="react" />
+  
 </Layout>
