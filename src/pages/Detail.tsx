@@ -42,8 +42,7 @@ const Detail = ({ id }: DetailProps) => {
   }
 
   return (
-    <div className="bg-[#09090B] min-w-full text-white w-full min-h-full pt-20 flex  flex-col items-center">
-      <Navbar />
+    <div className="bg-[#09090B] min-w-full text-white w-full min-h-full flex  flex-col items-center">
       {loading ? (
         <div className="bg-[#18181B] flex flex-col lg:flex-row w-full m-4 p-4 rounded-2xl justify-center items-center lg:items-start gap-6">
           

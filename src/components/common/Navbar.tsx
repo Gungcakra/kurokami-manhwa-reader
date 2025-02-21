@@ -5,12 +5,12 @@ import logo from "../../assets/images/logos/logo.png"
 
 const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(false); // Menambahkan state untuk sidebar
+  const [showSidebar, setShowSidebar] = useState(false);
 
   return (
-    <nav className="bg-zinc-900 fixed w-full z-50 top-0 start-0 border-b border-zinc-800">
+    <nav className="bg-zinc-900 w-full z-50 top-0 start-0 border-b border-zinc-800">
       <div className="container flex flex-wrap items-center justify-around py-2">
-        <a href="https://kurokami-id.vercel.app" className="flex items-center space-x-3">
+        <a href="/" className="flex items-center space-x-3">
           <img src={logo.src} className="w-8" alt="Kurokami Logo" />
           <h1 className="text-xl font-semibold text-white">Kurokami</h1>
         </a>
@@ -23,7 +23,7 @@ const Navbar = () => {
             <FontAwesomeIcon icon={faSearch} className="w-5 h-5" />
           </button>
           <button
-            onClick={() => setShowSidebar(!showSidebar)} // Mengubah state untuk sidebar
+            onClick={() => setShowSidebar(!showSidebar)} 
             className="md:hidden p-2 w-10 h-10 text-zinc-200 rounded-lg hover:bg-zinc-700"
           >
             <FontAwesomeIcon icon={faBars} className="w-5 h-5" />

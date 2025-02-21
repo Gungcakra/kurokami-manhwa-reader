@@ -62,7 +62,7 @@ const Chapter = ({ idChapter }: DetailProps) => {
   }, [chapter]);
 
   return (
-    <div className="bg-[#09090B] min-w-full text-white w-full min-h-full pt-20 flex  flex-col items-center">
+    <div className="bg-[#09090B] min-w-full text-white w-full min-h-full flex flex-col items-center">
       {loading ? (
         <div className="animate-pulse bg-gray-300 h-10 w-1/2 mx-auto rounded-full"></div>
       ) : (

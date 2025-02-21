@@ -7,7 +7,7 @@ const Footer = () => {
         <div className="lg:flex lg:justify-around gap-8">
           <div className="mb-6 lg:mb-0 max-w-[500px]">
             <a
-              href="https://kurokami-id.vercel.app"
+              href="/"
               className="flex items-center max-w-min"
             >
               <img
@@ -57,7 +57,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="https://saweria.co/wajik45"
+                  href=""
                   target="_blank"
                   className="hover:underline"
                 >
@@ -66,7 +66,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="https://saweria.co/wajik45"
+                  href=""
                   target="_blank"
                   className="hover:underline"
                 >
@@ -83,7 +83,7 @@ const Footer = () => {
           <span className="text-sm text-zinc-500 sm:text-center">
             © 2025{" "}
             <a
-              href="https://kurokami-id.vercel.app"
+              href="/"
               className="hover:underline text-white"
             >
               Kurokami™
@@ -110,7 +110,7 @@ const Footer = () => {
               </svg>
             </a>
             {/* <a
-              href="https://saweria.co/wajik45"
+              href=""
               target="_blank"
               className="text-zinc-500 hover:text-white ms-5"
             >

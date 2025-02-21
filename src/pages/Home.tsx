@@ -36,7 +36,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="bg-[#09090B] text-white w-full min-h-full m-auto pt-10 mt-5">
+    <div className="bg-[#09090B] text-white w-full min-h-full m-auto">
       <Navbar />
       <div className="grid xl:grid-cols-5 grid-cols-1 mt-4 px-4 gap-2 ">
         <div className="xl:col-span-4 md:col-span-1 w-full new-manhwa-container rounded-xl bg-[#18181B]">
