@@ -6,24 +6,25 @@ import { Astro } from "astro";
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/common/Navbar";
 import { fetchManhwaDetail } from "../../utils/api";
-import { removeTextTitle } from "../../utils/function";
+import { slugToText } from "../../utils/function";
 export const prerender = false; // Pastikan ini ada agar halaman tidak mencoba di-build statis
 
 const { id } = Astro.params;
 
+const title = slugToText(id);
 
 
-let manhwaTitle = "";
+// let manhwaTitle = "";
 
-try {
-    const manhwaDetail = await fetchManhwaDetail(id);
-    manhwaTitle = manhwaDetail.title;
-} catch (error) {
-    console.error("Failed to fetch manhwa details:", error);
-}
+// try {
+//     const manhwaDetail = await fetchManhwaDetail(id);
+//     manhwaTitle = manhwaDetail.title;
+// } catch (error) {
+//     console.error("Failed to fetch manhwa details:", error);
+// }
 ---
 
-<Layout title={removeTextTitle(manhwaTitle, "Bahasa Indonesia") + " - Kurokami"}>
+<Layout title={title + ' - Kurokami'}>
   <Navbar slot="body" client:only="react" />
   <Detail slot="body" id={id} client:only="react" />
 </Layout>

@@ -1,6 +1,17 @@
 const API_BASE_URL = import.meta.env.PUBLIC_API_URL;
 
 // 🔹 Fetch List Manhwa
+export const fetchHome = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/home`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching home:", error);
+    return [];
+  }
+};
+
 export const fetchNewManhwa = async () => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/manhwa-new`);

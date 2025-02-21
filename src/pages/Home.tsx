@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchNewManhwa, fetchPopularManhwa } from "../utils/api";
+import { fetchHome } from "../utils/api";
 import Card from "../components/ui/Card";
 import ListCard from "../components/ui/ListCard";
 import CardSkeleton from "../components/ui/CardSkeleton";
@@ -16,17 +16,15 @@ interface Manhwa {
 }
 
 const Home = () => {
-  const [newManhwa, setNewManhwa] = useState<Manhwa[]>([]);
+  const [home, setHome] = useState<Manhwa[]>([]);
   const [popularManhwa, setPopularManhwa] = useState<Manhwa[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const newManhwaData = await fetchNewManhwa();
-        const popularManhwaData = await fetchPopularManhwa();
-        setNewManhwa(newManhwaData);
-        setPopularManhwa(popularManhwaData);
+        const homeData = await fetchHome();
+        setHome(homeData);
       } catch (error) {
         console.error("Error fetching manhwa data:", error);
       } finally {
@@ -46,7 +44,7 @@ const Home = () => {
           <div className="flex flex-wrap justify-center">
             {loading
               ? Array.from({ length: 28 }).map((_, index) => <CardSkeleton />)
-              : newManhwa
+              : home.latestUpdates
                   ?.slice(0, 28)
                   .map((manhwa: Manhwa) => (
                     <Card
@@ -72,7 +70,7 @@ const Home = () => {
               ? Array.from({ length: 10 }).map((_, index) => (
                   <ListCardSkeleton />
                 ))
-              : popularManhwa
+              : home.popularManhwa
                   ?.slice(0, 10)
                   .map((manhwa: Manhwa, index) => (
                     <ListCard
@@ -81,10 +79,39 @@ const Home = () => {
                       img={manhwa.imageSrc}
                       title={manhwa.title}
                       link={manhwa.link}
-                      chapter={manhwa.chapter || "-"}
+                      chapter={manhwa.chapter || " "}
                       rating={manhwa.rating || "-"}
                     />
                   ))}
+          </div>
+          
+          <div className="bg-[#18181B] p-4 rounded-lg shadow-md text-white mt-4">
+            <div className="flex items-center mb-3">
+              <h3 className="text-lg font-semibold">Genre</h3>
+            </div>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+              {loading
+                ? Array.from({ length: 8 }).map((_, index) => (
+                    <li
+                      key={index}
+                      className="block px-3 py-1 bg-gray-700 rounded text-sm animate-pulse"
+                    >
+                      &nbsp;
+                    </li>
+                  ))
+                : home.genres?.map((genre, index) => (
+                    <li key={index}>
+                      <a
+                        href={genre.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block xl:text-xs text-md transition-all duration-300 ease-in-out hover:cursor-pointer hover:text-[#C11B25] text-start "
+                      >
+                        {genre.title}
+                      </a>
+                    </li>
+                  ))}
+            </ul>
           </div>
         </div>
       </div>
