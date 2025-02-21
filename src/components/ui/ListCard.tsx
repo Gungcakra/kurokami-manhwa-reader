@@ -22,7 +22,7 @@ const ListCard: React.FC<ListCardProps> = ({
   return (
     <a
       href={`/manhwa/${link.split("/")[4]}`}
-      className="flex items-start justify-start m-1 xl:w-[280px] xl:max-h-[120px] rounded-md text-center"
+      className="flex border-t border-gray-500 items-start justify-start m-1 xl:w-[280px] xl:max-h-[120px] rounded-md text-center"
     >
  
       <img
@@ -32,7 +32,7 @@ const ListCard: React.FC<ListCardProps> = ({
       />
 
       <div className="flex flex-col items-start ml-2">
-        <p className="text-wrap text-start font-semibold truncate xl:text-md lg:text-md md:text-md sm:text-md">
+        <p className="text-wrap text-start truncate text-md transition-all duration-300 ease-in-out hover:text-[#6B69F1] text-white font-semibold">
           {title}
         </p>
         <p>{chapter}</p>

@@ -1,24 +1,64 @@
 import { truncateTitle } from "../../utils/function";
+interface Chapter {
+  chapterLink: string;
+  chapterTitle: string;
+  timeAgo: string;
+}
 
 interface CardProps {
   img: string;
   title: string;
   link: string;
+  chapter?: Chapter[];
 }
 
-const Card: React.FC<CardProps> = ({ img, title, link }) => {
+const Card: React.FC<CardProps> = ({ img, title, link, chapter }) => {
   return (
-    <a
-      href={`/manhwa/${link.split("/")[4]}`}
-      className="flex flex-wrap flex-col items-center m-1 w-[150px] max-h-[280px] rounded-md text-center"
-    >
-      <img src={img.split('?')[0]} alt="cover" className="min-w-full max-w-full min-h-[200px] max-h-[200px] rounded-md" />
-
-      <div className="card-content">
-      <h2 className="card-title text-wrap font-bold truncate">{truncateTitle(title)}</h2>
-      {/* <p className="card-description">Description</p> */}
+    <div className="flex items-start gap-4 border-t border-gray-500 bg-accent p-3">
+      <a
+        className="w-24 h-28 flex-shrink-0 relative"
+        href={`/manhwa/${link.split("/")[4]}`}
+      >
+        <img
+          src={img.split("?")[0]}
+          alt={title}
+          className="h-full w-full object-fill rounded-lg transition-transform transform hover:scale-105 duration-300"
+        />
+      </a>
+      <div className="flex flex-col w-full justify-between overflow-hidden">
+        <a
+          className="text-sm font-semibold cursor-pointer text-white truncate transition-all 300 ease-in-out hover:text-[#6B69F1]"
+          href={`/manhwa/${link.split("/")[4]}`}
+        >
+          {truncateTitle(title)}
+        </a>
+        {chapter &&
+          chapter.map((ch, index) => (
+            <div className="mt-2" key={index}>
+              <a
+                className="flex items-center justify-between text-gray-200 transition-all 300 ease-in-out hover:text-[#6B69F1] text-xs"
+                href={`/chapter/${ch.chapterLink.split("/")[3]}`}
+              >
+                <div className="flex gap-1 items-center">
+                  <svg
+                    stroke="currentColor"
+                    fill="currentColor"
+                    strokeWidth="0"
+                    viewBox="0 0 24 24"
+                    height="1em"
+                    width="1em"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M12 7a5 5 0 1 1 -4.995 5.217l-.005 -.217l.005 -.217a5 5 0 0 1 4.995 -4.783z"></path>
+                  </svg>
+                  <span>{ch.chapterTitle}</span>
+                </div>
+                <span>{ch.timeAgo}</span>
+              </a>
+            </div>
+          ))}
       </div>
-    </a>
+    </div>
   );
 };
 

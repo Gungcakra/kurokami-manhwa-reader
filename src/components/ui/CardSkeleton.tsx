@@ -1,11 +1,17 @@
-const CardSkeleton = () => {
+const CardSkeleton: React.FC = () => {
   return (
-    <div className="flex flex-col items-center m-1 w-[150px] h-[260px] rounded-md bg-gray-700 animate-pulse">
-      <div className="bg-gray-500 w-full h-[200px] rounded-md"></div>
+    <div className="flex items-start gap-4 border-t border-gray-500 bg-gray-800 p-3 animate-pulse">
+      {/* Placeholder untuk gambar */}
+      <div className="w-24 h-28 flex-shrink-0 bg-gray-700 rounded-lg"></div>
 
-      <div className="mt-3 w-3/4 h-5 bg-gray-500 rounded-md"></div>
-
-      <div className="mt-2 w-1/2 h-4 bg-gray-500 rounded-md"></div>
+      {/* Placeholder untuk teks */}
+      <div className="flex flex-col w-full justify-between">
+        <div className="h-4 w-3/4 bg-gray-700 rounded-md"></div>
+        <div className="mt-2">
+          <div className="h-3 w-1/2 bg-gray-700 rounded-md mb-1"></div>
+          <div className="h-3 w-1/4 bg-gray-700 rounded-md"></div>
+        </div>
+      </div>
     </div>
   );
 };
