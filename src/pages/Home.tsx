@@ -54,7 +54,7 @@ const Home = () => {
           </div>
           <div className="flex gap-4 overflow-x-auto scrollbar-hide px-2">
             {loading
-              ? Array(4)
+              ? Array(5)
                   .fill(0)
                   .map((_, index) => <CardSliderSkeleton key={index} />)
               : home.trending.map((manga, index) => (

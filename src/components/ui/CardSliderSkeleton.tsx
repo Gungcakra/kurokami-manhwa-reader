@@ -2,12 +2,11 @@ import React from "react";
 
 const CardSliderSkeleton: React.FC = () => {
   return (
-    <div className="bg-white shadow-md rounded-lg p-2 animate-pulse">
-      <div className="relative bg-gray-300 w-full h-56 rounded-md"></div>
-      <div className="mt-2">
-        <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-        <div className="h-3 bg-gray-300 rounded w-1/2"></div>
-        <div className="h-3 bg-gray-300 rounded w-1/4 mt-1"></div>
+    <div className="flex flex-col items-center rounded-md xl:w-[250px] w-[150px] bg-accent overflow-hidden animate-pulse">
+      <div className="rounded-t-md xl:h-[300px] h-[200px] w-full bg-gray-300"></div>
+      <div className="mt-2 w-full">
+      <div className="h-4 bg-gray-300 rounded w-3/4 mb-2 mx-auto"></div>
+      <div className="h-3 bg-gray-300 rounded w-1/2 mx-auto"></div>
       </div>
     </div>
   );
