@@ -1,5 +1,27 @@
 const API_BASE_URL = import.meta.env.PUBLIC_API_URL;
 
+// 🔹 FETCH FROM SHINIGAMI
+export const fetchNewShinigami = async () => {
+  try {
+    const response = await fetch("https://api.shngm.io/v1/manga/list?type=project&page=1&page_size=30&is_update=true&sort=latest&sort_order=desc");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching home:", error);
+    return [];
+  }
+};
+
+export const fetchDetailShinigami = async (manhwaId: string) => {
+  try {
+    const response = await fetch(`https://api.shngm.io/v1/manga/detail/${manhwaId}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching home:", error);
+    return [];
+  }
+};
 // 🔹 Fetch List Manhwa
 export const fetchHome = async () => {
   try {

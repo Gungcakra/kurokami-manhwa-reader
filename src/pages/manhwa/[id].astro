@@ -11,7 +11,7 @@ export const prerender = false; // Pastikan ini ada agar halaman tidak mencoba d
 
 const { id } = Astro.params;
 
-const title = slugToText(id);
+// const title = slugToText(id);
 
 
 // let manhwaTitle = "";
@@ -24,7 +24,7 @@ const title = slugToText(id);
 // }
 ---
 
-<Layout title={title + ' - Kurokami'}>
+<Layout title={'Kurokami'}>
   <Navbar slot="body" client:only="react" />
   <Detail slot="body" id={id} client:only="react" />
 </Layout>

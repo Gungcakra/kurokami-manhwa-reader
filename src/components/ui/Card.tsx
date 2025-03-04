@@ -1,8 +1,8 @@
-import { truncateTitle } from "../../utils/function";
+import { timeStampToTime, truncateTitle } from "../../utils/function";
 interface Chapter {
-  chapterLink: string;
-  chapterTitle: string;
-  timeAgo: string;
+  chapter_id: string;
+  chapter_number: string;
+  created_at: string;
 }
 
 interface CardProps {
@@ -17,10 +17,10 @@ const Card: React.FC<CardProps> = ({ img, title, link, chapter }) => {
     <div className="flex items-start gap-4 border-t border-gray-500 bg-accent p-3">
       <a
         className="w-24 h-28 flex-shrink-0 relative"
-        href={`/manhwa/${link.split("/")[4]}`}
+        href={`/manhwa/${link}`}
       >
         <img
-          src={img.split("?")[0]}
+          src={img}
           alt={title}
           className="h-full w-full object-fill rounded-lg transition-transform transform hover:scale-105 duration-300"
         />
@@ -28,7 +28,7 @@ const Card: React.FC<CardProps> = ({ img, title, link, chapter }) => {
       <div className="flex flex-col w-full justify-between overflow-hidden">
         <a
           className="text-sm font-semibold cursor-pointer text-white truncate transition-all 300 ease-in-out hover:text-[#6B69F1]"
-          href={`/manhwa/${link.split("/")[4]}`}
+          href={`/manhwa/${link}`}
         >
           {truncateTitle(title)}
         </a>
@@ -37,7 +37,7 @@ const Card: React.FC<CardProps> = ({ img, title, link, chapter }) => {
             <div className="mt-2" key={index}>
               <a
                 className="flex items-center justify-between text-gray-200 transition-all 300 ease-in-out hover:text-[#6B69F1] text-xs"
-                href={`/chapter/${ch.chapterLink.split("/")[3]}`}
+                href={`/chapter/${ch.chapter_id}`}
               >
                 <div className="flex gap-1 items-center">
                   <svg
@@ -51,9 +51,9 @@ const Card: React.FC<CardProps> = ({ img, title, link, chapter }) => {
                   >
                     <path d="M12 7a5 5 0 1 1 -4.995 5.217l-.005 -.217l.005 -.217a5 5 0 0 1 4.995 -4.783z"></path>
                   </svg>
-                  <span>{ch.chapterTitle}</span>
+                  <span>Chapter {ch.chapter_number}</span>
                 </div>
-                <span>{ch.timeAgo}</span>
+                <span>{timeStampToTime(ch.created_at)}</span>
               </a>
             </div>
           ))}

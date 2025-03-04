@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchHome } from "../utils/api";
+import { fetchHome, fetchNewShinigami } from "../utils/api";
 import Card from "../components/ui/Card";
 import ListCard from "../components/ui/ListCard";
 import CardSkeleton from "../components/ui/CardSkeleton";
@@ -23,6 +23,7 @@ const Home = () => {
   const [home, setHome] = useState<Manhwa[]>([]);
   const [popularManhwa, setPopularManhwa] = useState<Manhwa[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingNew, setLoadingNew] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,6 +39,22 @@ const Home = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchNewShinigami();
+        setPopularManhwa(data);
+      } catch (error) {
+        console.error("Error fetching manhwa data:", error);
+      } finally {
+        setLoadingNew(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
 
   return (
     <div className="bg-secondary text-white w-full min-h-full m-auto overflow-hidden">
@@ -88,18 +105,18 @@ const Home = () => {
             <h1>Komik Baru</h1>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3">
-            {loading
+            {loadingNew
               ? Array.from({ length: 28 }).map((_, index) => (
                   <CardSkeleton key={index} />
                 ))
-              : home.latestUpdates.map((manhwa) => (
+              : popularManhwa.data.map((manhwa) => (
                   <Card
-                    key={manhwa.link}
-                    img={manhwa.imageSrc}
+                    key={manhwa.manga_id}
+                    img={manhwa.cover_image_url}
                     title={manhwa.title}
-                    link={manhwa.link}
+                    link={manhwa.manga_id}
                     chapter={manhwa.chapters}
-                    time={manhwa.time}
+                    time={manhwa.created_at}
                   />
                 ))}
           </div>

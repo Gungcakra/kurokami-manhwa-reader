@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchManhwaDetail } from "../utils/api";
+import { fetchDetailShinigami, fetchManhwaDetail } from "../utils/api";
 import { removeTextTitle } from "../utils/function";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -22,8 +22,10 @@ const Detail = ({ id }: DetailProps) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const manhwaDetail = await fetchManhwaDetail(id);
-        setManhwa(manhwaDetail);
+        const manhwaDetail = await fetchDetailShinigami(id);
+        setManhwa(manhwaDetail.data);
+        console.log(manhwaDetail);
+        
       } catch (error) {
         console.error("Error fetching manhwa data:", error);
       } finally {
@@ -53,45 +55,45 @@ const Detail = ({ id }: DetailProps) => {
           <div className="bg-accent flex flex-col xl:flex-row lg:flex-row w-full m-4 p-4 rounded-2xl justify-center items-center lg:items-start gap-6">
             <div className="flex-shrink-0 flex justify-center lg:justify-start xl:w-auto lg:w-auto w-full">
               <img
-                src={manhwa.imageSrc}
-                alt="cover"
-                className="xl:w-56 lg:w-56 w-70 max-h-auto rounded-2xl object-cover"
+              src={manhwa.cover_image_url}
+              alt="cover"
+              className="xl:w-56 lg:w-56 w-70 max-h-auto rounded-2xl object-cover"
               />
             </div>
             <div className="flex flex-col justify-start flex-grow min-w-0 text-center lg:text-left">
               <p className="xl:text-2xl lg:text-2xl text-xl w-full text-wrap font-bold m-1 break-words">
-                {removeTextTitle(manhwa.title, "Bahasa Indonesia")}
+              {manhwa.title}
               </p>
               <div className="flex flex-col m-1 rounded-lg w-full gap-y-2 text-start max-w-2/3">
-                <p className="text-white xl:text-lg md:text-md text-sm">
-                  Alternative {manhwa.alternative}
-                </p>
-                <p className="text-white xl:text-lg md:text-md text-sm">
-                  Rating {manhwa.rating}
-                </p>
-                <p className="text-white xl:text-lg md:text-md text-sm">
-                  Author(s) {manhwa.author}
-                </p>
-                <p className="text-white xl:text-lg md:text-md text-sm">
-                  Artist(s) {manhwa.artist}
-                </p>
-                <p className="text-white xl:text-lg md:text-md text-sm">
-                  Genre(s){" "}
-                  {manhwa.genres?.map((genre, index) => (
-                    <span key={genre.genreName}>
-                      {index > 0 && ", "}
-                      <a href={genre.genreLink} className="hover:underline">
-                        {genre.genreName}
-                      </a>
-                    </span>
-                  ))}
-                </p>
-                <p className="text-white xl:text-lg md:text-md text-sm">
-                  Type {manhwa.type}
-                </p>
-                <p className="text-white xl:text-lg md:text-md text-sm">
-                  Status {manhwa.status}
-                </p>
+              <p className="text-white xl:text-lg md:text-md text-sm">
+                Alternative {manhwa.alternative_title}
+              </p>
+              <p className="text-white xl:text-lg md:text-md text-sm">
+                Rating {manhwa.user_rate}
+              </p>
+              <p className="text-white xl:text-lg md:text-md text-sm">
+                Author(s) {manhwa.taxonomy?.Author.map((author) => author.name).join(", ")}
+              </p>
+              <p className="text-white xl:text-lg md:text-md text-sm">
+                Artist(s) {manhwa.taxonomy?.Artist?.map((artist) => artist.name).join(", ")}
+              </p>
+              <p className="text-white xl:text-lg md:text-md text-sm">
+                Genre(s){" "}
+                {manhwa.taxonomy?.Genre?.map((genre, index) => (
+                <span key={genre.slug}>
+                  {index > 0 && ", "}
+                  <a href={`#${genre.slug}`} className="hover:underline">
+                  {genre.name}
+                  </a>
+                </span>
+                ))}
+              </p>
+              <p className="text-white xl:text-lg md:text-md text-sm">
+                Type {manhwa.taxonomy?.Type?.map((type) => type.name).join(", ")}
+              </p>
+              <p className="text-white xl:text-lg md:text-md text-sm">
+                Status {manhwa.status === 1 ? "Ongoing" : "Completed"}
+              </p>
               </div>
             </div>
           </div>
@@ -105,7 +107,7 @@ const Detail = ({ id }: DetailProps) => {
                 Sort <FontAwesomeIcon icon={faArrowDownUpAcrossLine} />
               </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
+            {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
               {chapters?.map((chapter) => (
                 <div
                   key={chapter.chapterTitle}
@@ -127,7 +129,7 @@ const Detail = ({ id }: DetailProps) => {
                   </a>
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
         </>
       )}
