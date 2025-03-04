@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchDetailShinigami, fetchManhwaDetail } from "../utils/api";
-import { removeTextTitle } from "../utils/function";
+import { fetchChapterListDetailShinigami, fetchDetailShinigami, fetchManhwaDetail } from "../utils/api";
+import { removeTextTitle, timeStampToTime } from "../utils/function";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowDownUpAcrossLine,
@@ -16,7 +16,9 @@ interface DetailProps {
 
 const Detail = ({ id }: DetailProps) => {
   const [manhwa, setManhwa] = useState<any>(null);
+  const [chapterList, setChapterList] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingChapter, setLoadingChapter] = useState(true);
   const [isReversed, setIsReversed] = useState(false);
 
   useEffect(() => {
@@ -24,7 +26,6 @@ const Detail = ({ id }: DetailProps) => {
       try {
         const manhwaDetail = await fetchDetailShinigami(id);
         setManhwa(manhwaDetail.data);
-        console.log(manhwaDetail);
         
       } catch (error) {
         console.error("Error fetching manhwa data:", error);
@@ -36,12 +37,28 @@ const Detail = ({ id }: DetailProps) => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const chapterData = await fetchChapterListDetailShinigami(id);
+        setChapterList(chapterData.data);
+        
+      } catch (error) {
+        console.error("Error fetching manhwa data:", error);
+      } finally {
+        setLoadingChapter(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const toggleOrder = () => {
     setIsReversed(!isReversed);
   };
   let chapters = [];
-  if (manhwa != null) {
-    chapters = isReversed ? [...manhwa.chapters].reverse() : manhwa.chapters;
+  if (chapterList != null) {
+    chapters = isReversed ? [...chapterList].reverse() : chapterList;
   }
 
   return (
@@ -107,21 +124,21 @@ const Detail = ({ id }: DetailProps) => {
                 Sort <FontAwesomeIcon icon={faArrowDownUpAcrossLine} />
               </button>
             </div>
-            {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
               {chapters?.map((chapter) => (
                 <div
-                  key={chapter.chapterTitle}
-                  className="bg-accent duration-300 ease-in-out text-primarys rounded-md p-3 flex justify-between items-center"
+                  key={chapter.chapter_id}
+                  className="bg-accent duration-300 ease-in-out text-white hocver:text-primarys rounded-md p-3 flex justify-between items-center"
                 >
                   <div className="flex flex-col">
                     <a
                       className="xl:text-md lg:text-md text-md font-semibold"
-                      href={`/chapter/${chapter.chapterLink.split("/")[3]}`}
+                      href={`/chapter/${chapter.chapter_id}`}
                     >
-                      {chapter.chapterNum}
+                      Chapter {chapter.chapter_number}
                     </a>
                     <p className="text-gray-400 xl:text-md lg:text-md text-md">
-                      {chapter.chapterDate}
+                      {timeStampToTime(chapter.chapterDate)}
                     </p>
                   </div>
                   <a href={chapter.downloadLink}>
@@ -129,7 +146,7 @@ const Detail = ({ id }: DetailProps) => {
                   </a>
                 </div>
               ))}
-            </div> */}
+            </div>
           </div>
         </>
       )}

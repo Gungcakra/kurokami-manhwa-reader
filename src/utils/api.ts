@@ -22,6 +22,17 @@ export const fetchDetailShinigami = async (manhwaId: string) => {
     return [];
   }
 };
+
+export const fetchChapterListDetailShinigami = async (manhwaId: string) => {
+  try {
+    const response = await fetch(`https://api.shngm.io/v1/chapter/${manhwaId}/list?page=1&page_size=24&sort_by=chapter_number&sort_order=desc`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching home:", error);
+    return [];
+  }
+};
 // 🔹 Fetch List Manhwa
 export const fetchHome = async () => {
   try {
