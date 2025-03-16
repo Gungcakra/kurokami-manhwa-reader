@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
-import { fetchChapterListDetailShinigami, fetchDetailShinigami, fetchManhwaDetail } from "../utils/api";
-import { removeTextTitle, timeStampToTime } from "../utils/function";
+import { fetchChapterListDetailShinigami, fetchDetailShinigami } from "../utils/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowDownUpAcrossLine,
-  faDownload,
 } from "@fortawesome/free-solid-svg-icons";
 import ButtonCorner from "../components/ui/ButtonCorner";
-import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
 import kuru from "../assets/images/kuru.webp";
 interface DetailProps {

@@ -1,16 +1,9 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
+import node from '@astrojs/node';
 
 export default defineConfig({
+  output: 'server', // Pastikan output adalah server
+  adapter: node({ mode: 'standalone' }), // Tambahkan mode
   integrations: [react()],
-  server: {
-    proxy: {
-      '/api': {
-        target: 'https://kurokami.vercel.app',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-    },
-  },
 });

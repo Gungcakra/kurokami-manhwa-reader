@@ -1,13 +1,12 @@
 ---
-import Detail from "../Detail";
+import Detail from "../_Detail";
 import "../../styles/global.css";
 // @ts-expect-error yes, I know what I'm doing
 import { Astro } from "astro";
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/common/Navbar";
-import { fetchDetailShinigami, fetchManhwaDetail } from "../../utils/api";
-import { slugToText } from "../../utils/function";
-export const prerender = false; // Pastikan ini ada agar halaman tidak mencoba di-build statis
+import { fetchDetailShinigami } from "../../utils/api";
+export const prerender = false;
 
 const { id } = Astro.params;
 

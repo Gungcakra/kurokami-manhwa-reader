@@ -4,9 +4,9 @@ import "../../styles/global.css";
 import { Astro } from "astro";
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/common/Navbar";
-import { fetchChapterDetail, fetchChapterShinigami, fetchDetailShinigami, fetchManhwaDetail } from "../../utils/api";
-import { removeTextTitle, slugToText } from "../../utils/function";
-import Chapter from "../Chapter";
+import { fetchChapterShinigami, fetchDetailShinigami } from "../../utils/api";
+
+import Chapter from "../_Chapter";
 export const prerender = false; 
 
 const { id } = Astro.params;
