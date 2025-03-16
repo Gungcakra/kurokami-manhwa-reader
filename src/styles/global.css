@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 .text-primarys{
-    color: #131218;
+    color: #6B69F1;
 }
 .text-secondary{
     color: #131218;
 }
 .bg-primary{
-    background-color: #131218;
+    background-color: #6B69F1;
 }
 .bg-secondary{
     background-color: #131218;

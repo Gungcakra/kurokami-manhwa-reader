@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   fetchChapterDetail,
   fetchChapterShinigami,
+  fetchDetailShinigami,
   fetchManhwaDetail,
 } from "../utils/api";
 import { changeToSlug, removeTextTitle } from "../utils/function";
@@ -32,27 +33,6 @@ const Chapter = ({ idChapter }: DetailProps) => {
     fetchData();
   }, []);
 
-  // useEffect(() => {
-  //   if (chapter) {
-  //     const fetchData = async () => {
-  //       try {
-  //         const manhwaDetail = await fetchManhwaDetail(
-  //           chapter?.manhwaLink.split("/")[4]
-  //         );
-  //         setManhwa(manhwaDetail);
-  //       } catch (error) {
-  //         console.error("Error fetching manhwa data:", error);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     };
-
-  //     fetchData();
-  //   } else {
-  //     console.log("no manhwa");
-  //   }
-  // }, [chapter]);
-
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowLeft" && chapter.prevChapter) {
@@ -66,18 +46,32 @@ const Chapter = ({ idChapter }: DetailProps) => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [chapter]);
 
-  const url = "https://freenigami.vercel.app/v1/api/";
-  const manga_id = chapter?.data?.manga_id;
-  const chapter_id = chapter?.data?.chapter_id;
-  const images: string[] = chapter?.data?.chapter?.data || [];
+  useEffect(() => {
+    if (chapter) {
+      const fetchDataManhwa = async () => {
+        try {
+          const manhwaDetail = await fetchDetailShinigami(chapter.data.manga_id);
+          setManhwa(manhwaDetail);
+        } catch (error) {
+          console.error("Error fetching manhwa data:", error);
+        }
+      };
 
-  if (Array.isArray(images)) {
-    images.forEach((image) => {
-      console.log(url + manga_id + "/" + chapter_id + "/" + image);
-    });
-  } else {
-    console.error("images is not an array:", images);
-  }
+      fetchDataManhwa();
+    }
+  }, [chapter]);
+  // const url = "https://freenigami.vercel.app/v1/api/";
+  // const manga_id = chapter?.data?.manga_id;
+  // const chapter_id = chapter?.data?.chapter_id;
+  // const images: string[] = chapter?.data?.chapter?.data || [];
+
+  // if (Array.isArray(images)) {
+  //   images.forEach((image) => {
+  //     console.log(url + manga_id + "/" + chapter_id + "/" + image);
+  //   });
+  // } else {
+  //   console.error("images is not an array:", images);
+  // }
 
   return (
     <div className="bg-secondary min-w-full text-white w-full min-h-full flex flex-col items-center">
@@ -87,32 +81,32 @@ const Chapter = ({ idChapter }: DetailProps) => {
         </div>
       ) : (
         <>
-          {/* <p className="pt-2 text-center xl:text-2xl text-xl font-bold text-wrap max-w-1/2">
-        {chapter.title}
-        </p> */}
+          <p className="pt-2 text-center text-white xl:text-2xl text-xl font-bold text-wrap max-w-1/2">
+        {manhwa?.data?.title} Chapter {chapter?.data?.chapter_number}
+        </p>
           <div className="flex justify-end w-full p-4">
-            {/* <div className="flex gap-4">
-          {chapter.prevChapter ? (
-          <a
-            href={`${chapter.prevChapter?.split("/")[3]}`}
-            className="text-white py-1 px-4 bg-primary rounded-full"
-          >
-            <FontAwesomeIcon icon={faArrowLeft} /> Prev
-          </a>
-          ) : (
-          <div></div>
-          )}
-          {chapter.nextChapter ? (
-          <a
-            href={`${chapter.nextChapter?.split("/")[3]}`}
-            className="text-white py-1 px-4 bg-primary rounded-full"
-          >
-            Next <FontAwesomeIcon icon={faArrowRight} />
-          </a>
-          ) : (
-          <div></div>
-          )}
-        </div> */}
+            <div className="flex gap-4">
+              {chapter?.data?.prev_chapter_id ? (
+                <a
+                  href={`/chapter/${chapter?.data?.prev_chapter_id}`}
+                  className="text-white py-1 px-4 bg-primary rounded-full"
+                >
+                  <FontAwesomeIcon icon={faArrowLeft} /> Prev
+                </a>
+              ) : (
+                <div></div>
+              )}
+              {chapter?.data?.next_chapter_id ? (
+                <a
+                  href={`/chapter/${chapter?.data?.next_chapter_id}`}
+                  className="text-white py-1 px-4 bg-primary rounded-full"
+                >
+                  Next <FontAwesomeIcon icon={faArrowRight} />
+                </a>
+              ) : (
+                <div></div>
+              )}
+            </div>
           </div>
           <div className="flex flex-col items-center w-full min-h-screen py-4">
             {chapter?.data?.chapter?.data?.length > 0 ? (
@@ -134,28 +128,28 @@ const Chapter = ({ idChapter }: DetailProps) => {
             )}
           </div>
           <div className="flex justify-end w-full p-4">
-            {/* <div className="flex gap-4">
-          {chapter.prevChapter ? (
-          <a
-            href={`${chapter.prevChapter?.split("/")[3]}`}
-            className="text-white py-1 px-4 bg-primary rounded-full"
-          >
-            <FontAwesomeIcon icon={faArrowLeft} /> Prev
-          </a>
-          ) : (
-          <div></div>
-          )}
-          {chapter.nextChapter ? (
-          <a
-            href={`${chapter.nextChapter?.split("/")[3]}`}
-            className="text-white py-1 px-4 bg-primary rounded-full"
-          >
-            Next <FontAwesomeIcon icon={faArrowRight} />
-          </a>
-          ) : (
-          <div></div>
-          )}
-        </div> */}
+            <div className="flex gap-4">
+              {chapter?.data?.prev_chapter_id ? (
+                <a
+                  href={`/chapter/${chapter?.data?.prev_chapter_id}`}
+                  className="text-white py-1 px-4 bg-primary rounded-full"
+                >
+                  <FontAwesomeIcon icon={faArrowLeft} /> Prev
+                </a>
+              ) : (
+                <div></div>
+              )}
+              {chapter?.data?.next_chapter_id ? (
+                <a
+                  href={`/chapter/${chapter?.data?.next_chapter_id}`}
+                  className="text-white py-1 px-4 bg-primary rounded-full"
+                >
+                  Next <FontAwesomeIcon icon={faArrowRight} />
+                </a>
+              ) : (
+                <div></div>
+              )}
+            </div>
           </div>
         </>
       )}
