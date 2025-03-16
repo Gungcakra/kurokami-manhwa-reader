@@ -4,18 +4,29 @@ import "../../styles/global.css";
 import { Astro } from "astro";
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/common/Navbar";
-import { fetchChapterDetail, fetchManhwaDetail } from "../../utils/api";
+import { fetchChapterDetail, fetchChapterShinigami, fetchDetailShinigami, fetchManhwaDetail } from "../../utils/api";
 import { removeTextTitle, slugToText } from "../../utils/function";
 import Chapter from "../Chapter";
 export const prerender = false; 
 
 const { id } = Astro.params;
 
-const chapterTitle = slugToText(id);
+let manga_id = "";
+let manhwaTitle = "";
+try {
+      const manhwaDetail = await fetchChapterShinigami(id);
+     manga_id = manhwaDetail.data.manga_id;
+     if(manga_id){
+        const manhwaDetail = await fetchDetailShinigami(manga_id);
+        manhwaTitle = manhwaDetail.data.title;
+     }
+} catch (error) {
+    console.error("Failed to fetch manhwa details:", error);
+}
 
 ---
 
-<Layout title={removeTextTitle(chapterTitle, "Bahasa Indonesia") + " - Kurokami"}>
+<Layout title={manhwaTitle + " - Kurokami"}>
   <Navbar slot="body" client:only="react" />
   <Chapter slot="body" idChapter={id} client:only="react" />
   

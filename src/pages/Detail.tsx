@@ -128,22 +128,27 @@ const Detail = ({ id }: DetailProps) => {
               {chapters?.map((chapter) => (
                 <div
                   key={chapter.chapter_id}
-                  className="bg-accent duration-300 ease-in-out text-white hocver:text-primarys rounded-md p-3 flex justify-between items-center"
+                  className="bg-accent duration-300 ease-in-out text-white hocver:text-primarys rounded-md p-3 flex justify-between items-center border-1 border-gray-400"
                 >
-                  <div className="flex flex-col">
+                  <div className="flex w-2/4">
+                  <img src={chapter.thumbnail_image_url} alt="" className="rounded-md w-40"/>
+
+                  </div>
+                  <div className="flex flex-col w-2/4 h-full ">
                     <a
-                      className="xl:text-md lg:text-md text-md font-semibold"
+                      className="xl:text-md lg:text-md text-md font-semibold duration-300 hover:text-[#6B69F1]"
                       href={`/chapter/${chapter.chapter_id}`}
                     >
                       Chapter {chapter.chapter_number}
                     </a>
                     <p className="text-gray-400 xl:text-md lg:text-md text-md">
-                      {timeStampToTime(chapter.chapterDate)}
+                        {new Date(chapter.release_date).toLocaleDateString('en-GB', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                        })}
                     </p>
                   </div>
-                  <a href={chapter.downloadLink}>
-                    <FontAwesomeIcon icon={faDownload} />
-                  </a>
                 </div>
               ))}
             </div>

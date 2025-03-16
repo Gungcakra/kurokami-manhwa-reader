@@ -4,7 +4,6 @@ import Card from "../components/ui/Card";
 import ListCard from "../components/ui/ListCard";
 import CardSkeleton from "../components/ui/CardSkeleton";
 import ListCardSkeleton from "../components/ui/ListCardSkeleton";
-import Footer from "../components/common/Footer";
 import Navbar from "../components/common/Navbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFire, faLineChart } from "@fortawesome/free-solid-svg-icons";
