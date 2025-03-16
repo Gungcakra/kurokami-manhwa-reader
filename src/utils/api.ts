@@ -33,6 +33,29 @@ export const fetchChapterListDetailShinigami = async (manhwaId: string) => {
     return [];
   }
 };
+
+export const fetchChapterShinigami = async (chapterId: string) => {
+  try {
+    const response = await fetch(`https://api.shngm.io/v1/chapter/detail/${chapterId}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching home:", error);
+    return [];
+  }
+};
+export const fetchChapterImage = async (manhwaId: string) => {
+  try {
+    const response = await fetch(`https://api.shngm.io/v1/chapter/detail/${manhwaId}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching home:", error);
+    return [];
+  }
+};
+
+
 // 🔹 Fetch List Manhwa
 export const fetchHome = async () => {
   try {

@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { fetchChapterDetail, fetchManhwaDetail } from "../utils/api";
+import {
+  fetchChapterDetail,
+  fetchChapterShinigami,
+  fetchManhwaDetail,
+} from "../utils/api";
 import { changeToSlug, removeTextTitle } from "../utils/function";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
@@ -16,7 +20,7 @@ const Chapter = ({ idChapter }: DetailProps) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const chapterDetail = await fetchChapterDetail(idChapter);
+        const chapterDetail = await fetchChapterShinigami(idChapter);
         setChapter(chapterDetail);
       } catch (error) {
         console.error("Error fetching chapter data:", error);
@@ -62,20 +66,32 @@ const Chapter = ({ idChapter }: DetailProps) => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [chapter]);
 
+  const url = "https://freenigami.vercel.app/v1/api/";
+  const manga_id = chapter?.data?.manga_id;
+  const chapter_id = chapter?.data?.chapter_id;
+  const images: string[] = chapter?.data?.chapter?.data || [];
+
+  if (Array.isArray(images)) {
+    images.forEach((image) => {
+      console.log(url + manga_id + "/" + chapter_id + "/" + image);
+    });
+  } else {
+    console.error("images is not an array:", images);
+  }
+
   return (
     <div className="bg-secondary min-w-full text-white w-full min-h-full flex flex-col items-center">
       {loading ? (
-      
-      <div className="w-full min-h-screen flex justify-center items-center">
-        <img src={kuru.src} alt="loading" width={300} height={300} />
-      </div>
+        <div className="w-full min-h-screen flex justify-center items-center">
+          <img src={kuru.src} alt="loading" width={300} height={300} />
+        </div>
       ) : (
-      <>
-        <p className="pt-2 text-center xl:text-2xl text-xl font-bold text-wrap max-w-1/2">
+        <>
+          {/* <p className="pt-2 text-center xl:text-2xl text-xl font-bold text-wrap max-w-1/2">
         {chapter.title}
-        </p>
-        <div className="flex justify-end w-full p-4">
-        <div className="flex gap-4">
+        </p> */}
+          <div className="flex justify-end w-full p-4">
+            {/* <div className="flex gap-4">
           {chapter.prevChapter ? (
           <a
             href={`${chapter.prevChapter?.split("/")[3]}`}
@@ -96,29 +112,29 @@ const Chapter = ({ idChapter }: DetailProps) => {
           ) : (
           <div></div>
           )}
-        </div>
-        </div>
-        <div className="flex flex-col items-center w-full min-h-screen py-4">
-        {chapter?.images.length > 0 ? (
-          chapter.images.map((image: string, index: number) => (
-          <img
-            key={index}
-            src={image}
-            alt={`Chapter Image ${index + 1}`}
-            className="w-2/3"
-            loading="lazy"
-            onLoad={() => console.log(`Image loaded: ${image}`)}
-            onError={(e) =>
-            console.error(`Failed to load image: ${image}`, e)
-            }
-          />
-          ))
-        ) : (
-          <p className="text-red-500">No images found.</p>
-        )}
-        </div>
-        <div className="flex justify-end w-full p-4">
-        <div className="flex gap-4">
+        </div> */}
+          </div>
+          <div className="flex flex-col items-center w-full min-h-screen py-4">
+            {chapter?.data?.chapter?.data?.length > 0 ? (
+              chapter.data.chapter.data.map((image: string, index: number) => (
+                <img
+                  key={index}
+                  src={`https://freenigami.vercel.app/v1/api/${chapter.data.manga_id}/${chapter.data.chapter_id}/${image}`}
+                  alt={`Chapter Image ${index + 1}`}
+                  className="w-2/3"
+                  loading="lazy"
+                  onLoad={() => console.log(`Image loaded: ${image}`)}
+                  onError={(e) =>
+                    console.error(`Failed to load image: ${image}`, e)
+                  }
+                />
+              ))
+            ) : (
+              <p className="text-red-500">No images found.</p>
+            )}
+          </div>
+          <div className="flex justify-end w-full p-4">
+            {/* <div className="flex gap-4">
           {chapter.prevChapter ? (
           <a
             href={`${chapter.prevChapter?.split("/")[3]}`}
@@ -139,9 +155,9 @@ const Chapter = ({ idChapter }: DetailProps) => {
           ) : (
           <div></div>
           )}
-        </div>
-        </div>
-      </>
+        </div> */}
+          </div>
+        </>
       )}
       <ButtonCorner />
       <Footer />
