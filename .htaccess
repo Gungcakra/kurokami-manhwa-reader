@@ -1,5 +1,6 @@
 RewriteEngine On
 RewriteBase /
 
-# Redirect semua permintaan ke dalam folder client
+# Redirect semua permintaan ke client/
+RewriteCond %{REQUEST_URI} !^/client/
 RewriteRule ^(.*)$ client/$1 [L]
