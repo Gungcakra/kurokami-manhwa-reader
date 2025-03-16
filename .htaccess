@@ -1,0 +1,5 @@
+RewriteEngine On
+RewriteBase /
+
+# Redirect semua permintaan ke dalam folder client
+RewriteRule ^(.*)$ client/$1 [L]
