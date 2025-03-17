@@ -68,6 +68,18 @@ export const fetchChapterShinigami = async (chapterId: string) => {
     return [];
   }
 };
+
+export const fetchSearch = async (keyword: string) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/v1/manga/list?page=1&page_size=5&q=${keyword}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching home:", error);
+    return [];
+  }
+};
+
 export const fetchChapterImage = async (manhwaId: string) => {
   try {
     const response = await fetch(`${API_BASE_URL}/v1/chapter/detail/${manhwaId}`);
