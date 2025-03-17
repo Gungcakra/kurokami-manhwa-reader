@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchHome, fetchNewShinigami } from "../utils/api";
+import { fetchHome, fetchNewShinigami, fetchRecommendShinigami, fetchTopShinigami } from "../utils/api";
 import Card from "../components/ui/Card";
 import ListCard from "../components/ui/ListCard";
 import CardSkeleton from "../components/ui/CardSkeleton";
@@ -19,16 +19,17 @@ interface Manhwa {
 }
 
 const Home = () => {
-  const [home, setHome] = useState<Manhwa[]>([]);
+  const [top, setTop] = useState<Manhwa[]>([]);
   const [popularManhwa, setPopularManhwa] = useState<Manhwa[]>([]);
+  const [recommend, setRecommend] = useState<Manhwa[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingNew, setLoadingNew] = useState(true);
-
+  const [loadingRekomendasi, setLoadingRekomendasi] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const homeData = await fetchHome();
-        setHome(homeData);
+        const topManhwa = await fetchTopShinigami();
+        setTop(topManhwa);
       } catch (error) {
         console.error("Error fetching manhwa data:", error);
       } finally {
@@ -54,6 +55,21 @@ const Home = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchRecommendShinigami();
+        setRecommend(data);
+      } catch (error) {
+        console.error("Error fetching manhwa data:", error);
+      } finally {
+        setLoadingRekomendasi(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
 
   return (
     <div className="bg-secondary text-white w-full min-h-full m-auto overflow-hidden">
@@ -73,15 +89,15 @@ const Home = () => {
               ? Array(5)
                   .fill(0)
                   .map((_, index) => <CardSliderSkeleton key={index} />)
-              : home.trending.map((manga, index) => (
+              : top.data.map((manga, index) => (
                   <div
                     key={index}
                     className="flex-shrink-0 w-[150px] xl:w-[250px]"
                   >
                     <CardSlider
-                      img={manga.imageSrc}
+                      img={manga.cover_portrait_url}
                       title={manga.title}
-                      link={manga.link}
+                      link={manga.manga_id}
                       chapter={manga.latestChapter}
                     />
                   </div>
@@ -115,7 +131,6 @@ const Home = () => {
                     title={manhwa.title}
                     link={manhwa.manga_id}
                     chapter={manhwa.chapters}
-                    time={manhwa.created_at}
                   />
                 ))}
           </div>
@@ -125,20 +140,20 @@ const Home = () => {
         <div className="xl:col-span-1 md:col-span-1 w-full popular-container overflow-hidden rounded-xl ">
           <div className="flex items-center gap-2 text-white text-xl font-semibold pb-4 p-4 bg-secondary-light">
             <FontAwesomeIcon icon={faFire} className="w-5 h-5" />
-            <h1>Populer</h1>
+            <h1>Rekomendasi</h1>
           </div>
           <div className="flex flex-col bg-accent">
             {loading
               ? Array.from({ length: 10 }).map((_, index) => (
                   <ListCardSkeleton />
                 ))
-              : home.popularManhwa?.map((manhwa: Manhwa, index) => (
+              : recommend.data?.slice(0,10).map((manhwa: Manhwa, index) => (
                   <ListCard
-                    key={manhwa.link}
+                    key={manhwa.manga_id}
                     index={index}
-                    img={manhwa.imageSrc}
+                    img={manhwa.cover_image_url}
                     title={manhwa.title}
-                    link={manhwa.link}
+                    link={manhwa.manga_id}
                     chapter={manhwa.chapter || " "}
                     rating={manhwa.rating || "-"}
                   />
@@ -150,7 +165,7 @@ const Home = () => {
             <div className="flex items-center mb-3">
               <h3 className="text-lg font-semibold">Genre</h3>
             </div>
-            <ul className="grid grid-cols-3 gap-2">
+            {/* <ul className="grid grid-cols-3 gap-2">
               {loading
                 ? Array.from({ length: 8 }).map((_, index) => (
                     <li
@@ -172,7 +187,7 @@ const Home = () => {
                       </a>
                     </li>
                   ))}
-            </ul>
+            </ul> */}
           </div>
         </div>
       </div>

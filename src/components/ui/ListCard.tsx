@@ -21,7 +21,7 @@ const ListCard: React.FC<ListCardProps> = ({
 }) => {
   return (
     <a
-      href={`/manhwa/${link.split("/")[4]}`}
+      href={`/manhwa/${link}`}
       className="flex border-t border-gray-500 items-start justify-start m-1 xl:w-[280px] xl:max-h-[120px] rounded-md text-center"
     >
  

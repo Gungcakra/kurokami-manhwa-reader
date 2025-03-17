@@ -3,7 +3,31 @@ const API_BASE_URL = import.meta.env.PUBLIC_API_URL;
 // 🔹 FETCH FROM SHINIGAMI
 export const fetchNewShinigami = async () => {
   try {
-    const response = await fetch("https://api.shngm.io/v1/manga/list?type=project&page=1&page_size=30&is_update=true&sort=latest&sort_order=desc");
+    const response = await fetch(`${API_BASE_URL}/v1/manga/list?type=project&page=1&page_size=30&is_update=true&sort=latest&sort_order=desc`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching home:", error);
+    return [];
+  }
+};
+
+// 🔹 FETCH TOP
+export const fetchTopShinigami = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/v1/manga/top?filter=daily&page=1&page_size=10`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching home:", error);
+    return [];
+  }
+};
+
+// 🔹 FETCH RECOMMEND
+export const fetchRecommendShinigami = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/v1/manga/list?type=mirror&page=1&page_size=24&is_update=true&sort=latest&sort_order=desc`);
     const data = await response.json();
     return data;
   } catch (error) {
@@ -14,7 +38,7 @@ export const fetchNewShinigami = async () => {
 
 export const fetchDetailShinigami = async (manhwaId: string) => {
   try {
-    const response = await fetch(`https://api.shngm.io/v1/manga/detail/${manhwaId}`);
+    const response = await fetch(`${API_BASE_URL}/v1/manga/detail/${manhwaId}`);
     const data = await response.json();
     return data;
   } catch (error) {
@@ -25,7 +49,7 @@ export const fetchDetailShinigami = async (manhwaId: string) => {
 
 export const fetchChapterListDetailShinigami = async (manhwaId: string) => {
   try {
-    const response = await fetch(`https://api.shngm.io/v1/chapter/${manhwaId}/list?page=1&page_size=24&sort_by=chapter_number&sort_order=desc`);
+    const response = await fetch(`${API_BASE_URL}/v1/chapter/${manhwaId}/list?page=1&page_size=24&sort_by=chapter_number&sort_order=desc`);
     const data = await response.json();
     return data;
   } catch (error) {
@@ -36,7 +60,7 @@ export const fetchChapterListDetailShinigami = async (manhwaId: string) => {
 
 export const fetchChapterShinigami = async (chapterId: string) => {
   try {
-    const response = await fetch(`https://api.shngm.io/v1/chapter/detail/${chapterId}`);
+    const response = await fetch(`${API_BASE_URL}/v1/chapter/detail/${chapterId}`);
     const data = await response.json();
     return data;
   } catch (error) {
@@ -46,7 +70,7 @@ export const fetchChapterShinigami = async (chapterId: string) => {
 };
 export const fetchChapterImage = async (manhwaId: string) => {
   try {
-    const response = await fetch(`https://api.shngm.io/v1/chapter/detail/${manhwaId}`);
+    const response = await fetch(`${API_BASE_URL}/v1/chapter/detail/${manhwaId}`);
     const data = await response.json();
     return data;
   } catch (error) {

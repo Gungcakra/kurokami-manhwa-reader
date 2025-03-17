@@ -53,7 +53,11 @@ const Card: React.FC<CardProps> = ({ img, title, link, chapter }) => {
                   </svg>
                   <span>Chapter {ch.chapter_number}</span>
                 </div>
-                <span>{timeStampToTime(ch.created_at)}</span>
+                <span>{new Date(ch.created_at).toLocaleDateString('in-GB', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                        })}</span>
               </a>
             </div>
           ))}

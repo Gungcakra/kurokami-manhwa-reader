@@ -139,7 +139,7 @@ const Detail = ({ id }: DetailProps) => {
                       Chapter {chapter.chapter_number}
                     </a>
                     <p className="text-gray-400 xl:text-md lg:text-md text-md">
-                        {new Date(chapter.release_date).toLocaleDateString('en-GB', {
+                        {new Date(chapter.release_date).toLocaleDateString('in-GB', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
