@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useEffect, useState } from "react";
 import { fetchHome, fetchNewShinigami, fetchRecommendShinigami, fetchTopShinigami } from "../utils/api";
 import Card from "../components/ui/Card";

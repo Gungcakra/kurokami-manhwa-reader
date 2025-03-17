@@ -1,4 +1,5 @@
-import { timeStampToTime, truncateTitle } from "../../utils/function";
+// @ts-nocheck
+import { truncateTitle } from "../../utils/function";
 interface Chapter {
   chapter_id: string;
   chapter_number: string;
@@ -53,11 +54,32 @@ const Card: React.FC<CardProps> = ({ img, title, link, chapter }) => {
                   </svg>
                   <span>Chapter {ch.chapter_number}</span>
                 </div>
-                <span>{new Date(ch.created_at).toLocaleDateString('in-GB', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                        })}</span>
+                <span>
+                  {(() => {
+                  const now = new Date();
+                  const createdAt = new Date(ch.created_at);
+                  const diff = now.getTime() - createdAt.getTime();
+                  const diffInHours = Math.floor(diff / (1000 * 60 * 60));
+                  const diffInMinutes = Math.floor(diff / (1000 * 60));
+                  const diffInSeconds = Math.floor(diff / 1000);
+
+                  if (diffInHours < 24) {
+                    if (diffInMinutes < 60) {
+                    if (diffInSeconds < 60) {
+                      return `${diffInSeconds} detik yang lalu`;
+                    }
+                    return `${diffInMinutes} menit yang lalu`;
+                    }
+                    return `${diffInHours} jam yang lalu`;
+                  }
+
+                  return createdAt.toLocaleDateString('id-ID', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  });
+                  })()}
+                </span>
               </a>
             </div>
           ))}

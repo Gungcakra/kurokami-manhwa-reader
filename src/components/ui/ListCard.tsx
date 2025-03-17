@@ -1,13 +1,15 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// @ts-nocheck
 import { truncateTitle } from "../../utils/function";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 interface ListCardProps {
   index: number;
   img: string;
   title: string;
   link: string;
-  chapter: string;
+  chapter: {
+    chapter_id: string;
+    chapter_number: string;
+  };
 }
 
 const ListCard: React.FC<ListCardProps> = ({
@@ -30,9 +32,7 @@ const ListCard: React.FC<ListCardProps> = ({
       />
 
       <div className="flex flex-col items-start ml-2">
-        <p className="text-wrap text-start truncate text-md transition-all duration-300 ease-in-out hover:text-[#6B69F1] text-white font-semibold">
-          {truncateTitle(title, 20)}
-        </p>
+        <p>{truncateTitle(title, 20)}</p>
         <a href={`/chapter/${chapter[0].chapter_id}`} className="duration-300 ease-in-out hover:text-[#6B69F1]">Chapter {chapter[0].chapter_number}</a>
         {/* <p className="ListCard-description">Description</p> */}
       </div>

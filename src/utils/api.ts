@@ -47,9 +47,9 @@ export const fetchDetailShinigami = async (manhwaId: string) => {
   }
 };
 
-export const fetchChapterListDetailShinigami = async (manhwaId: string) => {
+export const fetchChapterListDetailShinigami = async (manhwaId: string, page:number) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/v1/chapter/${manhwaId}/list?page=1&page_size=24&sort_by=chapter_number&sort_order=desc`);
+    const response = await fetch(`${API_BASE_URL}/v1/chapter/${manhwaId}/list?page=${page}&page_size=24&sort_by=chapter_number&sort_order=desc`);
     const data = await response.json();
     return data;
   } catch (error) {
