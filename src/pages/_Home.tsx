@@ -154,8 +154,7 @@ const Home = () => {
                     img={manhwa.cover_image_url}
                     title={manhwa.title}
                     link={manhwa.manga_id}
-                    chapter={manhwa.chapter || " "}
-                    rating={manhwa.rating || "-"}
+                    chapter={manhwa.chapters}
                   />
                 ))}
           </div>

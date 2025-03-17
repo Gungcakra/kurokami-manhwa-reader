@@ -8,7 +8,6 @@ interface ListCardProps {
   title: string;
   link: string;
   chapter: string;
-  rating: string;
 }
 
 const ListCard: React.FC<ListCardProps> = ({
@@ -17,7 +16,6 @@ const ListCard: React.FC<ListCardProps> = ({
   title,
   link,
   chapter,
-  rating,
 }) => {
   return (
     <a
@@ -33,10 +31,9 @@ const ListCard: React.FC<ListCardProps> = ({
 
       <div className="flex flex-col items-start ml-2">
         <p className="text-wrap text-start truncate text-md transition-all duration-300 ease-in-out hover:text-[#6B69F1] text-white font-semibold">
-          {title}
+          {truncateTitle(title, 20)}
         </p>
-        <p>{chapter}</p>
-        <p><FontAwesomeIcon icon={faStar} className="text-yellow-300"/> {rating}</p>
+        <a href={`/chapter/${chapter[0].chapter_id}`} className="duration-300 ease-in-out hover:text-[#6B69F1]">Chapter {chapter[0].chapter_number}</a>
         {/* <p className="ListCard-description">Description</p> */}
       </div>
     </a>
