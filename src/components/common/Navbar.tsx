@@ -36,7 +36,7 @@ const Navbar = () => {
             onClick={() => setShowSearch(!showSearch)}
             className="p-2 w-10 h-10 text-zinc-200 rounded-lg"
           >
-            <FontAwesomeIcon icon={faSearch} className="w-5 h-5" />
+            <FontAwesomeIcon icon={faSearch} className="w-5 h-5 hover:cursor-pointer" />
           </button>
           <button
             onClick={() => setShowSidebar(!showSidebar)}
@@ -94,7 +94,7 @@ const Navbar = () => {
                     <a
                       key={index}
                       href={`/manhwa/${item.manga_id}`}
-                      className="flex text-white hover:text-[#6B69F1] ease-in-out duration-300 border-1 border-white m-2 rounded-md p-2"
+                      className="flex text-white ease-in-out duration-300 border-1 border-white m-2 rounded-md p-2"
                     >
                       <img
                         src={item.cover_image_url}

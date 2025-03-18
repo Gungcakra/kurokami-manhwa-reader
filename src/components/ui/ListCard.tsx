@@ -32,7 +32,7 @@ const ListCard: React.FC<ListCardProps> = ({
       />
 
       <div className="flex flex-col items-start ml-2">
-        <p>{truncateTitle(title, 20)}</p>
+        <p className="font-semibold duration-300 ease-in-out hover:text-[#6B69F1]">{truncateTitle(title, 20)}</p>
         <a href={`/chapter/${chapter[0].chapter_id}`} className="duration-300 ease-in-out hover:text-[#6B69F1]">Chapter {chapter[0].chapter_number}</a>
         {/* <p className="ListCard-description">Description</p> */}
       </div>

@@ -5,7 +5,7 @@ import {
   fetchDetailShinigami,
 } from "../utils/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowDownUpAcrossLine } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDownUpAcrossLine, faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import ButtonCorner from "../components/ui/ButtonCorner";
 import Footer from "../components/common/Footer";
 import kuru from "../assets/images/kuru.webp";
@@ -137,7 +137,7 @@ const Detail = ({ id }: DetailProps) => {
               {chapters?.map((chapter) => (
                 <div
                   key={chapter.chapter_id}
-                  className="bg-accent duration-300 ease-in-out text-white hocver:text-primarys rounded-md p-3 flex justify-between items-center border-1 border-gray-400"
+                  className="bg-accent duration-300 ease-in-out text-white hocver:text-primarys rounded-md p-3 flex justify-between items-center border-1 border-gray-400 hover:cursor-pointer"
                 >
                   <div className="flex w-2/4">
                     <img
@@ -148,7 +148,7 @@ const Detail = ({ id }: DetailProps) => {
                   </div>
                   <div className="flex flex-col w-2/4 h-full ">
                     <a
-                      className="xl:text-md lg:text-md text-md font-semibold duration-300 hover:text-[#6B69F1]"
+                      className="xl:text-md lg:text-md text-md font-semibol"
                       href={`/chapter/${chapter.chapter_id}`}
                     >
                       Chapter {chapter.chapter_number}
@@ -189,7 +189,7 @@ const Detail = ({ id }: DetailProps) => {
               disabled={currentPage === 1}
               className="text-white font-bold py-2 px-4 text-lg hover:cursor-pointer rounded-md bg-primary mx-2"
               >
-              Previous
+              <FontAwesomeIcon icon={faArrowLeft} />
               </button>
               <span className="text-white font-bold py-2 px-4 text-lg">
               {currentPage}
@@ -198,7 +198,7 @@ const Detail = ({ id }: DetailProps) => {
               onClick={() => handlePageChange(currentPage + 1)}
               className="text-white font-bold py-2 px-4 text-lg hover:cursor-pointer rounded-md bg-primary mx-2"
               >
-              Next
+              <FontAwesomeIcon icon={faArrowRight} />
               </button>
             </div>
           </div>
