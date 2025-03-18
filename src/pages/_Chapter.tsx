@@ -31,14 +31,16 @@ const Chapter = ({ idChapter }: DetailProps) => {
     };
 
     fetchData();
-  }, []);
+  }, [idChapter]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft" && chapter.prevChapter) {
-        window.location.href = chapter.prevChapter?.split("/")[3];
-      } else if (event.key === "ArrowRight" && chapter.nextChapter) {
-        window.location.href = chapter.nextChapter?.split("/")[3];
+      if (event.key === "ArrowLeft" && chapter?.data?.prev_chapter_id) {
+        const prevLink = document.getElementById("prev-chapter-link");
+        prevLink?.click();
+      } else if (event.key === "ArrowRight" && chapter?.data?.next_chapter_id) {
+        const nextLink = document.getElementById("next-chapter-link");
+        nextLink?.click();
       }
     };
 
@@ -60,18 +62,6 @@ const Chapter = ({ idChapter }: DetailProps) => {
       fetchDataManhwa();
     }
   }, [chapter]);
-  // const url = "https://freenigami.vercel.app/v1/api/";
-  // const manga_id = chapter?.data?.manga_id;
-  // const chapter_id = chapter?.data?.chapter_id;
-  // const images: string[] = chapter?.data?.chapter?.data || [];
-
-  // if (Array.isArray(images)) {
-  //   images.forEach((image) => {
-  //     console.log(url + manga_id + "/" + chapter_id + "/" + image);
-  //   });
-  // } else {
-  //   console.error("images is not an array:", images);
-  // }
 
   return (
     <div className="bg-secondary min-w-full text-white w-full min-h-full flex flex-col items-center">
@@ -82,12 +72,13 @@ const Chapter = ({ idChapter }: DetailProps) => {
       ) : (
         <>
           <p className="pt-2 text-center text-white xl:text-2xl text-xl font-bold text-wrap max-w-1/2">
-        {manhwa?.data?.title} Chapter {chapter?.data?.chapter_number}
-        </p>
+            {manhwa?.data?.title} Chapter {chapter?.data?.chapter_number}
+          </p>
           <div className="flex justify-end w-full p-4">
             <div className="flex gap-4">
               {chapter?.data?.prev_chapter_id ? (
                 <a
+                  id="prev-chapter-link"
                   href={`/chapter/${chapter?.data?.prev_chapter_id}`}
                   className="text-white py-1 px-4 bg-primary rounded-full"
                 >
@@ -98,6 +89,7 @@ const Chapter = ({ idChapter }: DetailProps) => {
               )}
               {chapter?.data?.next_chapter_id ? (
                 <a
+                  id="next-chapter-link"
                   href={`/chapter/${chapter?.data?.next_chapter_id}`}
                   className="text-white py-1 px-4 bg-primary rounded-full"
                 >
@@ -131,8 +123,13 @@ const Chapter = ({ idChapter }: DetailProps) => {
             <div className="flex gap-4">
               {chapter?.data?.prev_chapter_id ? (
                 <a
+                  id="prev-chapter-link"
                   href={`/chapter/${chapter?.data?.prev_chapter_id}`}
                   className="text-white py-1 px-4 bg-primary rounded-full"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = `/chapter/${chapter?.data?.prev_chapter_id}`;
+                  }}
                 >
                   <FontAwesomeIcon icon={faArrowLeft} /> Prev
                 </a>
@@ -141,8 +138,13 @@ const Chapter = ({ idChapter }: DetailProps) => {
               )}
               {chapter?.data?.next_chapter_id ? (
                 <a
+                  id="next-chapter-link"
                   href={`/chapter/${chapter?.data?.next_chapter_id}`}
                   className="text-white py-1 px-4 bg-primary rounded-full"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = `/chapter/${chapter?.data?.next_chapter_id}`;
+                  }}
                 >
                   Next <FontAwesomeIcon icon={faArrowRight} />
                 </a>
