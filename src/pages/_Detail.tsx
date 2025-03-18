@@ -5,7 +5,11 @@ import {
   fetchDetailShinigami,
 } from "../utils/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowDownUpAcrossLine, faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowDownUpAcrossLine,
+  faArrowLeft,
+  faArrowRight,
+} from "@fortawesome/free-solid-svg-icons";
 import ButtonCorner from "../components/ui/ButtonCorner";
 import Footer from "../components/common/Footer";
 import kuru from "../assets/images/kuru.webp";
@@ -39,7 +43,10 @@ const Detail = ({ id }: DetailProps) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const chapterData = await fetchChapterListDetailShinigami(id, currentPage);
+        const chapterData = await fetchChapterListDetailShinigami(
+          id,
+          currentPage
+        );
         setChapterList(chapterData.data);
       } catch (error) {
         console.error("Error fetching manhwa data:", error);
@@ -130,12 +137,13 @@ const Detail = ({ id }: DetailProps) => {
                 onClick={toggleOrder}
                 className="text-white font-bold py-2 px-4 text-lg hover:cursor-pointer rounded-md bg-primary"
               >
-                Sort <FontAwesomeIcon icon={faArrowDownUpAcrossLine} />
+                <FontAwesomeIcon icon={faArrowDownUpAcrossLine} />
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
               {chapters?.map((chapter) => (
-                <div
+                <a
+                  href={`/chapter/${chapter.chapter_id}`}
                   key={chapter.chapter_id}
                   className="bg-accent duration-300 ease-in-out text-white hocver:text-primarys rounded-md p-3 flex justify-between items-center border-1 border-gray-400 hover:cursor-pointer"
                 >
@@ -147,12 +155,9 @@ const Detail = ({ id }: DetailProps) => {
                     />
                   </div>
                   <div className="flex flex-col w-2/4 h-full ">
-                    <a
-                      className="xl:text-md lg:text-md text-md font-semibol"
-                      href={`/chapter/${chapter.chapter_id}`}
-                    >
+                    <p className="xl:text-md lg:text-md text-md font-semibol">
                       Chapter {chapter.chapter_number}
-                    </a>
+                    </p>
                     <p className="text-gray-400 xl:text-md lg:text-md text-md">
                       {(() => {
                         const now = new Date();
@@ -180,25 +185,25 @@ const Detail = ({ id }: DetailProps) => {
                       })()}
                     </p>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
             <div className="flex justify-center mt-4">
               <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="text-white font-bold py-2 px-4 text-lg hover:cursor-pointer rounded-md bg-primary mx-2"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="text-white font-bold py-2 px-4 text-lg hover:cursor-pointer rounded-md bg-primary mx-2"
               >
-              <FontAwesomeIcon icon={faArrowLeft} />
+                <FontAwesomeIcon icon={faArrowLeft} />
               </button>
               <span className="text-white font-bold py-2 px-4 text-lg">
-              {currentPage}
+                {currentPage}
               </span>
               <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              className="text-white font-bold py-2 px-4 text-lg hover:cursor-pointer rounded-md bg-primary mx-2"
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="text-white font-bold py-2 px-4 text-lg hover:cursor-pointer rounded-md bg-primary mx-2"
               >
-              <FontAwesomeIcon icon={faArrowRight} />
+                <FontAwesomeIcon icon={faArrowRight} />
               </button>
             </div>
           </div>

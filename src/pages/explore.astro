@@ -1,0 +1,16 @@
+---
+import "../styles/global.css";
+// @ts-expect-error yes, I know what I'm doing
+import { Astro } from "astro"; 
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/common/Navbar";
+import ExploreComponent from "./_Explore";
+import Footer from "../components/common/Footer";
+
+---
+
+<Layout title={ "Explore - Kurokami"}>
+  <Navbar slot="body" client:only="react" />
+  <ExploreComponent slot="body" client:only="react" />
+  <Footer slot="body" client:only="react" />
+</Layout>

@@ -56,7 +56,7 @@ const Navbar = () => {
               { name: "Home", link: "/" },
               { name: "Bookmark", link: "/ongoing" },
               { name: "History", link: "/completed" },
-              { name: "Explore", link: "/manhwa" },
+              { name: "Explore", link: "/explore" },
             ].map((item, index) => (
               <li key={index} className="mb-4 md:mb-0">
                 <a

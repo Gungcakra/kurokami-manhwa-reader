@@ -165,29 +165,27 @@ const Home = () => {
             <div className="flex items-center mb-3">
               <h3 className="text-lg font-semibold">Genre</h3>
             </div>
-            {/* <ul className="grid grid-cols-3 gap-2">
-              {loading
+            <ul className="grid grid-cols-2 gap-2">
+                {loading
                 ? Array.from({ length: 8 }).map((_, index) => (
-                    <li
-                      key={index}
-                      className="block px-3 py-1 bg-gray-700 rounded text-sm animate-pulse"
-                    >
-                      &nbsp;
-                    </li>
+                  <li
+                    key={index}
+                    className="block px-3 py-1 bg-gray-700 rounded text-sm animate-pulse"
+                  >
+                    &nbsp;
+                  </li>
                   ))
-                : home.genres?.map((genre, index) => (
-                    <li key={index}>
-                      <a
-                        href={genre.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block xl:text-xs text-md transition-all duration-300 ease-in-out hover:cursor-pointer hover:text-[#6B69F1] text-start "
-                      >
-                        {genre.title}
-                      </a>
-                    </li>
+                : [
+                  "Action", "Adult", "Adventure", "Comedy", "Cooking", "Demon", "Demons", "Drama", "Ecchi", "Fantasy", "Fight", "Game", "Harem", "Historical", "Horror", "Isekai", "Latest", "Magic", "Martial Arts", "Mature", "Medical", "Murim", "Mystery", "Philosophical", "Psychological", "Revenge", "Romance", "School Life", "Sci-fi", "Seinen", "Shoujo", "Shounen", "Slice of Life", "Sports", "Supernatural", "Supranatural", "Thriller", "Tragedy", "Violence", "Wuxia"
+                  ].map((genre, index) => (
+                    <a
+                    href={`#${genre.toLowerCase().replace(/ /g, '-')}`}
+                    className="block xl:text-md text-md transition-all duration-300 ease-in-out hover:cursor-pointer hover:text-[#6B69F1] p-1 bg-gray-900 rounded-md text-center"
+                     key={index}>
+                    {genre}
+                    </a>
                   ))}
-            </ul> */}
+            </ul>
           </div>
         </div>
       </div>
