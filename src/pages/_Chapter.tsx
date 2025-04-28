@@ -107,7 +107,7 @@ const Chapter = ({ idChapter }: DetailProps) => {
                   key={index}
                   src={`https://freenigami.vercel.app/v1/api/${chapter.data.manga_id}/${chapter.data.chapter_id}/${image}`}
                   alt={`Chapter Image ${index + 1}`}
-                  className="w-2/3"
+                  className="md:w-2/3 w-full"
                   loading="lazy"
                   onLoad={() => console.log(`Image loaded: ${image}`)}
                   onError={(e) =>
