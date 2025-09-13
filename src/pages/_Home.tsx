@@ -82,7 +82,7 @@ const Home = () => {
           {/* TOP */}
           <div className="flex items-center gap-2 text-white text-xl font-semibold mb-4">
             <h1>
-              <FontAwesomeIcon icon={faLineChart} /> Trending
+              <FontAwesomeIcon icon={faLineChart} /> Trending Manhwa
             </h1>
           </div>
           <div className="flex gap-4 overflow-x-auto scrollbar-hide px-2">
