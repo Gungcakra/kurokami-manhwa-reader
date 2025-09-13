@@ -15,7 +15,7 @@ export const fetchNewShinigami = async () => {
 // 🔹 FETCH TOP
 export const fetchTopShinigami = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/v1/manga/top?filter=daily&page=1&page_size=10`);
+    const response = await fetch(`${API_BASE_URL}/v1/manga/list?type=project&page=1&page_size=24&is_update=true&sort=latest&sort_order=desc`);
     const data = await response.json();
     return data;
   } catch (error) {
