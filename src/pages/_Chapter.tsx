@@ -105,7 +105,7 @@ const Chapter = ({ idChapter }: DetailProps) => {
               chapter.data.chapter.data.map((image: string, index: number) => (
                 <img
                   key={index}
-                  src={`https://freenigami.vercel.app/v1/api/${chapter.data.manga_id}/${chapter.data.chapter_id}/${image}`}
+                  src={`${chapter.data?.base_url}/${chapter.data?.chapter?.path}/${image}`}
                   alt={`Chapter Image ${index + 1}`}
                   className="md:w-2/3 w-full"
                   loading="lazy"
