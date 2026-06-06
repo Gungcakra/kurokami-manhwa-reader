@@ -1,220 +1,112 @@
 const API_BASE_URL = 'https://api.shngm.io';
 
-// 🔹 FETCH FROM SHINIGAMI
-export const fetchNewShinigami = async () => {
+const fetchData = async (endpoint: string) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/v1/manga/list?type=project&page=1&page_size=30&is_update=true&sort=latest&sort_order=desc`);
+    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+    if (!response.ok) throw new Error("Network response was not ok");
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error fetching home:", error);
-    return [];
-  }
-};
-
-// 🔹 FETCH TOP
-export const fetchTopShinigami = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/v1/manga/list?type=project&page=1&page_size=24&is_update=true&sort=latest&sort_order=desc`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching home:", error);
-    return [];
-  }
-};
-
-// 🔹 FETCH RECOMMEND
-export const fetchRecommendShinigami = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/v1/manga/list?type=mirror&page=1&page_size=24&is_update=true&sort=latest&sort_order=desc`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching home:", error);
-    return [];
-  }
-};
-
-export const fetchDetailShinigami = async (manhwaId: string) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/v1/manga/detail/${manhwaId}`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching home:", error);
-    return [];
-  }
-};
-
-export const fetchChapterListDetailShinigami = async (manhwaId: string, page:number) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/v1/chapter/${manhwaId}/list?page=${page}&page_size=24&sort_by=chapter_number&sort_order=desc`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching home:", error);
-    return [];
-  }
-};
-
-export const fetchChapterShinigami = async (chapterId: string) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/v1/chapter/detail/${chapterId}`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching home:", error);
-    return [];
-  }
-};
-
-export const fetchSearch = async (keyword: string) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/v1/manga/list?page=1&page_size=5&q=${keyword}`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching home:", error);
-    return [];
-  }
-};
-
-export const fetchChapterImage = async (manhwaId: string) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/v1/chapter/detail/${manhwaId}`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching home:", error);
-    return [];
-  }
-};
-
-
-// 🔹 Fetch List Manhwa
-export const fetchHome = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/home`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching home:", error);
-    return [];
-  }
-};
-
-export const fetchNewManhwa = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/manhwa-new`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching new manhwa:", error);
-    return [];
-  }
-};
-
-export const fetchPopularManhwa = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/manhwa-popular`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching popular manhwa:", error);
-    return [];
-  }
-};
-
-export const fetchTopManhwa = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/manhwa-top`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching top manhwa:", error);
-    return [];
-  }
-};
-
-export const fetchOngoingManhwa = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/manhwa-ongoing`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching ongoing manhwa:", error);
-    return [];
-  }
-};
-
-export const fetchRecommendedManhwa = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/manhwa-recommendation`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching recommended manhwa:", error);
-    return [];
-  }
-};
-
-// 🔹 Fetch Detail Manhwa
-export const fetchManhwaDetail = async (manhwaId: string) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/manhwa-detail/${manhwaId}`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(`Error fetching details for manhwa ${manhwaId}:`, error);
+    console.error(`API Error [${endpoint}]:`, error);
     return null;
   }
 };
 
-// 🔹 Fetch Detail Chapter
-export const fetchChapterDetail = async (chapterId: string) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/chapter/${chapterId}`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(`Error fetching details for chapter ${chapterId}:`, error);
-    return null;
-  }
-};
+export const apiService = {
+  getNewUpdate: (page = 1, pageSize = 30, format = "all") =>
+    fetchData(
+      `/v1/manga/list?${format !== "all" ? `format=${format}&` : ""}type=project&page=${page}&page_size=${pageSize}&is_update=true&sort=latest&sort_order=desc`
+    ),
 
-// 🔹 Fetch Genre List
-export const fetchGenres = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/genres`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching genres:", error);
-    return [];
-  }
-};
+  getPopular: (page = 1, pageSize = 24) =>
+    fetchData(
+      `/v1/manga/list?page=${page}&page_size=${pageSize}&genre_include_mode=or&genre_exclude_mode=or&sort=popularity&sort_order=desc`
+    ),
 
-// 🔹 Fetch Manhwa by Genre
-export const fetchManhwaByGenre = async (genreId: string, pageNumber: number = 1) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/genre/${genreId}/page/${pageNumber}`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(`Error fetching manhwa for genre ${genreId} on page ${pageNumber}:`, error);
-    return [];
-  }
-};
+  getTop: (page = 1, pageSize = 24) =>
+    fetchData(
+      `/v1/manga/list?page=${page}&page_size=${pageSize}&genre_include_mode=or&genre_exclude_mode=or&sort=rating&sort_order=desc`
+    ),
 
-// 🔹 Search Manhwa
-export const searchManhwa = async (searchQuery: string, pageNumber: number = 1) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/api/search/${searchQuery}/page/${pageNumber}`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(`Error searching manhwa for query ${searchQuery} on page ${pageNumber}:`, error);
-    return [];
-  }
+  getRecommend: (page = 1, pageSize = 8) =>
+    fetchData(
+      `/v1/manga/list?page=${page}&page_size=${pageSize}&category=explore-list-2`
+    ),
+
+  getCompleted: (page = 1, pageSize = 24) =>
+    fetchData(
+      `/v1/manga/list?page=${page}&page_size=${pageSize}&genre_include_mode=or&genre_exclude_mode=or&status=completed&sort=latest&sort_order=desc`
+    ),
+
+  getManhwa: (page = 1, pageSize = 10) =>
+    fetchData(
+      `/v1/manga/list?format=manhwa&page=${page}&page_size=${pageSize}&is_recommended=true&sort=latest&sort_order=desc`
+    ),
+
+  getManga: (page = 1, pageSize = 10) =>
+    fetchData(
+      `/v1/manga/list?format=manga&page=${page}&page_size=${pageSize}&is_recommended=true&sort=latest&sort_order=desc`
+    ),
+
+  getManhua: (page = 1, pageSize = 10) =>
+    fetchData(
+      `/v1/manga/list?format=manhua&page=${page}&page_size=${pageSize}&is_recommended=true&sort=latest&sort_order=desc`
+    ),
+
+  getDetail: (manhwaId: string) => fetchData(`/v1/manga/detail/${manhwaId}`),
+
+  getChapterList: (
+    manhwaId: string,
+    page = 1,
+    pageSize = 24,
+    order = "desc",
+    search = ""
+  ) =>
+    fetchData(
+      `/v1/chapter/${manhwaId}/list?page=${page}&page_size=${pageSize}&sort_by=chapter_number&sort_order=${order}${search ? `&search=${search}` : ""}`
+    ),
+
+  getChapterDetail: (chapterId: string) =>
+    fetchData(`/v1/chapter/detail/${chapterId}`),
+
+  searchManga: (keyword: string, page = 1, pageSize = 8) =>
+    fetchData(`/v1/manga/list?page=${page}&page_size=${pageSize}&q=${keyword}`),
+
+  getGenres: () => fetchData("/v1/genre/list"),
+
+  getExplore: ({
+    page = 1,
+    pageSize = 24,
+    genres = [],
+    status = "",
+    sort = "latest",
+    format = "",
+    sortOrder = "desc",
+    keyword = "",
+  }: {
+    page?: number;
+    pageSize?: number;
+    genres?: string[];
+    status?: string;
+    sort?: string;
+    format?: string;
+    sortOrder?: string;
+    keyword?: string;
+  }) => {
+    const genreParams =
+      genres.length > 0
+        ? genres.map((g) => `genre_include=${encodeURIComponent(g)}`).join("&")
+        : "";
+
+    let url = `/v1/manga/list?page=${page}&page_size=${pageSize}`;
+    if (genreParams) url += `&${genreParams}`;
+    if (status) url += `&status=${status}`;
+    if (format && format !== "all") url += `&format=${format}`;
+    if (sort) url += `&sort=${sort}`;
+    url += `&sort_order=${sortOrder}`;
+    if (keyword) url += `&q=${encodeURIComponent(keyword)}`;
+    url += `&genre_include_mode=or&genre_exclude_mode=or`;
+
+    return fetchData(url);
+  },
 };

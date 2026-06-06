@@ -1,33 +1,27 @@
 ---
 import "../../styles/global.css";
-// @ts-expect-error yes, I know what I'm doing
-import { Astro } from "astro";
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/common/Navbar";
-import { fetchChapterShinigami, fetchDetailShinigami } from "../../utils/api";
-
+import { apiService } from "../../utils/api";
 import Chapter from "../_Chapter";
-export const prerender = false; 
+export const prerender = false;
 
-const { id } = Astro.params;
+const { id = "" } = Astro.params;
 
-let manga_id = "";
 let manhwaTitle = "";
 try {
-      const manhwaDetail = await fetchChapterShinigami(id);
-     manga_id = manhwaDetail.data.manga_id;
-     if(manga_id){
-        const manhwaDetail = await fetchDetailShinigami(manga_id);
-        manhwaTitle = manhwaDetail.data.title;
-     }
+  const chapterDetail = await apiService.getChapterDetail(id);
+  const mangaId = chapterDetail?.data?.manga_id;
+  if (mangaId) {
+    const manhwaDetail = await apiService.getDetail(mangaId);
+    manhwaTitle = manhwaDetail?.data?.title || "";
+  }
 } catch (error) {
-    console.error("Failed to fetch manhwa details:", error);
+  console.error("Failed to fetch chapter details:", error);
 }
-
 ---
 
-<Layout title={manhwaTitle + " - Kurokami"}>
+<Layout title={manhwaTitle ? `${manhwaTitle} - Kurokami` : "Chapter - Kurokami"}>
   <Navbar slot="body" client:only="react" />
   <Chapter slot="body" idChapter={id} client:only="react" />
-  
 </Layout>

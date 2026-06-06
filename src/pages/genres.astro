@@ -1,0 +1,9 @@
+---
+import "../styles/global.css";
+import Layout from "../layouts/Layout.astro";
+import Genres from "./_Genres";
+---
+
+<Layout title="Daftar Genre - Kurokami">
+  <Genres slot="body" client:only="react" />
+</Layout>

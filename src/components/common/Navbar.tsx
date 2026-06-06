@@ -1,119 +1,203 @@
 // @ts-nocheck
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faBars } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { apiService } from "../../utils/api";
 import logo from "../../assets/images/logos/logo.png";
-import { fetchSearch } from "../../utils/api";
+
+const NAV_LINKS = [
+  { name: "Home", link: "/" },
+  { name: "Explore", link: "/explore" },
+  { name: "Popular", link: "/popular" },
+  { name: "Tamat", link: "/completed" },
+  { name: "Genres", link: "/genres" },
+];
 
 const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
-  const [manhwa, setManhwa] = useState<any>(null);
-  const search = (searchQuery: string) => {
-    const fetchData = async () => {
-      try {
-        const chapterData = await fetchSearch(searchQuery);
-        setManhwa(chapterData.data);
-        console.log(chapterData.data);
-        
-      } catch (error) {
-        console.error("Error fetching manhwa data:", error);
-      }
-    };
-    fetchData();
+  const [results, setResults] = useState<any[]>([]);
+  const [query, setQuery] = useState("");
+  const debounceRef = useRef<any>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  const handleSearch = (value: string) => {
+    setQuery(value);
+    clearTimeout(debounceRef.current);
+    if (value.length < 2) {
+      setResults([]);
+      return;
+    }
+    debounceRef.current = setTimeout(async () => {
+      const data = await apiService.searchManga(value, 1, 6);
+      setResults(data?.data || []);
+    }, 350);
   };
 
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setResults([]);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const currentPath =
+    typeof window !== "undefined" ? window.location.pathname : "";
+
   return (
-    <nav className="bg-accent w-full z-50 top-0 start-0 b">
-      <div className="container flex flex-wrap items-center justify-around py-2">
-        <a href="/" className="flex items-center space-x-3">
-          <img src={logo.src} className="w-8" alt="Kurokami Logo" />
-          <h1 className="text-xl font-semibold text-white">Kurokami</h1>
-        </a>
+    <>
+      <nav className="sticky top-0 z-50 bg-[#09090b]/90 backdrop-blur-md border-b border-zinc-800/50">
+        <div className="max-w-screen-2xl mx-auto flex items-center justify-between px-4 py-3">
+          {/* Logo */}
+          <a href="/" className="flex items-center gap-2.5 flex-shrink-0">
+            <img src={logo.src} className="w-7 h-7" alt="Kurokami Logo" />
+            <span className="text-lg font-bold text-white tracking-tight">
+              Kuro<span className="text-[#e63946]">kami</span>
+            </span>
+          </a>
 
-        <div className="flex md:order-2 space-x-2">
-          <button
-            onClick={() => setShowSearch(!showSearch)}
-            className="p-2 w-10 h-10 text-zinc-200 rounded-lg"
-          >
-            <FontAwesomeIcon icon={faSearch} className="w-5 h-5 hover:cursor-pointer" />
-          </button>
-          <button
-            onClick={() => setShowSidebar(!showSidebar)}
-            className="md:hidden p-2 w-10 h-10 text-zinc-200 rounded-lg"
-          >
-            <FontAwesomeIcon icon={faBars} className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div
-          className={`md:flex md:w-auto md:order-1 ${showSidebar ? "fixed left-0 top-0 h-full w-64 bg-secondary z-40" : "hidden"}`}
-        >
-          <ul
-            className={`flex flex-col p-4 md:p-0 mt-4 font-medium rounded-lg md:space-x-8 md:flex-row md:mt-0 md:border-0 ${showSidebar ? "gap-5 h-full" : ""}`}
-          >
-            {[
-              { name: "Home", link: "/" },
-              { name: "Bookmark", link: "/ongoing" },
-              { name: "History", link: "/completed" },
-              { name: "Explore", link: "/explore" },
-            ].map((item, index) => (
-              <li key={index} className="mb-4 md:mb-0">
+          {/* Desktop nav */}
+          <ul className="hidden md:flex items-center gap-1">
+            {NAV_LINKS.map((item) => (
+              <li key={item.link}>
                 <a
                   href={item.link}
-                  className="navbar-link-item transition-all font-semibold text-white duration-300 ease-in-out hover:text-[#6B69F1]"
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    currentPath === item.link
+                      ? "text-[#e63946] bg-[#e63946]/10"
+                      : "text-zinc-400 hover:text-white hover:bg-white/5"
+                  }`}
                 >
                   {item.name}
                 </a>
               </li>
             ))}
           </ul>
-        </div>
-      </div>
 
-      {showSearch && (
-        <div className="bg-secondary p-4 border-t border-zinc-800">
-          <input
-            type="search"
-            className="w-full p-2 rounded-lg bg-zinc-800 border border-zinc-700 text-white"
-            placeholder="Cari Manhwa..."
-            onKeyUp={(e) => {
-              const query = e.currentTarget.value;
-              if (query.length >= 3) {
-                search(query);
-              } else {
-                setManhwa(null);
-              }
-            }}
-          />
-          {manhwa && manhwa.length > 0 && (
-            <div className="absolute left-0 bg-opacity-50 flex justify-center items-start pt-2 z-50">
-              <div className="bg-secondary p-4 rounded-lg w-full max-w-md">
-                <div className="flex flex-col mt-2">
-                  {manhwa.map((item: any, index: number) => (
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                setShowSearch(!showSearch);
+                setResults([]);
+                setQuery("");
+              }}
+              className="p-2 text-zinc-400 hover:text-white rounded-lg hover:bg-white/5 transition-all"
+              aria-label="Search"
+            >
+              <FontAwesomeIcon icon={faSearch} className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setShowSidebar(true)}
+              className="md:hidden p-2 text-zinc-400 hover:text-white rounded-lg hover:bg-white/5 transition-all"
+              aria-label="Menu"
+            >
+              <FontAwesomeIcon icon={faBars} className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Search bar */}
+        {showSearch && (
+          <div className="border-t border-zinc-800/50 px-4 py-3 bg-[#09090b]/95">
+            <div ref={searchRef} className="relative max-w-2xl mx-auto">
+              <FontAwesomeIcon
+                icon={faSearch}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-sm"
+              />
+              <input
+                autoFocus
+                type="search"
+                value={query}
+                onChange={(e) => handleSearch(e.target.value)}
+                placeholder="Cari judul manhwa, manga, manhua..."
+                className="w-full pl-9 pr-4 py-2.5 bg-[#18181b] border border-zinc-700/50 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#e63946]/50"
+              />
+              {results.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-[#18181b] border border-zinc-700/50 rounded-xl shadow-2xl shadow-black/50 overflow-hidden z-50">
+                  {results.map((item) => (
                     <a
-                      key={index}
+                      key={item.manga_id}
                       href={`/manhwa/${item.manga_id}`}
-                      className="flex text-white ease-in-out duration-300 border-1 border-white m-2 rounded-md p-2"
+                      className="flex items-center gap-3 px-3 py-2.5 hover:bg-white/5 transition-all border-b border-zinc-800/50 last:border-b-0"
                     >
                       <img
                         src={item.cover_image_url}
                         alt={item.title}
-                        className="w-15 h-20 rounded-lg"
+                        className="w-10 h-14 rounded-lg object-cover flex-shrink-0"
                       />
-                      <div className="flex flex-col">
-                      <p className="ml-2">{item.title}</p>
-                      <p className="ml-2">{"Chapter " + item.latest_chapter_number}</p>
+                      <div className="flex flex-col min-w-0">
+                        <p className="text-white text-sm font-medium truncate">
+                          {item.title}
+                        </p>
+                        <p className="text-zinc-500 text-xs mt-0.5">
+                          {item.latest_chapter_number
+                            ? `Ch. ${item.latest_chapter_number}`
+                            : ""}
+                        </p>
                       </div>
                     </a>
                   ))}
+                  <a
+                    href={`/explore?q=${encodeURIComponent(query)}`}
+                    className="block px-3 py-2.5 text-center text-xs text-[#e63946] hover:bg-white/5 transition-all font-medium"
+                  >
+                    Lihat semua hasil untuk "{query}" →
+                  </a>
                 </div>
-              </div>
+              )}
             </div>
-          )}
+          </div>
+        )}
+      </nav>
+
+      {/* Mobile sidebar overlay */}
+      {showSidebar && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 md:hidden"
+          onClick={() => setShowSidebar(false)}
+        >
+          <div
+            className="absolute left-0 top-0 h-full w-64 bg-[#111116] border-r border-zinc-800/50 p-5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <a href="/" className="flex items-center gap-2">
+                <img src={logo.src} className="w-7 h-7" alt="Logo" />
+                <span className="text-lg font-bold text-white">
+                  Kuro<span className="text-[#e63946]">kami</span>
+                </span>
+              </a>
+              <button
+                onClick={() => setShowSidebar(false)}
+                className="text-zinc-400 hover:text-white p-1"
+              >
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            </div>
+            <ul className="flex flex-col gap-1">
+              {NAV_LINKS.map((item) => (
+                <li key={item.link}>
+                  <a
+                    href={item.link}
+                    className={`block px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                      currentPath === item.link
+                        ? "text-[#e63946] bg-[#e63946]/10"
+                        : "text-zinc-400 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    {item.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
-    </nav>
+    </>
   );
 };
 

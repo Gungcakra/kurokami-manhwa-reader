@@ -1,20 +1,28 @@
 @import "tailwindcss";
 
-.text-primarys{
-    color: #6B69F1;
+.text-primarys {
+  color: #e63946;
 }
-.text-secondary{
-    color: #131218;
+.text-secondary {
+  color: #141417;
 }
-.bg-primary{
-    background-color: #23212F;
+.bg-primary {
+  background-color: #232328;
 }
-.bg-secondary{
-    background-color: #131218;
+.bg-secondary {
+  background-color: #141417;
 }
-.bg-secondary-light{
-    background-color: #131218;
+.bg-secondary-light {
+  background-color: #18181b;
 }
-.bg-accent{
-    background-color: #131218;
+.bg-accent {
+  background-color: #18181b;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }

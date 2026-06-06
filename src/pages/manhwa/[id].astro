@@ -1,29 +1,23 @@
 ---
-import Detail from "../_Detail";
 import "../../styles/global.css";
-// @ts-expect-error yes, I know what I'm doing
-import { Astro } from "astro";
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/common/Navbar";
-import { fetchDetailShinigami } from "../../utils/api";
+import { apiService } from "../../utils/api";
+import Detail from "../_Detail";
 export const prerender = false;
 
-const { id } = Astro.params;
-
-// const title = slugToText(id);
-
+const { id = "" } = Astro.params;
 
 let manhwaTitle = "";
-
 try {
-    const manhwaDetail = await fetchDetailShinigami(id);
-    manhwaTitle = manhwaDetail.data.title;
+  const manhwaDetail = await apiService.getDetail(id);
+  manhwaTitle = manhwaDetail?.data?.title || "";
 } catch (error) {
-    console.error("Failed to fetch manhwa details:", error);
+  console.error("Failed to fetch manhwa details:", error);
 }
 ---
 
-<Layout title={manhwaTitle + ' - Kurokami'}>
+<Layout title={manhwaTitle ? `${manhwaTitle} - Kurokami` : "Detail - Kurokami"}>
   <Navbar slot="body" client:only="react" />
   <Detail slot="body" id={id} client:only="react" />
 </Layout>

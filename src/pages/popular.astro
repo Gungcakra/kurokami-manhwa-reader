@@ -1,0 +1,9 @@
+---
+import "../styles/global.css";
+import Layout from "../layouts/Layout.astro";
+import Popular from "./_Popular";
+---
+
+<Layout title="Terpopuler - Kurokami">
+  <Popular slot="body" client:only="react" />
+</Layout>
