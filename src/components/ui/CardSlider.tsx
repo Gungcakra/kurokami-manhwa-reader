@@ -36,7 +36,7 @@ const CardSlider: React.FC<CardSliderProps> = ({ img, title, link, chapter, rati
           {truncateTitle(title, 22)}
         </p>
         {chapter && (
-          <p className="text-zinc-400 text-[10px] mt-0.5">Ch. {chapter}</p>
+          <p className="text-zinc-300 text-xs mt-0.5">Ch. {chapter}</p>
         )}
       </div>
     </a>

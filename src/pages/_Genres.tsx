@@ -27,23 +27,23 @@ const Genres = () => {
           <h1 className="text-xl font-bold">Daftar Genre</h1>
         </div>
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
             {Array(20)
               .fill(0)
               .map((_, i) => (
                 <div
                   key={i}
-                  className="h-16 bg-[#18181b] rounded-xl border border-zinc-800/40 animate-pulse"
+                  className="h-12 sm:h-14 bg-[#18181b] rounded-xl border border-zinc-800/40 animate-pulse"
                 />
               ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
             {genres.map((genre) => (
               <a
                 key={genre.genre_id || genre.slug}
                 href={`/explore?genre=${genre.slug}`}
-                className="group flex items-center justify-center p-4 bg-[#18181b] rounded-xl border border-zinc-800/40 hover:border-[#e63946]/40 hover:bg-[#e63946]/10 hover:text-[#e63946] text-zinc-300 transition-all duration-200 text-center font-medium text-sm"
+                className="group flex items-center justify-center p-3 sm:p-4 bg-[#18181b] rounded-xl border border-zinc-800/40 hover:border-[#e63946]/40 hover:bg-[#e63946]/10 hover:text-[#e63946] text-zinc-300 transition-all duration-200 text-center font-medium text-sm"
               >
                 {genre.name}
               </a>

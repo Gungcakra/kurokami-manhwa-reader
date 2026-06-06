@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Footer from "../components/common/Footer";
 import ButtonCorner from "../components/ui/ButtonCorner";
-import kuru from "../assets/images/kuru.webp";
+import ChapterSkeleton from "../components/ui/ChapterSkeleton";
 
 interface ChapterProps {
   idChapter: string;
@@ -122,9 +122,7 @@ const Chapter = ({ idChapter }: ChapterProps) => {
   return (
     <div className="bg-[#09090b] text-white min-h-screen flex flex-col">
       {loading ? (
-        <div className="flex-1 flex justify-center items-center min-h-screen">
-          <img src={kuru.src} alt="loading" width={160} />
-        </div>
+        <ChapterSkeleton />
       ) : (
         <>
           <NavBar pos="top" />

@@ -3,11 +3,14 @@ import React, { useEffect, useState } from "react";
 import { apiService } from "../utils/api";
 import Card from "../components/ui/Card";
 import CardSkeleton from "../components/ui/CardSkeleton";
+import Pagination from "../components/ui/Pagination";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
 import ButtonCorner from "../components/ui/ButtonCorner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFire } from "@fortawesome/free-solid-svg-icons";
+
+const PAGE_SIZE = 24;
 
 const Popular = () => {
   const [data, setData] = useState(null);
@@ -16,26 +19,24 @@ const Popular = () => {
 
   useEffect(() => {
     setLoading(true);
-    apiService.getPopular(page, 24).then((res) => {
+    apiService.getPopular(page, PAGE_SIZE).then((res) => {
       setData(res);
       setLoading(false);
     });
   }, [page]);
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen">
+    <div className="bg-[#09090b] text-white min-h-screen flex flex-col">
       <Navbar />
-      <div className="max-w-screen-2xl mx-auto px-4 py-5">
+      <div className="max-w-screen-2xl mx-auto px-4 py-5 flex-1">
         <div className="flex items-center gap-2.5 mb-5">
           <div className="w-1 h-6 bg-[#e63946] rounded-full" />
           <FontAwesomeIcon icon={faFire} className="text-orange-400" />
           <h1 className="text-xl font-bold">Terpopuler</h1>
         </div>
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-2.5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2.5">
           {loading
-            ? Array(24)
-                .fill(0)
-                .map((_, i) => <CardSkeleton key={i} />)
+            ? Array(PAGE_SIZE).fill(0).map((_, i) => <CardSkeleton key={i} />)
             : data?.data?.map((manga) => (
                 <Card
                   key={manga.manga_id}
@@ -47,23 +48,11 @@ const Popular = () => {
               ))}
         </div>
         {!loading && (
-          <div className="flex justify-center items-center gap-3 mt-8">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-              className="px-4 py-2 bg-[#18181b] border border-zinc-700/50 rounded-xl text-sm disabled:opacity-30 hover:border-[#e63946]/50 hover:cursor-pointer transition-all"
-            >
-              ← Prev
-            </button>
-            <span className="text-zinc-400 text-sm px-2">Halaman {page}</span>
-            <button
-              onClick={() => setPage((p) => p + 1)}
-              disabled={!data?.data?.length || data.data.length < 24}
-              className="px-4 py-2 bg-[#18181b] border border-zinc-700/50 rounded-xl text-sm disabled:opacity-30 hover:border-[#e63946]/50 hover:cursor-pointer transition-all"
-            >
-              Next →
-            </button>
-          </div>
+          <Pagination
+            page={page}
+            onPageChange={setPage}
+            hasNext={!!data?.data?.length && data.data.length >= PAGE_SIZE}
+          />
         )}
       </div>
       <ButtonCorner />

@@ -1,4 +1,3 @@
-import React from "react";
 import logo from "../../assets/images/logos/logo.png";
 
 const NAV_LINKS = [
@@ -12,8 +11,8 @@ const NAV_LINKS = [
 const Footer = () => {
   return (
     <footer className="bg-[#111116] border-t border-zinc-800/50 mt-auto w-full">
-      <div className="max-w-screen-2xl mx-auto px-4 py-10">
-        <div className="flex flex-col md:flex-row md:justify-between gap-8">
+      <div className="max-w-screen-2xl mx-auto px-4 py-8 md:py-10">
+        <div className="flex flex-col md:flex-row md:justify-between gap-6 md:gap-8">
           {/* Brand */}
           <div className="max-w-xs">
             <a href="/" className="flex items-center gap-2.5 mb-3">
@@ -28,7 +27,9 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* Nav links */}
+          {/* Nav + Info links — side by side on mobile */}
+          <div className="flex gap-8 sm:gap-16 md:contents">
+
           <div className="flex flex-col gap-3">
             <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
               Navigasi
@@ -73,9 +74,11 @@ const Footer = () => {
               </li>
             </ul>
           </div>
+
+          </div>{/* end mobile row wrapper */}
         </div>
 
-        <hr className="my-8 border-zinc-800/50" />
+        <hr className="my-6 md:my-8 border-zinc-800/50" />
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <span className="text-xs text-zinc-600">

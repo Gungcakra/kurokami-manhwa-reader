@@ -39,7 +39,7 @@ const ListCard: React.FC<ListCardProps> = ({ index, img, title, link, chapter })
           {truncateTitle(title, 24)}
         </p>
         {chapter?.[0] && (
-          <span className="text-zinc-500 text-[10px] mt-0.5">
+          <span className="text-zinc-400 text-xs mt-0.5">
             Ch. {chapter[0].chapter_number}
           </span>
         )}

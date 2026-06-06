@@ -68,7 +68,7 @@ const Navbar = () => {
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                     currentPath === item.link
                       ? "text-[#e63946] bg-[#e63946]/10"
-                      : "text-zinc-400 hover:text-white hover:bg-white/5"
+                      : "text-zinc-300 hover:text-white hover:bg-white/5"
                   }`}
                 >
                   {item.name}
@@ -117,7 +117,7 @@ const Navbar = () => {
                 className="w-full pl-9 pr-4 py-2.5 bg-[#18181b] border border-zinc-700/50 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#e63946]/50"
               />
               {results.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-[#18181b] border border-zinc-700/50 rounded-xl shadow-2xl shadow-black/50 overflow-hidden z-50">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-[#18181b] border border-zinc-700/50 rounded-xl shadow-2xl shadow-black/50 overflow-hidden z-50 max-h-[70vh] overflow-y-auto">
                   {results.map((item) => (
                     <a
                       key={item.manga_id}
@@ -186,7 +186,7 @@ const Navbar = () => {
                     className={`block px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                       currentPath === item.link
                         ? "text-[#e63946] bg-[#e63946]/10"
-                        : "text-zinc-400 hover:text-white hover:bg-white/5"
+                        : "text-zinc-300 hover:text-white hover:bg-white/5"
                     }`}
                   >
                     {item.name}

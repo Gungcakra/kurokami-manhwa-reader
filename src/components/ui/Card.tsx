@@ -42,7 +42,7 @@ const Card: React.FC<CardProps> = ({ img, title, link, chapter }) => {
           {truncateTitle(title, 40)}
         </p>
         {latest?.created_at && (
-          <p className="text-zinc-500 text-[10px] mt-1">{timeAgo(latest.created_at)}</p>
+          <p className="text-zinc-400 text-xs mt-1">{timeAgo(latest.created_at)}</p>
         )}
       </div>
     </a>
