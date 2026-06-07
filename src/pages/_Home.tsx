@@ -190,7 +190,7 @@ const Home = () => {
       </div>
 
       <ButtonCorner />
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };
