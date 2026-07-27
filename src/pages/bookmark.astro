@@ -1,0 +1,9 @@
+---
+import "../styles/global.css";
+import Layout from "../layouts/Layout.astro";
+import BookmarkComponent from "./_Bookmark";
+---
+
+<Layout title="Bookmark - Kurokami">
+  <BookmarkComponent slot="body" client:only="react" />
+</Layout>

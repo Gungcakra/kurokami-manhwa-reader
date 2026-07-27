@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { apiService } from "../utils/api";
 import { timeAgo } from "../utils/function";
+import CountryBadge from "../components/ui/CountryBadge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowDownUpAcrossLine,
@@ -106,7 +107,7 @@ const Detail = ({ id }: DetailProps) => {
 
                 {/* Cover */}
                 <div className="relative flex-shrink-0 mx-auto sm:mx-0">
-                  <div className="absolute -inset-2 rounded-3xl bg-[#e63946]/15 blur-xl" />
+                  <div className="absolute -inset-2 rounded-3xl bg-[#EF4444]/15 blur-xl" />
                   <img src={manhwa.cover_image_url} alt={manhwa.title}
                     className="relative w-28 sm:w-40 md:w-48 rounded-2xl border border-white/10 shadow-2xl shadow-black/70" />
                   {manhwa.status === 1 && (
@@ -125,7 +126,7 @@ const Detail = ({ id }: DetailProps) => {
                     <div className="flex flex-wrap justify-center sm:justify-start gap-1.5">
                       {manhwa.taxonomy.Type.map((t) => (
                         <span key={t.slug}
-                          className="px-2 py-0.5 bg-[#e63946]/20 text-[#e63946] border border-[#e63946]/30 rounded text-[10px] font-black uppercase tracking-widest">
+                          className="px-2 py-0.5 bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/30 rounded text-[10px] font-black uppercase tracking-widest">
                           {t.name}
                         </span>
                       ))}
@@ -178,8 +179,30 @@ const Detail = ({ id }: DetailProps) => {
                     </span>
                     {totalRecord != null && (
                       <span className="flex items-center gap-1.5 px-2.5 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-semibold text-zinc-300">
-                        <FontAwesomeIcon icon={faLayerGroup} className="text-[#e63946] text-[10px]" />
+                        <FontAwesomeIcon icon={faLayerGroup} className="text-[#EF4444] text-[10px]" />
                         {totalRecord} Chapter
+                      </span>
+                    )}
+                    {manhwa.view_count > 0 && (
+                      <span className="flex items-center gap-1.5 px-2.5 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-semibold text-zinc-300">
+                        <FontAwesomeIcon icon={faEye} className="text-zinc-500 text-[10px]" />
+                        {fmt(manhwa.view_count)}
+                      </span>
+                    )}
+                    {manhwa.bookmark_count > 0 && (
+                      <span className="flex items-center gap-1.5 px-2.5 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-semibold text-zinc-300">
+                        <FontAwesomeIcon icon={faBookmark} className="text-zinc-500 text-[10px]" />
+                        {fmt(manhwa.bookmark_count)}
+                      </span>
+                    )}
+                    {manhwa.release_year && (
+                      <span className="flex items-center gap-1.5 px-2.5 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-semibold text-zinc-300">
+                        {manhwa.release_year}
+                      </span>
+                    )}
+                    {manhwa.country_id && (
+                      <span className="flex items-center gap-1.5 px-2.5 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-semibold text-zinc-300">
+                        <CountryBadge code={manhwa.country_id} />
                       </span>
                     )}
                   </div>
@@ -189,7 +212,7 @@ const Detail = ({ id }: DetailProps) => {
                     <div className="flex flex-wrap justify-center sm:justify-start gap-1.5">
                       {genres.map((g) => (
                         <a key={g.slug} href={`/explore?genre=${g.slug}`}
-                          className="px-2 py-0.5 bg-zinc-800/70 hover:bg-[#e63946]/15 hover:text-[#e63946] hover:border-[#e63946]/30 text-zinc-400 border border-zinc-700/40 rounded-full text-[10px] transition-all">
+                          className="px-2 py-0.5 bg-zinc-800/70 hover:bg-[#EF4444]/15 hover:text-[#EF4444] hover:border-[#EF4444]/30 text-zinc-400 border border-zinc-700/40 rounded-full text-[10px] transition-all">
                           {g.name}
                         </a>
                       ))}
@@ -200,13 +223,13 @@ const Detail = ({ id }: DetailProps) => {
                   <div className="flex flex-wrap justify-center sm:justify-start gap-2 pt-0.5">
                     {lastReadCh ? (
                       <a href={`/chapter/${lastReadId}`} onClick={() => markRead(lastReadId)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-[#e63946] hover:bg-[#c1121f] text-white rounded-xl text-sm font-black transition-all shadow-lg shadow-[#e63946]/25 hover:scale-[1.02]">
+                        className="flex items-center gap-2 px-5 py-2.5 bg-[#EF4444] hover:bg-[#DC2626] text-white rounded-xl text-sm font-black transition-all shadow-lg shadow-[#EF4444]/25 hover:scale-[1.02]">
                         <FontAwesomeIcon icon={faPlay} className="text-xs" />
                         Lanjut Ch.{lastReadCh.chapter_number}
                       </a>
                     ) : firstCh && (
                       <a href={`/chapter/${firstCh.chapter_id}`} onClick={() => markRead(firstCh.chapter_id)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-[#e63946] hover:bg-[#c1121f] text-white rounded-xl text-sm font-black transition-all shadow-lg shadow-[#e63946]/25">
+                        className="flex items-center gap-2 px-5 py-2.5 bg-[#EF4444] hover:bg-[#DC2626] text-white rounded-xl text-sm font-black transition-all shadow-lg shadow-[#EF4444]/25">
                         <FontAwesomeIcon icon={faPlay} className="text-xs" />
                         Mulai Baca
                       </a>
@@ -236,7 +259,7 @@ const Detail = ({ id }: DetailProps) => {
                 <p className="text-zinc-300 text-sm leading-relaxed text-justify">{showSyn}</p>
                 {longSyn && (
                   <button onClick={() => setExpandSyn(!expandSyn)}
-                    className="text-[#e63946] text-xs mt-2 hover:underline hover:cursor-pointer font-semibold">
+                    className="text-[#EF4444] text-xs mt-2 hover:underline hover:cursor-pointer font-semibold">
                     {expandSyn ? "Sembunyikan ↑" : "Selengkapnya ↓"}
                   </button>
                 )}
@@ -249,10 +272,10 @@ const Detail = ({ id }: DetailProps) => {
               {/* header */}
               <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3 px-4 sm:px-5 py-3.5 border-b border-zinc-800/50 bg-zinc-900/40">
                 <div className="flex items-center gap-2">
-                  <FontAwesomeIcon icon={faLayerGroup} className="text-[#e63946] text-sm" />
+                  <FontAwesomeIcon icon={faLayerGroup} className="text-[#EF4444] text-sm" />
                   <h3 className="font-bold text-sm sm:text-base">Daftar Chapter</h3>
                   {totalRecord != null && (
-                    <span className="px-2 py-0.5 bg-[#e63946]/15 text-[#e63946] text-xs font-bold rounded-lg border border-[#e63946]/20">
+                    <span className="px-2 py-0.5 bg-[#EF4444]/15 text-[#EF4444] text-xs font-bold rounded-lg border border-[#EF4444]/20">
                       {totalRecord}
                     </span>
                   )}
@@ -262,11 +285,11 @@ const Detail = ({ id }: DetailProps) => {
                     <FontAwesomeIcon icon={faSearch} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500 text-xs" />
                     <input type="text" placeholder="Cari…" value={search}
                       onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                      className="pl-7 pr-3 py-1.5 bg-zinc-800/60 border border-zinc-700/40 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#e63946]/50 w-24 sm:w-32" />
+                      className="pl-7 pr-3 py-1.5 bg-zinc-800/60 border border-zinc-700/40 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/50 w-24 sm:w-32" />
                   </div>
                   <button onClick={() => { setReversed(!reversed); setPage(1); }}
                     className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all hover:cursor-pointer ${
-                      reversed ? "bg-[#e63946]/15 text-[#e63946] border-[#e63946]/30" : "bg-zinc-800/60 text-zinc-400 border-zinc-700/40 hover:text-white"
+                      reversed ? "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30" : "bg-zinc-800/60 text-zinc-400 border-zinc-700/40 hover:text-white"
                     }`}>
                     <FontAwesomeIcon icon={faArrowDownUpAcrossLine} className="text-xs" />
                     <span className="hidden sm:inline">{reversed ? "Terlama" : "Terbaru"}</span>
@@ -304,10 +327,10 @@ const Detail = ({ id }: DetailProps) => {
                         className={`group relative flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl border transition-all duration-200 overflow-hidden ${
                           read
                             ? "bg-zinc-900/60 border-zinc-800/30 hover:border-zinc-700/50"
-                            : "bg-zinc-800/20 border-zinc-800/50 hover:bg-[#e63946]/5 hover:border-[#e63946]/30 hover:shadow-md hover:shadow-[#e63946]/8"
+                            : "bg-zinc-800/20 border-zinc-800/50 hover:bg-[#EF4444]/5 hover:border-[#EF4444]/30 hover:shadow-md hover:shadow-[#EF4444]/8"
                         }`}>
 
-                        <div className={`absolute left-0 inset-y-0 w-[3px] ${read ? "bg-zinc-700/40" : "bg-[#e63946]"}`} />
+                        <div className={`absolute left-0 inset-y-0 w-[3px] ${read ? "bg-zinc-700/40" : "bg-[#EF4444]"}`} />
 
                         <div className="w-12 h-[68px] flex-shrink-0 rounded-xl overflow-hidden bg-zinc-900/80 ml-1">
                           {ch.thumbnail_image_url ? (
@@ -322,11 +345,11 @@ const Detail = ({ id }: DetailProps) => {
 
                         <div className="flex flex-col min-w-0 flex-1 gap-0.5">
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className={`text-sm font-bold leading-none transition-colors ${read ? "text-zinc-500" : "text-white group-hover:text-[#e63946]"}`}>
+                            <span className={`text-sm font-bold leading-none transition-colors ${read ? "text-zinc-500" : "text-white group-hover:text-[#EF4444]"}`}>
                               Ch.{ch.chapter_number}
                             </span>
                             {fresh && (
-                              <span className="px-1.5 py-0.5 bg-[#e63946] text-white text-[9px] font-black rounded tracking-wide leading-none">
+                              <span className="px-1.5 py-0.5 bg-[#EF4444] text-white text-[9px] font-black rounded tracking-wide leading-none">
                                 BARU
                               </span>
                             )}

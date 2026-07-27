@@ -1,0 +1,10 @@
+---
+import "../styles/global.css";
+import Layout from "../layouts/Layout.astro";
+import Browse from "./_Browse";
+export const prerender = false;
+---
+
+<Layout title="Rekomendasi - Kurokami">
+  <Browse slot="body" type="recommended" client:only="react" />
+</Layout>

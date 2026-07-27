@@ -1,9 +1,10 @@
 ---
 import "../styles/global.css";
 import Layout from "../layouts/Layout.astro";
-import Completed from "./_Completed";
+import Browse from "./_Browse";
+export const prerender = false;
 ---
 
 <Layout title="Komik Tamat - Kurokami">
-  <Completed slot="body" client:only="react" />
+  <Browse slot="body" type="completed" client:only="react" />
 </Layout>

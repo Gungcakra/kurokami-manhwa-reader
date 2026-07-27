@@ -1,7 +1,6 @@
 ---
 import "../../styles/global.css";
 import Layout from "../../layouts/Layout.astro";
-import Navbar from "../../components/common/Navbar";
 import { apiService } from "../../utils/api";
 import Chapter from "../_Chapter";
 export const prerender = false;
@@ -22,6 +21,5 @@ try {
 ---
 
 <Layout title={manhwaTitle ? `${manhwaTitle} - Kurokami` : "Chapter - Kurokami"}>
-  <Navbar slot="body" client:only="react" />
   <Chapter slot="body" idChapter={id} client:only="react" />
 </Layout>

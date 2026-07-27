@@ -1,0 +1,10 @@
+---
+import "../styles/global.css";
+import Layout from "../layouts/Layout.astro";
+import Info from "./_Info";
+export const prerender = false;
+---
+
+<Layout title="Info - Kurokami">
+  <Info slot="body" client:only="react" />
+</Layout>

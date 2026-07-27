@@ -3,9 +3,17 @@ import logo from "../../assets/images/logos/logo.png";
 const NAV_LINKS = [
   { name: "Home", href: "/" },
   { name: "Explore", href: "/explore" },
-  { name: "Popular", href: "/popular" },
-  { name: "Tamat", href: "/completed" },
-  { name: "Genres", href: "/genres" },
+  { name: "Terpopuler", href: "/popular" },
+  { name: "Rating Tertinggi", href: "/top" },
+  { name: "Update Terbaru", href: "/updates" },
+  { name: "Komik Tamat", href: "/completed" },
+];
+
+const INFO_LINKS = [
+  { name: "Daftar Genre", href: "/genres" },
+  { name: "Bookmark", href: "/bookmark" },
+  { name: "Riwayat Baca", href: "/history" },
+  { name: "Info & Privasi", href: "/info" },
 ];
 
 const Footer = () => {
@@ -18,7 +26,7 @@ const Footer = () => {
             <a href="/" className="flex items-center gap-2.5 mb-3">
               <img src={logo.src} className="w-7 h-7" alt="Kurokami Logo" />
               <span className="text-lg font-bold text-white">
-                Kuro<span className="text-[#e63946]">kami</span>
+                Kuro<span className="text-[#EF4444]">kami</span>
               </span>
             </a>
             <p className="text-zinc-500 text-sm leading-relaxed">
@@ -39,7 +47,7 @@ const Footer = () => {
                 <li key={item.href}>
                   <a
                     href={item.href}
-                    className="text-zinc-500 text-sm hover:text-[#e63946] transition-colors duration-200"
+                    className="text-zinc-500 text-sm hover:text-[#EF4444] transition-colors duration-200"
                   >
                     {item.name}
                   </a>
@@ -54,24 +62,16 @@ const Footer = () => {
               Info
             </p>
             <ul className="flex flex-col gap-2">
-              <li>
-                <a href="/genres" className="text-zinc-500 text-sm hover:text-[#e63946] transition-colors duration-200">
-                  Daftar Genre
-                </a>
-              </li>
-              <li>
-                <a href="/popular" className="text-zinc-500 text-sm hover:text-[#e63946] transition-colors duration-200">
-                  Terpopuler
-                </a>
-              </li>
-              <li>
-                <a href="/completed" className="text-zinc-500 text-sm hover:text-[#e63946] transition-colors duration-200">
-                  Komik Tamat
-                </a>
-              </li>
-              <li>
-                <span className="text-zinc-600 text-sm cursor-default">Disclaimers</span>
-              </li>
+              {INFO_LINKS.map((item) => (
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    className="text-zinc-500 text-sm hover:text-[#EF4444] transition-colors duration-200"
+                  >
+                    {item.name}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 

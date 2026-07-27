@@ -21,8 +21,8 @@ const ButtonCorner = () => {
     return (
         <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className={`fixed bottom-4 right-4 bg-secondary text-white p-4 rounded-full shadow-lg hover:bg-[#454545] hover:cursor-pointer transition-all duration-300 transform ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            className={`fixed bottom-4 right-4 z-40 bg-[#EF4444] text-white p-4 rounded-full shadow-lg shadow-[#EF4444]/30 hover:bg-[#DC2626] hover:cursor-pointer transition-all duration-300 transform ${
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
             }`}
         >
             <FontAwesomeIcon icon={faArrowUp} className="text-xl" />

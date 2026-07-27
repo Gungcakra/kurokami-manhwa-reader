@@ -1,9 +1,10 @@
 ---
 import "../styles/global.css";
 import Layout from "../layouts/Layout.astro";
-import Popular from "./_Popular";
+import Browse from "./_Browse";
+export const prerender = false;
 ---
 
 <Layout title="Terpopuler - Kurokami">
-  <Popular slot="body" client:only="react" />
+  <Browse slot="body" type="popular" client:only="react" />
 </Layout>

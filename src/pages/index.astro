@@ -1,17 +1,10 @@
 ---
-import Welcome from "../components/Welcome.astro";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Layout from "../layouts/Layout.astro";
 import "../styles/global.css";
+import Layout from "../layouts/Layout.astro";
 import Home from "./_Home";
-import Navbar from "../components/common/Navbar";
-import Footer from "../components/common/Footer";
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+export const prerender = false;
 ---
 
-<Layout title="Kurokami">
+<Layout title="Kurokami — Baca Manhwa, Manga & Manhua">
   <Home slot="body" client:load />
-  <Footer slot="body" client:load />
 </Layout>

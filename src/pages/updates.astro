@@ -1,0 +1,10 @@
+---
+import "../styles/global.css";
+import Layout from "../layouts/Layout.astro";
+import Browse from "./_Browse";
+export const prerender = false;
+---
+
+<Layout title="Update Terbaru - Kurokami">
+  <Browse slot="body" type="updates" client:only="react" />
+</Layout>

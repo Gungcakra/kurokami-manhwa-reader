@@ -1,48 +1,89 @@
 // @ts-nocheck
-import { truncateTitle, timeAgo } from "../../utils/function";
+import {
+  normalizeManga,
+  timeAgoShort,
+  isRecent,
+  formatCount,
+} from "../../utils/function";
+import CountryBadge from "./CountryBadge";
 
-interface Chapter {
-  chapter_id: string;
-  chapter_number: string;
-  created_at: string;
-}
+/**
+ * Poster card used across every grid.
+ *
+ * Accepts the raw API item via `manga` (preferred), or the legacy
+ * img/title/link props still passed by a few call sites.
+ */
+const Card = ({ manga, img, title, link, chapter }) => {
+  const m = manga
+    ? normalizeManga(manga)
+    : {
+        id: link,
+        title: title ?? "",
+        cover: img ?? "",
+        country: "",
+        rating: null,
+        views: 0,
+        chapterNumber: chapter?.[0]?.chapter_number ?? null,
+        chapterTime: chapter?.[0]?.created_at ?? "",
+      };
 
-interface CardProps {
-  img: string;
-  title: string;
-  link: string;
-  chapter?: Chapter[];
-}
+  const fresh = m.chapterTime && isRecent(m.chapterTime, 3);
 
-const Card: React.FC<CardProps> = ({ img, title, link, chapter }) => {
-  const latest = chapter?.[0];
   return (
     <a
-      href={`/manhwa/${link}`}
-      className="group flex flex-col rounded-xl overflow-hidden bg-[#18181b] hover:bg-[#232328] transition-all duration-300 border border-zinc-800/50 hover:border-[#e63946]/40 hover:shadow-lg hover:shadow-[#e63946]/10"
+      href={`/manhwa/${m.id}`}
+      className="group flex flex-col rounded-xl overflow-hidden bg-[#141417] border border-zinc-800/60 hover:border-[#EF4444]/50 hover:shadow-lg hover:shadow-[#EF4444]/10 transition-all duration-300"
     >
-      <div className="relative aspect-[2/3] overflow-hidden">
+      <div className="relative aspect-[2/3] overflow-hidden bg-zinc-900">
         <img
-          src={img}
-          alt={title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          src={m.cover}
+          alt={m.title}
           loading="lazy"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-        {latest && (
-          <div className="absolute bottom-0 left-0 right-0 p-1.5">
-            <span className="text-white text-[10px] font-medium bg-[#e63946]/80 backdrop-blur-sm px-2 py-0.5 rounded-full">
-              Ch. {latest.chapter_number}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-black/40" />
+
+        {/* top-left: freshness */}
+        <div className="absolute top-1.5 left-1.5 flex items-center gap-1">
+          {m.chapterTime && (
+            <span className="px-1.5 py-0.5 rounded-md bg-black/70 backdrop-blur-sm text-[9px] font-bold text-zinc-200 leading-none">
+              {timeAgoShort(m.chapterTime)}
             </span>
-          </div>
+          )}
+          {fresh && (
+            <span className="px-1.5 py-0.5 rounded-md bg-[#EF4444] text-white text-[9px] font-black leading-none tracking-wide">
+              NEW
+            </span>
+          )}
+        </div>
+
+        {/* top-right: origin */}
+        <CountryBadge code={m.country} className="absolute top-1.5 right-1.5" />
+
+        {/* bottom-left: rating */}
+        {m.rating && (
+          <span className="absolute bottom-1.5 left-1.5 flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-black/70 backdrop-blur-sm">
+            <svg className="w-2.5 h-2.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <span className="text-white text-[9px] font-bold leading-none">{m.rating}</span>
+          </span>
+        )}
+
+        {/* bottom-right: latest chapter */}
+        {m.chapterNumber != null && (
+          <span className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-[#EF4444]/90 backdrop-blur-sm text-white text-[9px] font-black leading-none">
+            Ch {m.chapterNumber}
+          </span>
         )}
       </div>
-      <div className="p-2">
-        <p className="text-white text-xs font-semibold line-clamp-2 group-hover:text-[#e63946] transition-colors leading-tight">
-          {truncateTitle(title, 40)}
+
+      <div className="p-2 flex flex-col gap-1">
+        <p className="text-white text-[11px] sm:text-xs font-semibold line-clamp-2 leading-snug group-hover:text-[#EF4444] transition-colors">
+          {m.title}
         </p>
-        {latest?.created_at && (
-          <p className="text-zinc-400 text-xs mt-1">{timeAgo(latest.created_at)}</p>
+        {m.views > 0 && (
+          <p className="text-zinc-500 text-[10px] leading-none">{formatCount(m.views)} views</p>
         )}
       </div>
     </a>

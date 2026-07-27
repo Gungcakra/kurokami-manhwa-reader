@@ -22,8 +22,8 @@ const Genres = () => {
       <Navbar />
       <div className="max-w-screen-xl mx-auto px-4 py-5">
         <div className="flex items-center gap-2.5 mb-5">
-          <div className="w-1 h-6 bg-[#e63946] rounded-full" />
-          <FontAwesomeIcon icon={faCompass} className="text-[#e63946]" />
+          <div className="w-1 h-6 bg-[#EF4444] rounded-full" />
+          <FontAwesomeIcon icon={faCompass} className="text-[#EF4444]" />
           <h1 className="text-xl font-bold">Daftar Genre</h1>
         </div>
         {loading ? (
@@ -43,7 +43,7 @@ const Genres = () => {
               <a
                 key={genre.genre_id || genre.slug}
                 href={`/explore?genre=${genre.slug}`}
-                className="group flex items-center justify-center p-3 sm:p-4 bg-[#18181b] rounded-xl border border-zinc-800/40 hover:border-[#e63946]/40 hover:bg-[#e63946]/10 hover:text-[#e63946] text-zinc-300 transition-all duration-200 text-center font-medium text-sm"
+                className="group flex items-center justify-center p-3 sm:p-4 bg-[#18181b] rounded-xl border border-zinc-800/40 hover:border-[#EF4444]/40 hover:bg-[#EF4444]/10 hover:text-[#EF4444] text-zinc-300 transition-all duration-200 text-center font-medium text-sm"
               >
                 {genre.name}
               </a>

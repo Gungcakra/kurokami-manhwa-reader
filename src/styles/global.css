@@ -1,24 +1,84 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────
+   Kurokami — Red / Black theme
+   (referencing komikcast & shinigami)
+   ───────────────────────────────────────────── */
+:root {
+  /* Accent — vivid red */
+  --color-primary: #EF4444;
+  --color-primary-light: #F87171;
+  --color-primary-dark: #DC2626;
+
+  /* Surfaces — near-black */
+  --bg-primary: #09090b;   /* page background */
+  --bg-secondary: #141417;
+  --bg-elevated: #18181b;  /* cards / panels */
+  --bg-soft: #232328;
+
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+
+  --border-soft: rgba(63, 63, 70, 0.5);
+  --border-muted: rgba(39, 39, 42, 0.5);
+
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* ── Color utility overrides (legacy class names) ── */
 .text-primarys {
-  color: #e63946;
+  color: var(--color-primary);
 }
 .text-secondary {
   color: #141417;
 }
 .bg-primary {
-  background-color: #232328;
+  background-color: var(--bg-soft);
 }
 .bg-secondary {
-  background-color: #141417;
+  background-color: var(--bg-secondary);
 }
 .bg-secondary-light {
-  background-color: #18181b;
+  background-color: var(--bg-elevated);
 }
 .bg-accent {
-  background-color: #18181b;
+  background-color: var(--color-primary);
 }
 
+/* ── Red text selection ── */
+::selection {
+  background-color: rgba(239, 68, 68, 0.35);
+  color: #ffffff;
+}
+
+/* ── Slim dark scrollbar (like komikcast/shinigami) ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #EF4444 transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: #3f3f46;
+  border-radius: 9999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #EF4444;
+}
+
+/* ── Hidden scrollbar helper (horizontal sliders) ── */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;

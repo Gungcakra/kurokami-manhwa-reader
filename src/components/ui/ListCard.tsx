@@ -1,48 +1,58 @@
 // @ts-nocheck
-import { truncateTitle } from "../../utils/function";
+import { normalizeManga, formatCount } from "../../utils/function";
+import CountryBadge from "./CountryBadge";
 
-interface ListCardProps {
-  index: number;
-  img: string;
-  title: string;
-  link: string;
-  chapter: { chapter_id: string; chapter_number: string }[];
-}
-
-const rankColor = (i: number) =>
+const rankStyle = (i: number) =>
   i === 0
-    ? "text-yellow-400"
+    ? "bg-[#EF4444] text-white"
     : i === 1
-    ? "text-zinc-300"
+    ? "bg-zinc-500 text-white"
     : i === 2
-    ? "text-amber-600"
-    : "text-zinc-600";
+    ? "bg-amber-700 text-white"
+    : "bg-zinc-800 text-zinc-500";
 
-const ListCard: React.FC<ListCardProps> = ({ index, img, title, link, chapter }) => {
+/** Ranked row used in the "Terpopuler" sidebar panel. */
+const ListCard = ({ index, manga, img, title, link, chapter }) => {
+  const m = manga
+    ? normalizeManga(manga)
+    : {
+        id: link,
+        title: title ?? "",
+        cover: img ?? "",
+        views: 0,
+        country: "",
+        chapterNumber: chapter?.[0]?.chapter_number ?? null,
+      };
+
   return (
     <a
-      href={`/manhwa/${link}`}
-      className="group flex items-center gap-3 px-3 py-2.5 border-b border-zinc-800/40 hover:bg-white/5 transition-all duration-200 last:border-b-0"
+      href={`/manhwa/${m.id}`}
+      className="group flex items-center gap-2.5 px-3 py-2.5 border-b border-zinc-800/40 hover:bg-[#EF4444]/5 transition-all duration-200 last:border-b-0"
     >
       <span
-        className={`text-sm font-bold w-5 text-center flex-shrink-0 ${rankColor(index)}`}
+        className={`w-5 h-5 flex items-center justify-center rounded-md text-[10px] font-black flex-shrink-0 ${rankStyle(
+          index
+        )}`}
       >
         {index + 1}
       </span>
       <img
-        src={img.split("?")[0]}
-        alt="cover"
-        className="w-10 h-14 rounded-lg object-cover flex-shrink-0"
+        src={(m.cover || "").split("?")[0]}
+        alt=""
+        loading="lazy"
+        className="w-9 h-12 rounded-md object-cover flex-shrink-0 bg-zinc-900"
       />
-      <div className="flex flex-col min-w-0">
-        <p className="text-white text-xs font-semibold truncate group-hover:text-[#e63946] transition-colors">
-          {truncateTitle(title, 24)}
+      <div className="flex flex-col min-w-0 flex-1 gap-0.5">
+        <p className="text-white text-[11px] font-semibold line-clamp-2 leading-snug group-hover:text-[#EF4444] transition-colors">
+          {m.title}
         </p>
-        {chapter?.[0] && (
-          <span className="text-zinc-400 text-xs mt-0.5">
-            Ch. {chapter[0].chapter_number}
-          </span>
-        )}
+        <div className="flex items-center gap-1.5 text-[10px] text-zinc-500 leading-none">
+          {m.chapterNumber != null && (
+            <span className="text-[#EF4444] font-bold">Ch {m.chapterNumber}</span>
+          )}
+          {m.views > 0 && <span>{formatCount(m.views)}</span>}
+          <CountryBadge code={m.country} />
+        </div>
       </div>
     </a>
   );

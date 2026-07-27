@@ -59,7 +59,7 @@ const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={() => onPageChange(page - 1)}
         disabled={!canPrev}
-        className="w-9 h-9 flex items-center justify-center rounded-xl bg-[#18181b] border border-zinc-700/50 text-zinc-300 text-sm disabled:opacity-30 hover:bg-[#e63946] hover:border-[#e63946] hover:text-white transition-all hover:cursor-pointer disabled:cursor-default"
+        className="w-9 h-9 flex items-center justify-center rounded-xl bg-[#18181b] border border-zinc-700/50 text-zinc-300 text-sm disabled:opacity-30 hover:bg-[#EF4444] hover:border-[#EF4444] hover:text-white transition-all hover:cursor-pointer disabled:cursor-default"
       >
         ←
       </button>
@@ -78,7 +78,7 @@ const Pagination: React.FC<PaginationProps> = ({
             onClick={() => onPageChange(p as number)}
             className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm font-semibold transition-all hover:cursor-pointer border ${
               p === page
-                ? "bg-[#e63946] border-[#e63946] text-white shadow-md shadow-[#e63946]/20"
+                ? "bg-[#EF4444] border-[#EF4444] text-white shadow-md shadow-[#EF4444]/20"
                 : "bg-[#18181b] border-zinc-700/50 text-zinc-300 hover:bg-zinc-700/60 hover:text-white"
             }`}
           >
@@ -90,7 +90,7 @@ const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={() => onPageChange(page + 1)}
         disabled={!canNext}
-        className="w-9 h-9 flex items-center justify-center rounded-xl bg-[#18181b] border border-zinc-700/50 text-zinc-300 text-sm disabled:opacity-30 hover:bg-[#e63946] hover:border-[#e63946] hover:text-white transition-all hover:cursor-pointer disabled:cursor-default"
+        className="w-9 h-9 flex items-center justify-center rounded-xl bg-[#18181b] border border-zinc-700/50 text-zinc-300 text-sm disabled:opacity-30 hover:bg-[#EF4444] hover:border-[#EF4444] hover:text-white transition-all hover:cursor-pointer disabled:cursor-default"
       >
         →
       </button>
