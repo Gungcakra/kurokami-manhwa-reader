@@ -3,8 +3,15 @@ import "../styles/global.css";
 import Layout from "../layouts/Layout.astro";
 import Info from "./_Info";
 export const prerender = false;
+
+const title = "Info & Kebijakan Privasi — Kurokami";
+const description = "Informasi tentang Kurokami, kebijakan privasi, penyimpanan data lokal, dan sumber konten. Kurokami tidak meng-host file media apa pun.";
 ---
 
-<Layout title="Info - Kurokami">
+<Layout
+  title={title}
+  description={description}
+  keywords="info kurokami, kebijakan privasi kurokami, tentang kurokami, dmca"
+>
   <Info slot="body" client:only="react" />
 </Layout>

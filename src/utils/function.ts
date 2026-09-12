@@ -138,3 +138,24 @@ export function timeAgo(dateString: string): string {
     day: "numeric",
   });
 }
+
+/**
+ * Turn an API `description` into a meta-safe blurb.
+ *
+ * Shinigami descriptions arrive with stray markup and hard line breaks, and are
+ * often far longer than what search engines will show, so strip and clamp them
+ * on a word boundary rather than mid-word.
+ */
+export function metaDescription(raw?: string, max = 160): string {
+  const clean = (raw || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&[a-z]+;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!clean) return "";
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max);
+  const lastSpace = cut.lastIndexOf(" ");
+  const trimmed = lastSpace > max * 0.6 ? cut.slice(0, lastSpace) : cut;
+  return trimmed.replace(/[\s,.;:—–-]+$/, "") + "…";
+}

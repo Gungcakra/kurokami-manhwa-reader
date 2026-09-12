@@ -15,11 +15,15 @@ import {
   faEye,
   faLayerGroup,
   faCheckCircle,
+  faForwardFast,
 } from "@fortawesome/free-solid-svg-icons";
 import ButtonCorner from "../components/ui/ButtonCorner";
 import Pagination from "../components/ui/Pagination";
 import DetailSkeleton from "../components/ui/DetailSkeleton";
+import ShareButton from "../components/ui/ShareButton";
 import Footer from "../components/common/Footer";
+import Navbar from "../components/common/Navbar";
+import BottomNav from "../components/common/BottomNav";
 
 const fmt = (n: number) => {
   if (!n) return "0";
@@ -46,12 +50,32 @@ const Detail = ({ id }: DetailProps) => {
   const [bookmarked,  setBookmarked]  = useState(false);
   const [readMap,     setReadMap]     = useState<Record<string, number>>({});
   const [lastReadId,  setLastReadId]  = useState<string | null>(null);
+  const [lastReadNum, setLastReadNum] = useState<number | null>(null);
+  const [firstCh,     setFirstCh]     = useState<any>(null);
 
   useEffect(() => {
     const bm = JSON.parse(localStorage.getItem("kurokami_bookmarks") || "[]");
     setBookmarked(bm.includes(id));
     setReadMap(JSON.parse(localStorage.getItem("kurokami_read_chapters") || "{}"));
-    setLastReadId(localStorage.getItem(`kurokami_last_read_${id}`));
+
+    const lastId = localStorage.getItem(`kurokami_last_read_${id}`);
+    setLastReadId(lastId);
+    // The reader writes the chapter number into history, so "Lanjut Ch.N" works
+    // even when that chapter sits on a page of the list we are not showing.
+    const hist = JSON.parse(localStorage.getItem("kurokami_history") || "{}");
+    const entry = hist?.[id];
+    setLastReadNum(entry?.chapter_id === lastId ? entry?.chapter_number ?? null : null);
+  }, [id]);
+
+  /**
+   * Chapter 1 of the whole series.
+   *
+   * It cannot be derived from `chapters`: that array holds one page of results
+   * in whatever direction the user is sorting, so its last element is the oldest
+   * chapter *on this page*, not the first chapter of the series.
+   */
+  useEffect(() => {
+    apiService.getFirstChapter(id).then(setFirstCh);
   }, [id]);
 
   useEffect(() => {
@@ -66,7 +90,7 @@ const Detail = ({ id }: DetailProps) => {
       setTotalRecord(r?.meta?.total_record);
       setLoadingCh(false);
     });
-  }, [page, reversed, search]);
+  }, [id, page, reversed, search]);
 
   const toggleBookmark = () => {
     const bm = JSON.parse(localStorage.getItem("kurokami_bookmarks") || "[]");
@@ -75,24 +99,24 @@ const Detail = ({ id }: DetailProps) => {
     setBookmarked(!bookmarked);
   };
 
-  const markRead = (cid: string) => {
+  const markRead = (cid: string, num?: number) => {
     const h = JSON.parse(localStorage.getItem("kurokami_read_chapters") || "{}");
     h[cid] = Date.now();
     localStorage.setItem("kurokami_read_chapters", JSON.stringify(h));
     localStorage.setItem(`kurokami_last_read_${id}`, cid);
     setReadMap((p) => ({ ...p, [cid]: Date.now() }));
     setLastReadId(cid);
+    if (num != null) setLastReadNum(num);
   };
 
   const synopsis   = manhwa?.synopsis || manhwa?.description || "";
   const longSyn    = synopsis.length > 300;
   const showSyn    = longSyn && !expandSyn ? synopsis.slice(0, 300) + "…" : synopsis;
-  const firstCh    = chapters[chapters.length - 1];
-  const lastReadCh = chapters.find((c) => c.chapter_id === lastReadId);
   const genres     = manhwa?.taxonomy?.Genre ?? [];
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen flex flex-col">
+    <div className="bg-[#09090b] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
+      <Navbar />
       {loading ? <DetailSkeleton /> : (
         <>
           {/* ═══════════════ HERO ═══════════════ */}
@@ -102,14 +126,15 @@ const Detail = ({ id }: DetailProps) => {
             <div className="absolute inset-0 bg-gradient-to-b from-[#09090b]/50 via-transparent to-[#09090b]" />
             <div className="absolute inset-0 bg-gradient-to-r from-[#09090b] via-[#09090b]/55 to-transparent" />
 
-            <div className="relative max-w-screen-xl mx-auto px-4 py-8 sm:py-12">
-              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-7">
+            <div className="relative max-w-screen-xl mx-auto px-3 sm:px-4 py-6 sm:py-12">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-7">
 
                 {/* Cover */}
                 <div className="relative flex-shrink-0 mx-auto sm:mx-0">
                   <div className="absolute -inset-2 rounded-3xl bg-[#EF4444]/15 blur-xl" />
                   <img src={manhwa.cover_image_url} alt={manhwa.title}
-                    className="relative w-28 sm:w-40 md:w-48 rounded-2xl border border-white/10 shadow-2xl shadow-black/70" />
+                    loading="eager"
+                    className="relative w-32 sm:w-40 md:w-48 rounded-2xl border border-white/10 shadow-2xl shadow-black/70" />
                   {manhwa.status === 1 && (
                     <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 flex items-center gap-1 px-2.5 py-0.5 bg-emerald-500 text-white text-[10px] font-black rounded-full whitespace-nowrap shadow-lg">
                       <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
@@ -134,12 +159,14 @@ const Detail = ({ id }: DetailProps) => {
                   )}
 
                   {/* 2. Title */}
-                  <div>
-                    <h1 className="text-xl sm:text-2xl md:text-3xl font-black leading-tight">
+                  <div className="min-w-0 w-full">
+                    <h1 className="text-lg sm:text-2xl md:text-3xl font-black leading-tight break-words hyphens-auto">
                       {manhwa.title}
                     </h1>
                     {manhwa.alternative_title && (
-                      <p className="text-zinc-500 text-xs sm:text-sm mt-1 truncate">{manhwa.alternative_title}</p>
+                      <p className="text-zinc-500 text-xs sm:text-sm mt-1 break-words line-clamp-2">
+                        {manhwa.alternative_title}
+                      </p>
                     )}
                   </div>
 
@@ -147,15 +174,15 @@ const Detail = ({ id }: DetailProps) => {
                   {(manhwa.taxonomy?.Author?.length > 0 || manhwa.taxonomy?.Artist?.length > 0) && (
                     <div className="flex flex-wrap justify-center sm:justify-start gap-x-4 gap-y-1 text-xs text-zinc-400">
                       {manhwa.taxonomy?.Author?.length > 0 && (
-                        <span className="flex items-center gap-1">
-                          <FontAwesomeIcon icon={faUser} className="text-zinc-600 text-[9px]" />
-                          {manhwa.taxonomy.Author.map((a) => a.name).join(", ")}
+                        <span className="flex items-center gap-1 min-w-0 max-w-full">
+                          <FontAwesomeIcon icon={faUser} className="text-zinc-600 text-[9px] flex-shrink-0" />
+                          <span className="truncate">{manhwa.taxonomy.Author.map((a) => a.name).join(", ")}</span>
                         </span>
                       )}
                       {manhwa.taxonomy?.Artist?.length > 0 && (
-                        <span className="flex items-center gap-1">
-                          <FontAwesomeIcon icon={faPen} className="text-zinc-600 text-[9px]" />
-                          {manhwa.taxonomy.Artist.map((a) => a.name).join(", ")}
+                        <span className="flex items-center gap-1 min-w-0 max-w-full">
+                          <FontAwesomeIcon icon={faPen} className="text-zinc-600 text-[9px] flex-shrink-0" />
+                          <span className="truncate">{manhwa.taxonomy.Artist.map((a) => a.name).join(", ")}</span>
                         </span>
                       )}
                     </div>
@@ -219,30 +246,59 @@ const Detail = ({ id }: DetailProps) => {
                     </div>
                   )}
 
-                  {/* 6. Action buttons — only Read & Bookmark */}
-                  <div className="flex flex-wrap justify-center sm:justify-start gap-2 pt-0.5">
-                    {lastReadCh ? (
-                      <a href={`/chapter/${lastReadId}`} onClick={() => markRead(lastReadId)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-[#EF4444] hover:bg-[#DC2626] text-white rounded-xl text-sm font-black transition-all shadow-lg shadow-[#EF4444]/25 hover:scale-[1.02]">
+                  {/* 6. Action buttons — resume/start, jump to ch.1, share, bookmark.
+                      Primary CTA owns its own row on phones; the secondary
+                      controls share a row of equal-width buttons beneath it and
+                      flow inline from `sm` up via `sm:contents`. */}
+                  <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 pt-1 w-full">
+                    {lastReadId ? (
+                      <a href={`/chapter/${lastReadId}`} onClick={() => markRead(lastReadId, lastReadNum)}
+                        className="flex items-center justify-center sm:justify-start gap-2 w-full sm:w-auto px-5 py-3 sm:py-2.5 bg-[#EF4444] hover:bg-[#DC2626] active:scale-[0.98] text-white rounded-xl text-sm font-black transition-all shadow-lg shadow-[#EF4444]/25">
                         <FontAwesomeIcon icon={faPlay} className="text-xs" />
-                        Lanjut Ch.{lastReadCh.chapter_number}
+                        {lastReadNum != null ? `Lanjut Ch.${lastReadNum}` : "Lanjutkan Baca"}
                       </a>
-                    ) : firstCh && (
-                      <a href={`/chapter/${firstCh.chapter_id}`} onClick={() => markRead(firstCh.chapter_id)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-[#EF4444] hover:bg-[#DC2626] text-white rounded-xl text-sm font-black transition-all shadow-lg shadow-[#EF4444]/25">
+                    ) : (
+                      <a href={firstCh ? `/chapter/${firstCh.chapter_id}` : undefined}
+                        onClick={() => firstCh && markRead(firstCh.chapter_id, firstCh.chapter_number)}
+                        aria-disabled={!firstCh}
+                        className={`flex items-center justify-center sm:justify-start gap-2 w-full sm:w-auto px-5 py-3 sm:py-2.5 rounded-xl text-sm font-black transition-all shadow-lg ${
+                          firstCh
+                            ? "bg-[#EF4444] hover:bg-[#DC2626] active:scale-[0.98] text-white shadow-[#EF4444]/25"
+                            : "bg-[#EF4444]/40 text-white/70 shadow-none pointer-events-none"
+                        }`}>
                         <FontAwesomeIcon icon={faPlay} className="text-xs" />
                         Mulai Baca
                       </a>
                     )}
-                    <button onClick={toggleBookmark}
-                      className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all hover:cursor-pointer ${
-                        bookmarked
-                          ? "bg-yellow-500/20 text-yellow-300 border-yellow-500/40 hover:bg-yellow-500/30"
-                          : "bg-white/5 text-zinc-400 border-white/10 hover:text-white hover:border-white/20"
-                      }`}>
-                      <FontAwesomeIcon icon={faBookmark} className="text-xs" />
-                      {bookmarked ? "Tersimpan" : "Simpan"}
-                    </button>
+
+                    <div className="flex items-center gap-2 w-full sm:w-auto sm:contents">
+                      {/* jumping back to the very first chapter stays available
+                          once a resume button has taken the primary slot */}
+                      {lastReadId && firstCh && firstCh.chapter_id !== lastReadId && (
+                        <a href={`/chapter/${firstCh.chapter_id}`}
+                          onClick={() => markRead(firstCh.chapter_id, firstCh.chapter_number)}
+                          className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border bg-white/5 text-zinc-300 border-white/10 hover:text-white hover:border-white/20 active:scale-[0.98] transition-all">
+                          <FontAwesomeIcon icon={faForwardFast} className="text-xs rotate-180" />
+                          Ch.{firstCh.chapter_number}
+                        </a>
+                      )}
+
+                      <ShareButton
+                        className="flex-1 sm:flex-none"
+                        title={manhwa.title}
+                        text={`Baca ${manhwa.title} bahasa Indonesia di Kurokami`}
+                      />
+
+                      <button onClick={toggleBookmark}
+                        className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all hover:cursor-pointer active:scale-[0.98] ${
+                          bookmarked
+                            ? "bg-yellow-500/20 text-yellow-300 border-yellow-500/40 hover:bg-yellow-500/30"
+                            : "bg-white/5 text-zinc-400 border-white/10 hover:text-white hover:border-white/20"
+                        }`}>
+                        <FontAwesomeIcon icon={faBookmark} className="text-xs" />
+                        {bookmarked ? "Tersimpan" : "Simpan"}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -250,13 +306,13 @@ const Detail = ({ id }: DetailProps) => {
           </section>
 
           {/* ═══════════════ BODY ═══════════════ */}
-          <div className="max-w-screen-xl mx-auto px-4 pb-10 w-full flex-1 mt-5">
+          <div className="max-w-screen-xl mx-auto px-3 sm:px-4 pb-10 w-full flex-1 mt-5">
 
             {/* Synopsis — di atas chapter list, text justify */}
             {synopsis && (
               <div className="bg-[#18181b] rounded-2xl p-4 sm:p-5 mb-5 border border-zinc-800/50">
                 <h3 className="text-sm font-bold text-white mb-2.5">Sinopsis</h3>
-                <p className="text-zinc-300 text-sm leading-relaxed text-justify">{showSyn}</p>
+                <p className="text-zinc-300 text-[13px] sm:text-sm leading-relaxed text-justify break-words">{showSyn}</p>
                 {longSyn && (
                   <button onClick={() => setExpandSyn(!expandSyn)}
                     className="text-[#EF4444] text-xs mt-2 hover:underline hover:cursor-pointer font-semibold">
@@ -270,7 +326,7 @@ const Detail = ({ id }: DetailProps) => {
             <div className="bg-[#18181b] rounded-2xl border border-zinc-800/50 overflow-hidden">
 
               {/* header */}
-              <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3 px-4 sm:px-5 py-3.5 border-b border-zinc-800/50 bg-zinc-900/40">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3 px-3.5 sm:px-5 py-3.5 border-b border-zinc-800/50 bg-zinc-900/40">
                 <div className="flex items-center gap-2">
                   <FontAwesomeIcon icon={faLayerGroup} className="text-[#EF4444] text-sm" />
                   <h3 className="font-bold text-sm sm:text-base">Daftar Chapter</h3>
@@ -281,18 +337,18 @@ const Detail = ({ id }: DetailProps) => {
                   )}
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="relative">
+                  <div className="relative flex-1 sm:flex-none">
                     <FontAwesomeIcon icon={faSearch} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500 text-xs" />
-                    <input type="text" placeholder="Cari…" value={search}
+                    <input type="text" placeholder="Cari chapter…" value={search} inputMode="numeric"
                       onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                      className="pl-7 pr-3 py-1.5 bg-zinc-800/60 border border-zinc-700/40 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/50 w-24 sm:w-32" />
+                      className="w-full sm:w-36 pl-7 pr-3 py-2 sm:py-1.5 bg-zinc-800/60 border border-zinc-700/40 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/50" />
                   </div>
                   <button onClick={() => { setReversed(!reversed); setPage(1); }}
-                    className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all hover:cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-xl text-xs font-semibold border transition-all hover:cursor-pointer active:scale-95 flex-shrink-0 ${
                       reversed ? "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30" : "bg-zinc-800/60 text-zinc-400 border-zinc-700/40 hover:text-white"
                     }`}>
                     <FontAwesomeIcon icon={faArrowDownUpAcrossLine} className="text-xs" />
-                    <span className="hidden sm:inline">{reversed ? "Terlama" : "Terbaru"}</span>
+                    {reversed ? "Terlama" : "Terbaru"}
                   </button>
                 </div>
               </div>
@@ -317,13 +373,13 @@ const Detail = ({ id }: DetailProps) => {
                   <p className="text-sm">Chapter tidak ditemukan</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 p-3.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-2.5 p-3 sm:p-3.5">
                   {chapters.map((ch) => {
                     const read  = !!readMap[ch.chapter_id];
                     const fresh = isNew7(ch.release_date) && !read;
                     return (
                       <a key={ch.chapter_id} href={`/chapter/${ch.chapter_id}`}
-                        onClick={() => markRead(ch.chapter_id)}
+                        onClick={() => markRead(ch.chapter_id, ch.chapter_number)}
                         className={`group relative flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl border transition-all duration-200 overflow-hidden ${
                           read
                             ? "bg-zinc-900/60 border-zinc-800/30 hover:border-zinc-700/50"
@@ -356,7 +412,7 @@ const Detail = ({ id }: DetailProps) => {
                             {read && <FontAwesomeIcon icon={faCheckCircle} className="text-zinc-600 text-[10px]" />}
                           </div>
                           {ch.chapter_title && (
-                            <p className="text-zinc-400 text-[11px] truncate">{ch.chapter_title}</p>
+                            <p className="text-zinc-400 text-[11px] truncate break-words">{ch.chapter_title}</p>
                           )}
                           <div className="flex items-center gap-2 mt-1 text-[10px] text-zinc-600">
                             <span className="flex items-center gap-0.5">
@@ -387,6 +443,7 @@ const Detail = ({ id }: DetailProps) => {
       )}
       <ButtonCorner />
       <Footer />
+      <BottomNav />
     </div>
   );
 };

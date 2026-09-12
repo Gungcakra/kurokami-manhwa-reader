@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { useEffect, useRef, useState } from "react";
+import { apiService } from "../../utils/api";
 import { normalizeManga, formatCount } from "../../utils/function";
 import CountryBadge from "./CountryBadge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,6 +25,25 @@ const Hero = ({ items = [], loading }) => {
     clearInterval(timer.current);
     setIdx((n + list.length) % list.length);
   };
+
+  // "Mulai Baca" must open chapter 1, but list endpoints only return the latest
+  // chapter — so look the first one up for the visible slide. Fetching lazily
+  // per slide (rather than for all 8 up front) keeps the home page's initial
+  // request burst unchanged; apiService caches the result per series.
+  const currentId = list[idx]?.manga_id;
+  const [firstChapterId, setFirstChapterId] = useState(null);
+
+  useEffect(() => {
+    if (!currentId) return;
+    let cancelled = false;
+    setFirstChapterId(null);
+    apiService.getFirstChapter(currentId).then((ch) => {
+      if (!cancelled) setFirstChapterId(ch?.chapter_id ?? null);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [currentId]);
 
   if (loading) {
     return (
@@ -95,11 +115,11 @@ const Hero = ({ items = [], loading }) => {
 
           <div className="flex items-center gap-2 mt-1">
             <a
-              href={m.chapterId ? `/chapter/${m.chapterId}` : `/manhwa/${m.id}`}
-              className="flex items-center gap-2 px-4 py-2 bg-[#EF4444] hover:bg-[#DC2626] text-white rounded-xl text-xs sm:text-sm font-black transition-all shadow-lg shadow-[#EF4444]/25"
+              href={firstChapterId ? `/chapter/${firstChapterId}` : `/manhwa/${m.id}`}
+              className="flex items-center gap-2 px-4 py-2 bg-[#EF4444] hover:bg-[#DC2626] active:scale-[0.98] text-white rounded-xl text-xs sm:text-sm font-black transition-all shadow-lg shadow-[#EF4444]/25"
             >
               <FontAwesomeIcon icon={faPlay} className="text-[10px]" />
-              Baca
+              Mulai Baca
             </a>
             <a
               href={`/manhwa/${m.id}`}

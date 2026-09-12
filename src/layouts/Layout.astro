@@ -1,32 +1,115 @@
 ---
-import {SEO} from 'astro-seo'
+import { SEO } from "astro-seo";
 
-const {title} = Astro.props;
+export interface Props {
+  /** Full <title>. Keep the "— Kurokami" suffix on every page. */
+  title: string;
+  /** Indonesian meta description. Falls back to the site-wide blurb. */
+  description?: string;
+  /** Absolute or root-relative OG image. Defaults to the app icon. */
+  image?: string;
+  type?: string;
+  /** Personal pages (bookmark/riwayat) opt out of indexing. */
+  noindex?: boolean;
+  keywords?: string;
+  /** One JSON-LD object, or several. */
+  jsonLd?: unknown;
+}
+
+const SITE_NAME = "Kurokami";
+const DEFAULT_DESCRIPTION =
+  "Baca manhwa, manga, dan manhua bahasa Indonesia gratis di Kurokami. Update chapter terbaru setiap hari, koleksi lengkap, dan tampilan baca yang nyaman di HP maupun desktop.";
+
+const {
+  title,
+  description = DEFAULT_DESCRIPTION,
+  image,
+  type = "website",
+  noindex = false,
+  keywords = "baca manhwa, baca manga, baca manhua, manhwa indonesia, komik online, manga bahasa indonesia, kurokami",
+  jsonLd,
+} = Astro.props;
+
+// Astro.url is the real request URL on Vercel, so canonicals stay correct
+// across preview deployments and the production domain without hardcoding one.
+const origin = Astro.url.origin;
+const canonical = new URL(Astro.url.pathname, origin).href;
+const ogImage = new URL(image ?? "/android-chrome-512x512.png", origin).href;
+
+const structured = jsonLd == null ? [] : Array.isArray(jsonLd) ? jsonLd : [jsonLd];
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="id">
   <head>
-    <SEO title={title} />
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <SEO
+      title={title}
+      description={description}
+      canonical={canonical}
+      noindex={noindex}
+      nofollow={noindex}
+      openGraph={{
+        basic: { title, type, image: ogImage, url: canonical },
+        optional: {
+          description,
+          siteName: SITE_NAME,
+          locale: "id_ID",
+        },
+        image: { alt: title },
+      }}
+      twitter={{
+        card: "summary_large_image",
+        title,
+        description,
+        image: ogImage,
+        imageAlt: title,
+      }}
+      extend={{
+        meta: [
+          { name: "keywords", content: keywords },
+          // astro-seo owns <meta name="robots">; the preview directives ride on
+          // the googlebot tag so the two can never contradict each other.
+          ...(noindex
+            ? []
+            : [{ name: "googlebot", content: "max-image-preview:large, max-snippet:-1" }]),
+          { name: "author", content: SITE_NAME },
+          { name: "apple-mobile-web-app-title", content: SITE_NAME },
+          { name: "apple-mobile-web-app-capable", content: "yes" },
+          { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+          { name: "format-detection", content: "telephone=no" },
+        ],
+      }}
+    />
     <meta name="theme-color" content="#09090b" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://api.shngm.io" />
+    <link rel="preconnect" href="https://assets.shngm.id" />
+    <link rel="dns-prefetch" href="https://assets.shngm.id" />
     <meta name="generator" content={Astro.generator} />
+    {
+      structured.map((item) => (
+        <script type="application/ld+json" set:html={JSON.stringify(item)} />
+      ))
+    }
   </head>
   <body>
     <slot name="body" />
   </body>
 </html>
 
-<style>
+<style is:global>
   html,
   body {
     margin: 0;
     width: 100%;
-    height: 100%;
+    /* Long pages must be able to grow; a hard 100% height clipped the reader. */
+    min-height: 100%;
+    /* No page ever scrolls sideways on a phone. */
+    overflow-x: hidden;
   }
 </style>

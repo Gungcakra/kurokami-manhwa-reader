@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { apiService } from "../utils/api";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
+import BottomNav from "../components/common/BottomNav";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCompass } from "@fortawesome/free-solid-svg-icons";
 
@@ -18,7 +19,7 @@ const Genres = () => {
   }, []);
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen">
+    <div className="bg-[#09090b] text-white min-h-screen pb-[58px] lg:pb-0">
       <Navbar />
       <div className="max-w-screen-xl mx-auto px-4 py-5">
         <div className="flex items-center gap-2.5 mb-5">
@@ -52,6 +53,7 @@ const Genres = () => {
         )}
       </div>
       <Footer />
+      <BottomNav />
     </div>
   );
 };

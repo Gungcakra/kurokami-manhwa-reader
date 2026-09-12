@@ -2,24 +2,107 @@
 import "../../styles/global.css";
 import Layout from "../../layouts/Layout.astro";
 import { apiService } from "../../utils/api";
+import { metaDescription } from "../../utils/function";
 import Chapter from "../_Chapter";
 export const prerender = false;
 
 const { id = "" } = Astro.params;
 
-let manhwaTitle = "";
+let manhwa: any = null;
+let chapter: any = null;
 try {
   const chapterDetail = await apiService.getChapterDetail(id);
-  const mangaId = chapterDetail?.data?.manga_id;
-  if (mangaId) {
-    const manhwaDetail = await apiService.getDetail(mangaId);
-    manhwaTitle = manhwaDetail?.data?.title || "";
+  chapter = chapterDetail?.data ?? null;
+  if (chapter?.manga_id) {
+    const manhwaDetail = await apiService.getDetail(chapter.manga_id);
+    manhwa = manhwaDetail?.data ?? null;
   }
 } catch (error) {
   console.error("Failed to fetch chapter details:", error);
 }
+
+const manhwaTitle = manhwa?.title ?? "";
+const chapterNumber = chapter?.chapter_number;
+const chapterTitle = (chapter?.chapter_title ?? "").trim();
+const pageCount = chapter?.chapter?.data?.length ?? 0;
+const cover = manhwa?.cover_portrait_url || manhwa?.cover_image_url || chapter?.thumbnail_image_url;
+
+// "Baca {title} Chapter N di Kurokami" — the label the reader actually searches for.
+const chapterLabel =
+  chapterNumber != null ? `Chapter ${chapterNumber}` : chapterTitle || "Chapter";
+
+const title = manhwaTitle
+  ? `Baca ${manhwaTitle} ${chapterLabel} Bahasa Indonesia di Kurokami`
+  : "Baca Chapter di Kurokami";
+
+const synopsis = metaDescription(manhwa?.description, 90);
+const description = manhwaTitle
+  ? `Baca ${manhwaTitle} ${chapterLabel}${
+      chapterTitle ? ` — ${chapterTitle}` : ""
+    } bahasa Indonesia di Kurokami${
+      pageCount ? `, ${pageCount} halaman` : ""
+    } dengan kualitas gambar HD dan gratis. ${
+      synopsis || "Lanjut ke chapter berikutnya langsung dari halaman baca."
+    }`
+  : "Baca chapter terbaru bahasa Indonesia gratis di Kurokami dengan kualitas gambar HD.";
+
+const keywords = manhwaTitle
+  ? [
+      `baca ${manhwaTitle} ${chapterLabel}`,
+      `${manhwaTitle} ${chapterLabel} bahasa indonesia`,
+      `${manhwaTitle} ${chapterLabel} kurokami`,
+      `baca ${manhwaTitle}`,
+      "kurokami",
+    ].join(", ")
+  : undefined;
+
+const canonical = new URL(Astro.url.pathname, Astro.url.origin).href;
+
+const jsonLd =
+  manhwaTitle && chapter
+    ? [
+        {
+          "@context": "https://schema.org",
+          "@type": "Chapter",
+          name: `${manhwaTitle} ${chapterLabel}`,
+          headline: chapterTitle || `${manhwaTitle} ${chapterLabel}`,
+          url: canonical,
+          image: cover,
+          inLanguage: "id-ID",
+          position: chapterNumber ?? undefined,
+          datePublished: chapter?.release_date ?? chapter?.created_at ?? undefined,
+          isPartOf: {
+            "@type": "Book",
+            name: manhwaTitle,
+            url: new URL(`/manhwa/${chapter.manga_id}`, Astro.url.origin).href,
+          },
+          publisher: { "@type": "Organization", name: "Kurokami" },
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Beranda", item: Astro.url.origin },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: manhwaTitle,
+              item: new URL(`/manhwa/${chapter.manga_id}`, Astro.url.origin).href,
+            },
+            { "@type": "ListItem", position: 3, name: chapterLabel, item: canonical },
+          ],
+        },
+      ]
+    : undefined;
 ---
 
-<Layout title={manhwaTitle ? `${manhwaTitle} - Kurokami` : "Chapter - Kurokami"}>
+<Layout
+  title={title}
+  description={description}
+  image={cover}
+  type="article"
+  keywords={keywords}
+  jsonLd={jsonLd}
+>
   <Chapter slot="body" idChapter={id} client:only="react" />
 </Layout>

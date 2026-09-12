@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Personal, device-local pages — nothing useful for a crawler to index.
+Disallow: /bookmark
+Disallow: /history

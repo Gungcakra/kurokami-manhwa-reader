@@ -11,6 +11,8 @@ import UpdateRow from "../components/ui/UpdateRow";
 import Hero from "../components/ui/Hero";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
+import BottomNav from "../components/common/BottomNav";
+import Sponsor from "../components/ui/Sponsor";
 import ButtonCorner from "../components/ui/ButtonCorner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -61,8 +63,8 @@ const Rail = ({ loading, items, count = 8, rank = false }) => (
     {loading
       ? Array(count).fill(0).map((_, i) => <CardSliderSkeleton key={i} />)
       : items?.map((m, i) => (
-          <CardSlider key={m.manga_id} manga={m} rank={rank ? i + 1 : undefined} />
-        ))}
+        <CardSlider key={m.manga_id} manga={m} rank={rank ? i + 1 : undefined} />
+      ))}
   </div>
 );
 
@@ -151,11 +153,14 @@ const Home = () => {
     );
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen flex flex-col">
+    <div className="bg-[#09090b] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
       <Navbar />
 
-      <main className="max-w-screen-2xl mx-auto px-3 sm:px-4 pt-4 pb-10 w-full flex-1 flex flex-col gap-7">
+      <main className="max-w-screen-2xl mx-auto px-3 sm:px-4 pt-3 sm:pt-4 pb-8 sm:pb-10 w-full flex-1 flex flex-col gap-6 sm:gap-7">
         <Hero items={featured} loading={loadingHero} />
+
+        {/* ── Sponsor resmi — terakhir sebelum footer ── */}
+        <Sponsor />
 
         {/* ── Rekomendasi ── */}
         <section>
@@ -171,18 +176,18 @@ const Home = () => {
                 <button
                   onClick={() => setView("grid")}
                   aria-label="Tampilan grid"
-                  className={`w-6 h-6 flex items-center justify-center rounded-md text-[10px] transition-all hover:cursor-pointer ${
-                    view === "grid" ? "bg-[#EF4444] text-white" : "text-zinc-400 hover:text-white"
-                  }`}
+                  aria-pressed={view === "grid"}
+                  className={`w-7 h-7 sm:w-6 sm:h-6 flex items-center justify-center rounded-md text-[10px] transition-all hover:cursor-pointer active:scale-90 ${view === "grid" ? "bg-[#EF4444] text-white" : "text-zinc-400 hover:text-white"
+                    }`}
                 >
                   <FontAwesomeIcon icon={faTableCellsLarge} />
                 </button>
                 <button
                   onClick={() => setView("list")}
                   aria-label="Tampilan daftar"
-                  className={`w-6 h-6 flex items-center justify-center rounded-md text-[10px] transition-all hover:cursor-pointer ${
-                    view === "list" ? "bg-[#EF4444] text-white" : "text-zinc-400 hover:text-white"
-                  }`}
+                  aria-pressed={view === "list"}
+                  className={`w-7 h-7 sm:w-6 sm:h-6 flex items-center justify-center rounded-md text-[10px] transition-all hover:cursor-pointer active:scale-90 ${view === "list" ? "bg-[#EF4444] text-white" : "text-zinc-400 hover:text-white"
+                    }`}
                 >
                   <FontAwesomeIcon icon={faList} />
                 </button>
@@ -194,11 +199,10 @@ const Home = () => {
                 <button
                   key={f.value}
                   onClick={() => setActiveFormat(f.value)}
-                  className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all hover:cursor-pointer whitespace-nowrap ${
-                    activeFormat === f.value
+                  className={`px-3.5 py-2 sm:py-1.5 rounded-lg text-[11px] font-bold border transition-all hover:cursor-pointer active:scale-95 whitespace-nowrap ${activeFormat === f.value
                       ? "bg-[#EF4444] text-white border-[#EF4444] shadow-md shadow-[#EF4444]/20"
                       : "bg-zinc-800/60 text-zinc-400 border-zinc-700/40 hover:text-white hover:border-zinc-600"
-                  }`}
+                    }`}
                 >
                   {f.label}
                 </button>
@@ -215,11 +219,11 @@ const Home = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2.5">
                 {loadingUpd
                   ? Array(9).fill(0).map((_, i) => (
-                      <div
-                        key={i}
-                        className="h-[104px] rounded-xl bg-[#141417] border border-zinc-800/60 animate-pulse"
-                      />
-                    ))
+                    <div
+                      key={i}
+                      className="h-[104px] rounded-xl bg-[#141417] border border-zinc-800/60 animate-pulse"
+                    />
+                  ))
                   : updates?.data?.map((m) => <UpdateRow key={m.manga_id} manga={m} />)}
               </div>
             )}
@@ -231,8 +235,8 @@ const Home = () => {
               {loadingPop
                 ? Array(6).fill(0).map((_, i) => <ListCardSkeleton key={i} />)
                 : popular?.data?.slice(0, 10).map((m, i) => (
-                    <ListCard key={m.manga_id} index={i} manga={m} />
-                  ))}
+                  <ListCard key={m.manga_id} index={i} manga={m} />
+                ))}
             </Panel>
 
             <Panel>
@@ -240,8 +244,8 @@ const Home = () => {
               {loadingTop
                 ? Array(5).fill(0).map((_, i) => <ListCardSkeleton key={i} />)
                 : top?.data?.slice(0, 8).map((m, i) => (
-                    <ListCard key={m.manga_id} index={i} manga={m} />
-                  ))}
+                  <ListCard key={m.manga_id} index={i} manga={m} />
+                ))}
             </Panel>
 
             <Panel>
@@ -269,10 +273,13 @@ const Home = () => {
           />
           <Rail loading={loadingDone} items={completed?.data} />
         </section>
+
+
       </main>
 
       <ButtonCorner />
       <Footer />
+      <BottomNav />
     </div>
   );
 };

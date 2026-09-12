@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
+import BottomNav from "../components/common/BottomNav";
 import ButtonCorner from "../components/ui/ButtonCorner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -93,7 +94,7 @@ const Info = () => {
   ];
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen flex flex-col">
+    <div className="bg-[#09090b] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
       <Navbar />
 
       <main className="max-w-3xl mx-auto px-3 sm:px-4 py-6 flex-1 w-full flex flex-col gap-6">
@@ -197,6 +198,7 @@ const Info = () => {
 
       <ButtonCorner />
       <Footer />
+      <BottomNav />
     </div>
   );
 };

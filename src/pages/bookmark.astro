@@ -2,8 +2,17 @@
 import "../styles/global.css";
 import Layout from "../layouts/Layout.astro";
 import BookmarkComponent from "./_Bookmark";
+export const prerender = false;
+
+const title = "Bookmark Saya — Kurokami";
+const description = "Koleksi manhwa, manga, dan manhua yang kamu simpan di Kurokami. Semua bookmark tersimpan di perangkatmu sendiri tanpa perlu daftar akun.";
 ---
 
-<Layout title="Bookmark - Kurokami">
+<Layout
+  title={title}
+  description={description}
+  keywords="bookmark komik, simpan manhwa, koleksi manga, kurokami"
+  noindex
+>
   <BookmarkComponent slot="body" client:only="react" />
 </Layout>

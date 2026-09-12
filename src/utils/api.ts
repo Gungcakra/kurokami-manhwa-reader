@@ -12,6 +12,16 @@ const fetchData = async (endpoint: string) => {
   }
 };
 
+/**
+ * In-flight/resolved first-chapter lookups, keyed by manga id.
+ *
+ * List endpoints only carry `latest_chapter_*`, so "start from the beginning"
+ * always costs an extra request. Several surfaces ask for the same series (the
+ * home hero as it cycles, the detail CTA), and the hero re-asks every time a
+ * slide comes back around — caching the promise makes all of that one request.
+ */
+const firstChapterCache = new Map<string, Promise<any>>();
+
 export const apiService = {
   getNewUpdate: (page = 1, pageSize = 30, format = "all") =>
     fetchData(
@@ -68,6 +78,24 @@ export const apiService = {
 
   getChapterDetail: (chapterId: string) =>
     fetchData(`/v1/chapter/detail/${chapterId}`),
+
+  /** Chapter 1 of a series — the target of every "Mulai Baca" button. */
+  getFirstChapter: (manhwaId: string): Promise<any> => {
+    const cached = firstChapterCache.get(manhwaId);
+    if (cached) return cached;
+    const req = fetchData(
+      `/v1/chapter/${manhwaId}/list?page=1&page_size=1&sort_by=chapter_number&sort_order=asc`
+    )
+      .then((r) => r?.data?.[0] ?? null)
+      // a failed lookup must not be cached, or the button stays broken for the
+      // rest of the session
+      .catch(() => {
+        firstChapterCache.delete(manhwaId);
+        return null;
+      });
+    firstChapterCache.set(manhwaId, req);
+    return req;
+  },
 
   searchManga: (keyword: string, page = 1, pageSize = 8) =>
     fetchData(`/v1/manga/list?page=${page}&page_size=${pageSize}&q=${keyword}`),

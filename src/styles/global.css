@@ -86,3 +86,59 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* ─────────────────────────────────────────────
+   Mobile behaviour
+   ───────────────────────────────────────────── */
+
+/* Grey flash on every tap looks broken next to the app's own :active states. */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* iOS bumps font sizes on rotate unless this is pinned. */
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+/* Nothing should be able to push a phone viewport sideways. */
+body {
+  overflow-x: hidden;
+}
+
+/* Long titles from the API have no spaces to break on in some locales. */
+h1,
+h2,
+h3 {
+  overflow-wrap: anywhere;
+}
+
+/* Scrollbars are pointer affordances; on touch they just eat 8px of gutter. */
+@media (hover: none) {
+  *::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+  * {
+    scrollbar-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Respects the notch/home-indicator on the fixed mobile chrome. */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}

@@ -2,8 +2,16 @@
 import "../styles/global.css";
 import Layout from "../layouts/Layout.astro";
 import Genres from "./_Genres";
+export const prerender = false;
+
+const title = "Daftar Genre Komik — Action, Romance, Fantasy | Kurokami";
+const description = "Telusuri komik berdasarkan genre di Kurokami: action, romance, fantasy, isekai, manhwa dewasa, dan puluhan genre lainnya. Baca gratis bahasa Indonesia.";
 ---
 
-<Layout title="Daftar Genre - Kurokami">
+<Layout
+  title={title}
+  description={description}
+  keywords="genre manhwa, genre manga, komik action, manhwa romance, manhwa fantasy, isekai, kurokami"
+>
   <Genres slot="body" client:only="react" />
 </Layout>

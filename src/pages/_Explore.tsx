@@ -6,6 +6,7 @@ import CardSkeleton from "../components/ui/CardSkeleton";
 import Pagination from "../components/ui/Pagination";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
+import BottomNav from "../components/common/BottomNav";
 import ButtonCorner from "../components/ui/ButtonCorner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -92,7 +93,7 @@ const Explore = () => {
   const totalPages = results?.meta?.total_page;
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen flex flex-col">
+    <div className="bg-[#09090b] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
       <Navbar />
 
       {/* ── Sticky filter bar ── */}
@@ -265,6 +266,7 @@ const Explore = () => {
 
       <ButtonCorner />
       <Footer />
+      <BottomNav />
     </div>
   );
 };

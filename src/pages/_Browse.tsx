@@ -6,6 +6,7 @@ import CardSkeleton from "../components/ui/CardSkeleton";
 import Pagination from "../components/ui/Pagination";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
+import BottomNav from "../components/common/BottomNav";
 import ButtonCorner from "../components/ui/ButtonCorner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFire, faStar, faBolt, faCircleCheck, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
@@ -84,7 +85,7 @@ const Browse = ({ type = "popular" }) => {
   const totalPages = data?.meta?.total_page;
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen flex flex-col">
+    <div className="bg-[#09090b] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
       <Navbar />
 
       <main className="max-w-screen-2xl mx-auto px-3 sm:px-4 py-5 flex-1 w-full">
@@ -155,6 +156,7 @@ const Browse = ({ type = "popular" }) => {
 
       <ButtonCorner />
       <Footer />
+      <BottomNav />
     </div>
   );
 };

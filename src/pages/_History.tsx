@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { timeAgo } from "../utils/function";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
+import BottomNav from "../components/common/BottomNav";
 import ButtonCorner from "../components/ui/ButtonCorner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClockRotateLeft, faPlay, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -33,7 +34,7 @@ const History = () => {
   };
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen flex flex-col">
+    <div className="bg-[#09090b] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
       <Navbar />
       <div className="max-w-screen-xl mx-auto px-4 py-5 flex-1 w-full">
         <div className="flex items-center justify-between gap-2 mb-5">
@@ -114,6 +115,7 @@ const History = () => {
       </div>
       <ButtonCorner />
       <Footer />
+      <BottomNav />
     </div>
   );
 };

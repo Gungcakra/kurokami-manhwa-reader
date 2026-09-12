@@ -3,8 +3,15 @@ import "../styles/global.css";
 import Layout from "../layouts/Layout.astro";
 import Browse from "./_Browse";
 export const prerender = false;
+
+const title = "Manhwa & Manga Rating Tertinggi — Kurokami";
+const description = "Kumpulan manhwa, manga, dan manhua dengan rating tertinggi pilihan pembaca. Baca judul terbaik bahasa Indonesia gratis di Kurokami.";
 ---
 
-<Layout title="Rating Tertinggi - Kurokami">
+<Layout
+  title={title}
+  description={description}
+  keywords="manhwa rating tertinggi, manga terbaik, komik rating tinggi, rekomendasi manhwa bagus, kurokami"
+>
   <Browse slot="body" type="top" client:only="react" />
 </Layout>

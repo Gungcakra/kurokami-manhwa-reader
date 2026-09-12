@@ -3,8 +3,15 @@ import "../styles/global.css";
 import Layout from "../layouts/Layout.astro";
 import Browse from "./_Browse";
 export const prerender = false;
+
+const title = "Update Chapter Terbaru Hari Ini — Kurokami";
+const description = "Chapter manhwa, manga, dan manhua yang baru saja rilis hari ini di Kurokami. Pantau update terbaru setiap hari dan baca gratis bahasa Indonesia.";
 ---
 
-<Layout title="Update Terbaru - Kurokami">
+<Layout
+  title={title}
+  description={description}
+  keywords="update manhwa terbaru, chapter terbaru hari ini, manga update, rilis komik terbaru, kurokami"
+>
   <Browse slot="body" type="updates" client:only="react" />
 </Layout>

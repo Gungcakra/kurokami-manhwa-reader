@@ -3,8 +3,15 @@ import "../styles/global.css";
 import Layout from "../layouts/Layout.astro";
 import Browse from "./_Browse";
 export const prerender = false;
+
+const title = "Rekomendasi Manhwa & Manga Pilihan — Kurokami";
+const description = "Rekomendasi manhwa, manga, dan manhua pilihan kurator Kurokami. Bingung mau baca apa? Mulai dari daftar ini dan baca gratis bahasa Indonesia.";
 ---
 
-<Layout title="Rekomendasi - Kurokami">
+<Layout
+  title={title}
+  description={description}
+  keywords="rekomendasi manhwa, rekomendasi manga, komik bagus, manhwa wajib baca, kurokami"
+>
   <Browse slot="body" type="recommended" client:only="react" />
 </Layout>

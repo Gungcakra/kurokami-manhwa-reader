@@ -5,6 +5,7 @@ import Card from "../components/ui/Card";
 import CardSkeleton from "../components/ui/CardSkeleton";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
+import BottomNav from "../components/common/BottomNav";
 import ButtonCorner from "../components/ui/ButtonCorner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookmark, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -38,7 +39,7 @@ const Bookmark = () => {
   };
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen flex flex-col">
+    <div className="bg-[#09090b] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
       <Navbar />
       <div className="max-w-screen-2xl mx-auto px-4 py-5 flex-1 w-full">
         <div className="flex items-center justify-between gap-2 mb-5">
@@ -85,6 +86,7 @@ const Bookmark = () => {
       </div>
       <ButtonCorner />
       <Footer />
+      <BottomNav />
     </div>
   );
 };
