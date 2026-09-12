@@ -283,11 +283,7 @@ const Detail = ({ id }: DetailProps) => {
                         </a>
                       )}
 
-                      <ShareButton
-                        className="flex-1 sm:flex-none"
-                        title={manhwa.title}
-                        text={`Baca ${manhwa.title} bahasa Indonesia di Kurokami`}
-                      />
+                      <ShareButton className="flex-1 sm:flex-none" />
 
                       <button onClick={toggleBookmark}
                         className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all hover:cursor-pointer active:scale-[0.98] ${
