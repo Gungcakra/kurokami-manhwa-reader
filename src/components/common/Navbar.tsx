@@ -114,17 +114,17 @@ const Navbar = () => {
               <a
                 key={item.manga_id}
                 href={`/manhwa/${item.manga_id}`}
-                className="flex items-center gap-3 px-3 py-2.5 hover:bg-[#EF4444]/10 active:bg-[#EF4444]/15 transition-colors border-b border-zinc-800/60 last:border-b-0"
+                className="flex items-center gap-3 lg:gap-3.5 px-3 py-2.5 lg:px-4 lg:py-3 hover:bg-[#EF4444]/10 active:bg-[#EF4444]/15 transition-colors border-b border-zinc-800/60 last:border-b-0"
               >
                 <img
                   src={item.cover_image_url}
                   alt=""
                   loading="lazy"
-                  className="w-9 h-12 rounded-md object-cover flex-shrink-0 bg-zinc-900"
+                  className="w-9 h-12 lg:w-11 lg:h-[58px] rounded-md lg:rounded-lg object-cover flex-shrink-0 bg-zinc-900"
                 />
                 <div className="flex flex-col min-w-0 flex-1">
-                  <p className="text-white text-xs font-semibold line-clamp-1 break-words">{item.title}</p>
-                  <div className="flex items-center gap-2 text-[10px] text-zinc-500 mt-0.5">
+                  <p className="text-white text-xs lg:text-sm font-semibold line-clamp-1 break-words">{item.title}</p>
+                  <div className="flex items-center gap-2 text-[10px] lg:text-xs text-zinc-500 mt-0.5">
                     {item.latest_chapter_number != null && (
                       <span className="text-[#EF4444] font-bold">Ch {item.latest_chapter_number}</span>
                     )}
@@ -136,7 +136,7 @@ const Navbar = () => {
             ))}
             <a
               href={`/explore?q=${encodeURIComponent(query.trim())}`}
-              className="block px-3 py-3 text-center text-[11px] font-bold text-[#EF4444] hover:bg-[#EF4444]/10 transition-colors"
+              className="block px-3 py-3 lg:py-3.5 text-center text-[11px] lg:text-[13px] font-bold text-[#EF4444] hover:bg-[#EF4444]/10 transition-colors"
             >
               Lihat semua hasil →
             </a>
@@ -149,11 +149,11 @@ const Navbar = () => {
     <header className="sticky top-0 z-50 bg-[#09090b]/95 backdrop-blur-md border-b border-zinc-800/60">
       <div className="h-[3px] w-full bg-gradient-to-r from-[#EF4444] via-[#DC2626] to-[#EF4444]" />
 
-      <div className="max-w-screen-2xl mx-auto flex items-center gap-3 px-3 sm:px-4 h-14">
+      <div className="max-w-screen-2xl mx-auto flex items-center gap-3 lg:gap-4 px-3 sm:px-4 lg:px-6 h-14 lg:h-[68px]">
         {/* logo */}
         <a href="/" className="flex items-center gap-2 flex-shrink-0">
-          <img src={logo.src} className="w-7 h-7" alt="" />
-          <span className="text-base sm:text-lg font-black tracking-tight">
+          <img src={logo.src} className="w-7 h-7 lg:w-9 lg:h-9" alt="" />
+          <span className="text-base sm:text-lg lg:text-2xl font-black tracking-tight">
             Kuro<span className="text-[#EF4444]">kami</span>
           </span>
         </a>
@@ -164,11 +164,11 @@ const Navbar = () => {
             <a
               key={item.link}
               href={item.link}
-              className={`relative flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold transition-colors ${
+              className={`relative flex items-center gap-1.5 lg:gap-2 px-3 lg:px-3.5 py-2 lg:py-2.5 text-[13px] lg:text-[15px] font-semibold transition-colors ${
                 isActive(item.link) ? "text-[#EF4444]" : "text-zinc-400 hover:text-white"
               }`}
             >
-              <FontAwesomeIcon icon={item.icon} className="text-[11px]" />
+              <FontAwesomeIcon icon={item.icon} className="text-[11px] lg:text-[13px]" />
               {item.name}
               {isActive(item.link) && (
                 <span className="absolute left-2 right-2 -bottom-px h-[2px] bg-[#EF4444] rounded-full" />
@@ -181,7 +181,7 @@ const Navbar = () => {
         <form
           onSubmit={submit}
           ref={searchRef}
-          className="relative hidden md:block flex-1 max-w-sm ml-auto"
+          className="relative hidden md:block flex-1 max-w-sm lg:max-w-md ml-auto"
         >
           <FontAwesomeIcon
             icon={faSearch}
@@ -193,9 +193,9 @@ const Navbar = () => {
             value={query}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="Cari judul…"
-            className="w-full pl-9 pr-12 py-2 bg-[#141417] border border-zinc-800 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/60 transition-colors"
+            className="w-full pl-9 lg:pl-11 pr-12 lg:pr-14 py-2 lg:py-2.5 bg-[#141417] border border-zinc-800 rounded-xl text-xs lg:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/60 transition-colors"
           />
-          <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] text-zinc-600 border border-zinc-700/60 rounded px-1 py-0.5 pointer-events-none">
+          <kbd className="absolute right-2.5 lg:right-3 top-1/2 -translate-y-1/2 text-[9px] lg:text-[11px] text-zinc-600 border border-zinc-700/60 rounded px-1 lg:px-1.5 py-0.5 pointer-events-none">
             ⌘K
           </kbd>
           <SearchResults />
@@ -209,13 +209,13 @@ const Navbar = () => {
               href={item.link}
               title={item.name}
               aria-label={item.name}
-              className={`hidden lg:flex w-9 h-9 items-center justify-center rounded-lg transition-all ${
+              className={`hidden lg:flex w-11 h-11 items-center justify-center rounded-xl transition-all ${
                 isActive(item.link)
                   ? "text-[#EF4444] bg-[#EF4444]/10"
                   : "text-zinc-400 hover:text-white hover:bg-white/5"
               }`}
             >
-              <FontAwesomeIcon icon={item.icon} className="text-sm" />
+              <FontAwesomeIcon icon={item.icon} className="text-base" />
             </a>
           ))}
 

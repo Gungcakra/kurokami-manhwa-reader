@@ -21,11 +21,11 @@ const ButtonCorner = () => {
     return (
         <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className={`fixed bottom-[70px] lg:bottom-4 right-4 z-40 bg-[#EF4444] text-white p-3.5 sm:p-4 rounded-full shadow-lg shadow-[#EF4444]/30 hover:bg-[#DC2626] hover:cursor-pointer transition-all duration-300 transform ${
+            className={`fixed bottom-[70px] lg:bottom-7 right-4 lg:right-7 z-40 bg-[#EF4444] text-white p-3.5 sm:p-4 lg:p-5 rounded-full shadow-lg shadow-[#EF4444]/30 hover:bg-[#DC2626] hover:cursor-pointer transition-all duration-300 transform ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
             }`}
         >
-            <FontAwesomeIcon icon={faArrowUp} className="text-lg sm:text-xl" />
+            <FontAwesomeIcon icon={faArrowUp} className="text-lg sm:text-xl lg:text-2xl" />
         </button>
     );
 };

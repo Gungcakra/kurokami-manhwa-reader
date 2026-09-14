@@ -27,10 +27,10 @@ const ListCard = ({ index, manga, img, title, link, chapter }) => {
   return (
     <a
       href={`/manhwa/${m.id}`}
-      className="group flex items-center gap-2.5 px-3 py-2.5 border-b border-zinc-800/40 hover:bg-[#EF4444]/5 transition-all duration-200 last:border-b-0"
+      className="group flex items-center gap-2.5 lg:gap-3.5 px-3 py-2.5 lg:px-4 lg:py-3.5 border-b border-zinc-800/40 hover:bg-[#EF4444]/5 transition-all duration-200 last:border-b-0"
     >
       <span
-        className={`w-5 h-5 flex items-center justify-center rounded-md text-[10px] font-black flex-shrink-0 ${rankStyle(
+        className={`w-5 h-5 lg:w-7 lg:h-7 flex items-center justify-center rounded-md lg:rounded-lg text-[10px] lg:text-xs font-black flex-shrink-0 ${rankStyle(
           index
         )}`}
       >
@@ -40,13 +40,13 @@ const ListCard = ({ index, manga, img, title, link, chapter }) => {
         src={(m.cover || "").split("?")[0]}
         alt=""
         loading="lazy"
-        className="w-9 h-12 rounded-md object-cover flex-shrink-0 bg-zinc-900"
+        className="w-9 h-12 lg:w-12 lg:h-16 rounded-md lg:rounded-lg object-cover flex-shrink-0 bg-zinc-900"
       />
       <div className="flex flex-col min-w-0 flex-1 gap-0.5">
-        <p className="text-white text-[11px] font-semibold line-clamp-2 leading-snug group-hover:text-[#EF4444] transition-colors">
+        <p className="text-white text-[11px] lg:text-[13px] font-semibold line-clamp-2 leading-snug group-hover:text-[#EF4444] transition-colors">
           {m.title}
         </p>
-        <div className="flex items-center gap-1.5 text-[10px] text-zinc-500 leading-none">
+        <div className="flex items-center gap-1.5 lg:gap-2 text-[10px] lg:text-[11px] text-zinc-500 leading-none">
           {m.chapterNumber != null && (
             <span className="text-[#EF4444] font-bold">Ch {m.chapterNumber}</span>
           )}

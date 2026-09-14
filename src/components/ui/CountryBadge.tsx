@@ -10,7 +10,7 @@ const CountryBadge = ({ code, className = "" }) => {
   if (!label) return null;
   return (
     <span
-      className={`px-1 py-px rounded border text-[8px] font-black leading-none tracking-wide ${countryTone(
+      className={`px-1 py-px lg:px-1.5 lg:py-0.5 rounded border text-[8px] lg:text-[10px] font-black leading-none tracking-wide ${countryTone(
         code
       )} ${className}`}
     >

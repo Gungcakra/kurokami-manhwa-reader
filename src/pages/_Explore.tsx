@@ -97,21 +97,21 @@ const Explore = () => {
       <Navbar />
 
       {/* ── Sticky filter bar ── */}
-      <div className="sticky top-[60px] z-30 bg-[#09090b]/95 backdrop-blur-md border-b border-zinc-800/50">
-        <div className="max-w-screen-xl mx-auto px-4 py-3 flex flex-col gap-2">
+      <div className="sticky top-[60px] lg:top-[71px] z-30 bg-[#09090b]/95 backdrop-blur-md border-b border-zinc-800/50">
+        <div className="max-w-screen-2xl mx-auto px-4 lg:px-6 py-3 lg:py-4 flex flex-col gap-2 lg:gap-3">
 
           {/* Row 1: search + genre toggle + reset */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 lg:gap-3">
             <div className="relative flex-1">
               <FontAwesomeIcon icon={faSearch}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs" />
               <input type="text" placeholder="Cari judul manga / manhwa..."
                 value={keyword}
                 onChange={(e) => { setKeyword(e.target.value); setPage(1); }}
-                className="w-full pl-9 pr-3 py-2 bg-[#18181b] border border-zinc-700/40 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/50" />
+                className="w-full pl-9 lg:pl-11 pr-3 py-2 lg:py-3 bg-[#18181b] border border-zinc-700/40 rounded-xl text-sm lg:text-base text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/50" />
             </div>
             <button onClick={() => setShowGenres((p) => !p)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-all hover:cursor-pointer flex-shrink-0 ${
+              className={`flex items-center gap-1.5 lg:gap-2 px-3 py-2 lg:px-5 lg:py-3 rounded-xl text-xs lg:text-sm font-semibold border transition-all hover:cursor-pointer flex-shrink-0 ${
                 selectedGenres.length > 0
                   ? "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30"
                   : "bg-[#18181b] text-zinc-400 border-zinc-700/40 hover:text-white"
@@ -123,7 +123,7 @@ const Explore = () => {
             </button>
             {hasFilters && (
               <button onClick={clearFilters} title="Reset semua filter"
-                className="p-2 rounded-xl text-zinc-400 hover:text-[#EF4444] bg-zinc-800/50 border border-zinc-700/40 hover:border-[#EF4444]/30 transition-all hover:cursor-pointer flex-shrink-0">
+                className="p-2 lg:p-3 rounded-xl text-zinc-400 hover:text-[#EF4444] bg-zinc-800/50 border border-zinc-700/40 hover:border-[#EF4444]/30 transition-all hover:cursor-pointer flex-shrink-0">
                 <FontAwesomeIcon icon={faTimes} className="text-xs" />
               </button>
             )}
@@ -135,7 +135,7 @@ const Explore = () => {
             <div className="flex gap-1 flex-shrink-0">
               {FORMATS.map((f) => (
                 <button key={f.value} onClick={() => { setFormat(f.value); setPage(1); }}
-                  className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold border transition-all hover:cursor-pointer whitespace-nowrap ${
+                  className={`px-2.5 py-1.5 lg:px-4 lg:py-2.5 rounded-xl text-xs lg:text-sm font-semibold border transition-all hover:cursor-pointer whitespace-nowrap ${
                     format === f.value
                       ? "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30"
                       : "bg-zinc-800/60 text-zinc-400 border-zinc-700/40 hover:text-white"
@@ -149,23 +149,23 @@ const Explore = () => {
 
             {/* Status */}
             <select value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-              className="px-3 py-1.5 bg-zinc-800/60 border border-zinc-700/40 rounded-xl text-xs text-zinc-300 focus:outline-none focus:border-[#EF4444]/50 hover:cursor-pointer flex-shrink-0">
+              className="px-3 py-1.5 lg:px-4 lg:py-2.5 bg-zinc-800/60 border border-zinc-700/40 rounded-xl text-xs lg:text-sm text-zinc-300 focus:outline-none focus:border-[#EF4444]/50 hover:cursor-pointer flex-shrink-0">
               {STATUS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
             </select>
 
             {/* Sort */}
             <select value={sort} onChange={(e) => { setSort(e.target.value); setPage(1); }}
-              className="px-3 py-1.5 bg-zinc-800/60 border border-zinc-700/40 rounded-xl text-xs text-zinc-300 focus:outline-none focus:border-[#EF4444]/50 hover:cursor-pointer flex-shrink-0">
+              className="px-3 py-1.5 lg:px-4 lg:py-2.5 bg-zinc-800/60 border border-zinc-700/40 rounded-xl text-xs lg:text-sm text-zinc-300 focus:outline-none focus:border-[#EF4444]/50 hover:cursor-pointer flex-shrink-0">
               {SORT_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
             </select>
           </div>
 
           {/* Genre panel */}
           {showGenres && genres.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 pt-2 pb-1 border-t border-zinc-800/50 max-h-40 overflow-y-auto scrollbar-hide">
+            <div className="flex flex-wrap gap-1.5 lg:gap-2 pt-2 lg:pt-3 pb-1 border-t border-zinc-800/50 max-h-40 lg:max-h-56 overflow-y-auto scrollbar-hide">
               {genres.map((g) => (
                 <button key={g.genre_id || g.slug} onClick={() => toggleGenre(g.slug)}
-                  className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-all hover:cursor-pointer ${
+                  className={`px-2.5 py-1 lg:px-4 lg:py-1.5 rounded-full text-xs lg:text-sm font-medium border transition-all hover:cursor-pointer ${
                     selectedGenres.includes(g.slug)
                       ? "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30"
                       : "bg-zinc-800/60 text-zinc-400 border-zinc-700/40 hover:text-white hover:border-zinc-600"
@@ -179,18 +179,18 @@ const Explore = () => {
       </div>
 
       {/* ── Results ── */}
-      <div className="max-w-screen-xl mx-auto px-4 py-5 w-full flex-1">
-        <div className="bg-[#18181b] rounded-2xl border border-zinc-800/50 overflow-hidden">
+      <div className="max-w-screen-2xl mx-auto px-4 lg:px-6 py-5 lg:py-9 w-full flex-1">
+        <div className="bg-[#18181b] rounded-2xl lg:rounded-3xl border border-zinc-800/50 overflow-hidden">
 
           {/* Results header */}
-          <div className="flex flex-wrap items-center justify-between gap-2 px-4 sm:px-5 py-3.5 border-b border-zinc-800/50 bg-zinc-900/40">
+          <div className="flex flex-wrap items-center justify-between gap-2 px-4 sm:px-5 lg:px-7 py-3.5 lg:py-5 border-b border-zinc-800/50 bg-zinc-900/40">
             <div className="flex items-center gap-2">
-              <FontAwesomeIcon icon={faCompass} className="text-[#EF4444] text-sm" />
-              <h2 className="font-bold text-sm">
+              <FontAwesomeIcon icon={faCompass} className="text-[#EF4444] text-sm lg:text-lg" />
+              <h2 className="font-bold text-sm lg:text-lg">
                 {keyword ? `Hasil: "${keyword}"` : "Jelajahi"}
               </h2>
               {!loading && resultCount > 0 && (
-                <span className="px-2 py-0.5 bg-[#EF4444]/15 text-[#EF4444] text-xs font-bold rounded-lg border border-[#EF4444]/20">
+                <span className="px-2 py-0.5 lg:px-3 lg:py-1 bg-[#EF4444]/15 text-[#EF4444] text-xs lg:text-sm font-bold rounded-lg border border-[#EF4444]/20">
                   {resultCount.toLocaleString()}
                 </span>
               )}
@@ -231,7 +231,7 @@ const Explore = () => {
 
           {/* Card grid */}
           {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-2.5 p-3.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 lg:gap-4 p-3.5 lg:p-6">
               {Array(24).fill(0).map((_, i) => <CardSkeleton key={i} />)}
             </div>
           ) : results?.data?.length === 0 ? (
@@ -246,7 +246,7 @@ const Explore = () => {
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-2.5 p-3.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 lg:gap-4 p-3.5 lg:p-6">
               {results?.data?.map((m) => (
                 <Card key={m.manga_id} manga={m} />
               ))}
@@ -255,7 +255,7 @@ const Explore = () => {
 
           {/* Pagination */}
           {!loading && results?.data?.length > 0 && (
-            <div className="px-4 pb-5">
+            <div className="px-4 lg:px-6 pb-5 lg:pb-7">
               <Pagination page={page} onPageChange={setPage}
                 totalPages={totalPages}
                 hasNext={!!results?.data?.length && results.data.length >= 24} />

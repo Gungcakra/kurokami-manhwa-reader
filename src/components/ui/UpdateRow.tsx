@@ -18,21 +18,21 @@ const UpdateRow = ({ manga }) => {
       : [];
 
   return (
-    <div className="flex gap-3 p-3 rounded-xl bg-[#141417] border border-zinc-800/60 hover:border-[#EF4444]/40 transition-all duration-200">
+    <div className="flex gap-3 lg:gap-4 p-3 lg:p-4 rounded-xl lg:rounded-2xl bg-[#141417] border border-zinc-800/60 hover:border-[#EF4444]/40 transition-all duration-200">
       <a href={`/manhwa/${m.id}`} className="relative flex-shrink-0 group">
         <img
           src={m.cover}
           alt={m.title}
           loading="lazy"
-          className="w-14 h-[76px] sm:w-16 sm:h-[88px] rounded-lg object-cover bg-zinc-900 group-hover:opacity-80 transition-opacity"
+          className="w-14 h-[76px] sm:w-16 sm:h-[88px] lg:w-[76px] lg:h-[106px] rounded-lg lg:rounded-xl object-cover bg-zinc-900 group-hover:opacity-80 transition-opacity"
         />
         <CountryBadge code={m.country} className="absolute -bottom-1 -right-1" />
       </a>
 
-      <div className="flex flex-col min-w-0 flex-1 gap-1.5">
+      <div className="flex flex-col min-w-0 flex-1 gap-1.5 lg:gap-2">
         <a
           href={`/manhwa/${m.id}`}
-          className="text-white text-xs sm:text-sm font-bold line-clamp-2 leading-snug hover:text-[#EF4444] transition-colors"
+          className="text-white text-xs sm:text-sm lg:text-base font-bold line-clamp-2 leading-snug hover:text-[#EF4444] transition-colors"
         >
           {m.title}
         </a>
@@ -45,7 +45,7 @@ const UpdateRow = ({ manga }) => {
               className="flex items-center justify-between gap-2 group/ch"
             >
               <span className="flex items-center gap-1.5 min-w-0">
-                <span className="text-[11px] text-zinc-400 group-hover/ch:text-[#EF4444] transition-colors truncate">
+                <span className="text-[11px] lg:text-[13px] text-zinc-400 group-hover/ch:text-[#EF4444] transition-colors truncate">
                   Chapter {c.chapter_number}
                 </span>
                 {isRecent(c.created_at, 1) && (
@@ -54,7 +54,7 @@ const UpdateRow = ({ manga }) => {
                   </span>
                 )}
               </span>
-              <span className="text-[10px] text-zinc-600 flex-shrink-0">
+              <span className="text-[10px] lg:text-xs text-zinc-600 flex-shrink-0">
                 {timeAgoShort(c.created_at)}
               </span>
             </a>

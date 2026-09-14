@@ -5,11 +5,13 @@ import { timeAgoShort, isRecent } from "../utils/function";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
-  faArrowRight,
+  faArrowUp,
+  faChevronLeft,
+  faChevronRight,
+  faChevronUp,
+  faChevronDown,
   faListUl,
   faBook,
-  faHouse,
-  faChevronUp,
   faSpinner,
   faXmark,
   faSearch,
@@ -17,6 +19,7 @@ import {
   faCheckCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import ChapterSkeleton from "../components/ui/ChapterSkeleton";
+import logo from "../assets/images/logos/logo.png";
 
 /** Chapters pulled per request by the picker sidebar. */
 const PICKER_PAGE_SIZE = 120;
@@ -26,7 +29,11 @@ const PICKER_PAGE_SIZE = 120;
  *
  * Chapters swap **in place**: prev/next update `currentId`, which refetches and
  * resets the scroll position rather than doing a full page navigation.
- * Tapping the page area toggles the top/bottom control bars.
+ *
+ * The chrome is a floating title pill at the top, a row of circular controls at
+ * the bottom of the viewport, and a pair of page-scroll buttons on the right
+ * edge. All three slide away while scrolling down and come back on a tap, on a
+ * scroll up, or on the space bar.
  */
 const Chapter = ({ idChapter }) => {
   const [currentId, setCurrentId] = useState(idChapter);
@@ -70,6 +77,8 @@ const Chapter = ({ idChapter }) => {
    * still regardless of row heights.
    */
   const prevHeightRef = useRef(null);
+  /** Timestamp until which scroll events are the app's own, not the reader's. */
+  const autoScrollUntil = useRef(0);
 
   // ── fetch chapter ──
   useEffect(() => {
@@ -291,7 +300,7 @@ const Chapter = ({ idChapter }) => {
     return () => window.removeEventListener("keydown", onKey);
   }, [prevId, nextId, goTo, showPicker]);
 
-  // ── scroll progress + auto-hide controls while scrolling down ──
+  // ── scroll progress + auto-hide the chrome while scrolling down ──
   useEffect(() => {
     let lastY = window.scrollY;
     const onScroll = () => {
@@ -299,187 +308,189 @@ const Chapter = ({ idChapter }) => {
       setProgress(h > 0 ? Math.min(100, (window.scrollY / h) * 100) : 0);
 
       const y = window.scrollY;
-      if (y > lastY + 24 && y > 200) setShowControls(false);
-      else if (y < lastY - 24) setShowControls(true);
+      // a scroll this code started is not the reader scrolling, so it must not
+      // hide the very button that was just pressed
+      if (Date.now() >= autoScrollUntil.current) {
+        if (y > lastY + 24 && y > 200) setShowControls(false);
+        else if (y < lastY - 24) setShowControls(true);
+      }
       lastY = y;
     };
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [currentId]);
 
-  const NavButton = ({ id, dir, label }) =>
-    id ? (
-      <button
-        onClick={() => goTo(id)}
-        className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all hover:cursor-pointer ${
-          dir === "next"
-            ? "bg-[#EF4444] text-white hover:bg-[#DC2626]"
-            : "bg-[#1a1a1f] border border-zinc-700/60 text-zinc-300 hover:border-[#EF4444]/60 hover:text-white"
-        }`}
-      >
-        {dir === "prev" && <FontAwesomeIcon icon={faArrowLeft} className="text-[10px]" />}
-        <span className="hidden sm:inline">{label}</span>
-        {dir === "next" && <FontAwesomeIcon icon={faArrowRight} className="text-[10px]" />}
-      </button>
-    ) : (
-      <span className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-[#1a1a1f]/40 border border-zinc-800/40 text-zinc-700 cursor-default">
-        {dir === "prev" && <FontAwesomeIcon icon={faArrowLeft} className="text-[10px]" />}
-        <span className="hidden sm:inline">{label}</span>
-        {dir === "next" && <FontAwesomeIcon icon={faArrowRight} className="text-[10px]" />}
-      </span>
-    );
+  /** Circular floating control — the only chrome the reader shows. */
+  const Round = ({ icon, label, onClick, disabled = false }) => (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={label}
+      title={label}
+      className="w-12 md:w-16 aspect-square rounded-full bg-[#141417]/95 border border-zinc-800/70 text-white flex items-center justify-center shadow-lg shadow-black/50 backdrop-blur-sm transition-all hover:border-[#EF4444]/60 hover:text-[#EF4444] active:scale-95 hover:cursor-pointer disabled:opacity-30 disabled:pointer-events-none"
+    >
+      <FontAwesomeIcon icon={icon} className="text-base md:text-xl" />
+    </button>
+  );
+
+  const scrollTop = () => {
+    autoScrollUntil.current = Date.now() + 1000;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  // a screenful at a time, matching the reference reader's edge buttons
+  const scrollScreen = (dir) => {
+    autoScrollUntil.current = Date.now() + 1000;
+    window.scrollBy({ top: dir * window.innerHeight * 0.9, behavior: "smooth" });
+  };
 
   return (
     <div className="bg-[#09090b] text-white min-h-screen flex flex-col">
-      {/* ── top bar ── */}
-      <header
-        className={`fixed top-0 inset-x-0 z-50 bg-[#09090b]/95 backdrop-blur-md border-b border-zinc-800/60 transition-transform duration-300 ${
-          showControls ? "translate-y-0" : "-translate-y-full"
-        }`}
-      >
-        <div className="max-w-4xl mx-auto px-3 sm:px-4 h-14 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 min-w-0">
-            <a
-              href="/"
-              aria-label="Beranda"
-              className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#1a1a1f] border border-zinc-700/60 text-zinc-400 hover:text-white hover:border-[#EF4444]/60 transition-all flex-shrink-0"
-            >
-              <FontAwesomeIcon icon={faHouse} className="text-xs" />
-            </a>
-            {mangaId && (
-              <a
-                href={`/manhwa/${mangaId}`}
-                aria-label="Detail manhwa"
-                title="Detail manhwa"
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#1a1a1f] border border-zinc-700/60 text-zinc-400 hover:text-white hover:border-[#EF4444]/60 transition-all flex-shrink-0"
-              >
-                <FontAwesomeIcon icon={faBook} className="text-xs" />
-              </a>
-            )}
-            <div className="min-w-0 ml-1">
-              <p className="text-white text-xs font-bold truncate">{manhwa?.title ?? "Memuat…"}</p>
-              {chapterNum != null && (
-                <p className="text-[#EF4444] text-[10px] font-bold">Chapter {chapterNum}</p>
-              )}
-            </div>
-          </div>
+      {/* reading progress — a hairline above everything else */}
+      <div className="fixed top-0 inset-x-0 z-[130] h-[3px] bg-zinc-900/70">
+        <div
+          className="h-full bg-[#EF4444] transition-[width] duration-150"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
 
-          <div className="flex items-center gap-1.5 flex-shrink-0">
-            <NavButton id={prevId} dir="prev" label="Prev" />
-            <NavButton id={nextId} dir="next" label="Next" />
-          </div>
-        </div>
-
-        {/* reading progress */}
-        <div className="h-[2px] bg-zinc-800/60">
-          <div
-            className="h-full bg-[#EF4444] transition-[width] duration-150"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      </header>
-
-      {/* ── pages ── */}
-      <main className="flex-1 pt-14" onClick={() => setShowControls((p) => !p)}>
-        {loading ? (
-          <ChapterSkeleton />
-        ) : images.length > 0 ? (
-          <div className="flex flex-col items-center w-full">
-            {images.map((image, i) => (
-              <img
-                key={`${currentId}-${i}`}
-                src={`${basePath}/${image}`}
-                alt={`Halaman ${i + 1}`}
-                loading={i < 3 ? "eager" : "lazy"}
-                className="w-full max-w-3xl block select-none"
-                draggable={false}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-24 gap-3">
-            <p className="text-zinc-500 text-sm">Gambar chapter tidak ditemukan.</p>
-            {mangaId && (
-              <a href={`/manhwa/${mangaId}`} className="text-[#EF4444] text-sm font-semibold hover:underline">
-                Kembali ke detail →
-              </a>
-            )}
-          </div>
-        )}
-      </main>
-
-      {/* ── end-of-chapter actions ── */}
-      {!loading && images.length > 0 && (
-        <section className="max-w-4xl mx-auto w-full px-3 sm:px-4 py-8 flex flex-col items-center gap-4">
-          <p className="text-zinc-500 text-xs">
-            Selesai membaca <span className="text-white font-bold">Chapter {chapterNum}</span>
-          </p>
-          <div className="flex items-center gap-2">
-            <NavButton id={prevId} dir="prev" label="Chapter Sebelumnya" />
-            <NavButton id={nextId} dir="next" label="Chapter Selanjutnya" />
-          </div>
-          {mangaId && (
-            <a
-              href={`/manhwa/${mangaId}`}
-              className="text-[11px] text-zinc-500 hover:text-[#EF4444] font-semibold transition-colors"
-            >
-              ← Lihat semua chapter
-            </a>
-          )}
-        </section>
-      )}
-
-      {/* ── bottom bar ── */}
+      {/* ── floating title pill ── */}
       <div
-        className={`fixed bottom-0 inset-x-0 z-50 bg-[#09090b]/95 backdrop-blur-md border-t border-zinc-800/60 transition-transform duration-300 ${
-          showControls ? "translate-y-0" : "translate-y-full"
+        className={`fixed top-0 inset-x-0 z-[120] h-[84px] md:h-[116px] flex items-center px-4 md:px-16 transition-all duration-300 ${
+          showControls ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
         }`}
       >
-        <div className="max-w-4xl mx-auto px-3 sm:px-4 h-14 flex items-center justify-between gap-3">
-          <NavButton id={prevId} dir="prev" label="Prev" />
-
-          <div className="flex items-center gap-2">
-            {loading && <FontAwesomeIcon icon={faSpinner} className="text-[#EF4444] text-xs animate-spin" />}
-
-            {/* the chapter indicator doubles as the picker trigger — it is the
-                most reachable spot on a phone and needs no extra icon slot */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowPicker(true);
-              }}
-              aria-label="Pilih chapter"
-              aria-expanded={showPicker}
-              className="flex items-center gap-2 h-9 px-3 rounded-lg bg-[#1a1a1f] border border-zinc-700/60 text-zinc-300 hover:text-white hover:border-[#EF4444]/60 active:scale-95 transition-all hover:cursor-pointer"
+        <div className="max-w-5xl mx-auto w-full">
+          <div className="flex justify-between items-center gap-4 rounded-xl px-2 py-1 sm:px-6 sm:py-3 bg-[#141417]/95 border border-zinc-800/70 shadow-xl shadow-black/50 backdrop-blur-md">
+            <a
+              href={mangaId ? `/manhwa/${mangaId}` : "/"}
+              aria-label="Kembali ke detail manhwa"
+              title="Kembali ke detail manhwa"
+              className="px-1 py-4 sm:px-4 text-white hover:text-[#EF4444] transition-colors flex-shrink-0"
             >
-              <FontAwesomeIcon icon={faListUl} className="text-[11px] text-[#EF4444]" />
-              <span className="text-[11px] font-bold">
-                {chapterNum != null ? `Ch ${chapterNum}` : "Chapter"}
+              <FontAwesomeIcon icon={faArrowLeft} className="text-lg" />
+            </a>
+
+            <div className="flex items-center gap-2 min-w-0 text-sm font-medium">
+              <a
+                href={mangaId ? `/manhwa/${mangaId}` : "/"}
+                className="line-clamp-1 w-fit break-all hover:text-[#EF4444] transition-colors"
+              >
+                {manhwa?.title ?? "Memuat…"}
+              </a>
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                className="text-[11px] text-zinc-500 flex-shrink-0"
+              />
+              <span className="whitespace-nowrap text-[#EF4444] font-semibold flex-shrink-0">
+                <span className="md:hidden">Ch</span>
+                <span className="hidden md:inline">Chapter</span> {chapterNum ?? "…"}
               </span>
-            </button>
+            </div>
 
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
+              onClick={scrollTop}
               aria-label="Kembali ke atas"
-              className="w-9 h-9 flex items-center justify-center rounded-lg bg-[#1a1a1f] border border-zinc-700/60 text-zinc-400 hover:text-white hover:border-[#EF4444]/60 transition-all hover:cursor-pointer"
+              title="Kembali ke atas"
+              className="px-1 py-4 sm:px-4 text-white hover:text-[#EF4444] transition-colors hover:cursor-pointer flex-shrink-0"
             >
-              <FontAwesomeIcon icon={faChevronUp} className="text-xs" />
+              <FontAwesomeIcon icon={faArrowUp} className="text-lg" />
             </button>
           </div>
-
-          <NavButton id={nextId} dir="next" label="Next" />
         </div>
       </div>
 
-      {/* keeps the last page clear of the fixed bottom bar */}
-      <div className="h-14" />
+      {/* ── page column (cleared of the fixed title pill) ──
+          Tapping anywhere on the pages toggles the chrome. */}
+      <div
+        className="flex-1 relative flex flex-col pt-[84px] md:pt-[116px]"
+        onClick={() => setShowControls((p) => !p)}
+      >
+        <div className="flex flex-col">
+          {loading ? (
+            <ChapterSkeleton />
+          ) : images.length > 0 ? (
+            <div className="max-w-[800px] mx-auto w-full flex flex-col items-center">
+              {images.map((image, i) => (
+                <img
+                  key={`${currentId}-${i}`}
+                  src={`${basePath}/${image}`}
+                  alt={`Halaman ${i + 1}`}
+                  loading={i < 3 ? "eager" : "lazy"}
+                  className="w-full object-contain block select-none"
+                  draggable={false}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-24 gap-3">
+              <p className="text-zinc-500 text-sm lg:text-base">Gambar chapter tidak ditemukan.</p>
+              {mangaId && (
+                <a
+                  href={`/manhwa/${mangaId}`}
+                  className="text-[#EF4444] text-sm font-semibold hover:underline"
+                >
+                  Kembali ke detail →
+                </a>
+              )}
+            </div>
+          )}
+
+        </div>
+      </div>
+
+      {/* ── control bar, floating over the pages ── */}
+      <div
+        className={`fixed inset-x-0 bottom-8 md:bottom-10 z-[110] flex justify-center pointer-events-none transition-all duration-300 ${
+          showControls ? "translate-y-0 opacity-100" : "translate-y-[200%] opacity-0"
+        }`}
+      >
+        <div className="flex items-center gap-3 md:gap-4 pointer-events-auto">
+          <Round
+            icon={faChevronLeft}
+            label="Chapter sebelumnya"
+            onClick={() => goTo(prevId)}
+            disabled={!prevId}
+          />
+          <Round
+            icon={faChevronRight}
+            label="Chapter selanjutnya"
+            onClick={() => goTo(nextId)}
+            disabled={!nextId}
+          />
+          <Round icon={faListUl} label="Daftar chapter" onClick={() => setShowPicker(true)} />
+          <Round icon={faArrowUp} label="Kembali ke atas" onClick={scrollTop} />
+        </div>
+      </div>
+
+      {/* ── page-scroll shortcuts on the right edge ── */}
+      <div
+        className={`fixed right-3 md:right-6 bottom-[104px] md:bottom-28 z-[100] flex flex-col gap-3 transition-all duration-300 ${
+          showControls ? "translate-x-0 opacity-100" : "translate-x-[200%] opacity-0 pointer-events-none"
+        }`}
+      >
+        <Round icon={faChevronUp} label="Gulir ke atas" onClick={() => scrollScreen(-1)} />
+        <Round icon={faChevronDown} label="Gulir ke bawah" onClick={() => scrollScreen(1)} />
+      </div>
+
+      {/* ── footer ── */}
+      <footer className="bg-[#111116] border-t border-zinc-800/60 pt-8 lg:pt-12 pb-32 md:pb-36">
+        <div className="flex flex-col items-center justify-center gap-5 px-4 text-center">
+          <a href="/" className="flex items-center gap-2.5">
+            <img src={logo.src} className="w-9 h-9" alt="" />
+            <span className="text-xl font-black tracking-tight">
+              Kuro<span className="text-[#EF4444]">kami</span>
+            </span>
+          </a>
+          <p className="text-xs md:text-sm font-medium text-zinc-500">
+            Copyright ©2025 Kurokami. All Rights Reserved.
+          </p>
+        </div>
+      </footer>
 
       {/* ── chapter picker — overlay sidebar from the right ── */}
       <div
-        className={`fixed inset-0 z-[80] transition-opacity duration-300 ${
+        className={`fixed inset-0 z-[140] transition-opacity duration-300 ${
           showPicker ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setShowPicker(false)}
@@ -491,17 +502,17 @@ const Chapter = ({ idChapter }) => {
           aria-modal="true"
           aria-label="Pilih chapter"
           onClick={(e) => e.stopPropagation()}
-          className={`absolute right-0 top-0 h-full w-[340px] sm:w-[420px] max-w-[88vw] bg-[#0e0e11] border-l border-zinc-800 flex flex-col shadow-2xl shadow-black/80 transition-transform duration-300 ease-out ${
+          className={`absolute right-0 top-0 h-full w-[340px] sm:w-[420px] lg:w-[520px] max-w-[88vw] bg-[#0e0e11] border-l border-zinc-800 flex flex-col shadow-2xl shadow-black/80 transition-transform duration-300 ease-out ${
             showPicker ? "translate-x-0" : "translate-x-full"
           }`}
         >
           {/* header */}
-          <div className="flex items-center justify-between gap-2 px-4 h-14 border-b border-zinc-800 flex-shrink-0">
+          <div className="flex items-center justify-between gap-2 px-4 lg:px-5 h-14 lg:h-[68px] border-b border-zinc-800 flex-shrink-0">
             <div className="flex items-center gap-2 min-w-0">
-              <FontAwesomeIcon icon={faListUl} className="text-[#EF4444] text-sm flex-shrink-0" />
-              <h2 className="font-bold text-sm truncate">Daftar Chapter</h2>
+              <FontAwesomeIcon icon={faListUl} className="text-[#EF4444] text-sm lg:text-lg flex-shrink-0" />
+              <h2 className="font-bold text-sm lg:text-lg truncate">Daftar Chapter</h2>
               {chTotal != null && (
-                <span className="px-2 py-0.5 bg-[#EF4444]/15 text-[#EF4444] text-[10px] font-bold rounded-lg border border-[#EF4444]/20 flex-shrink-0">
+                <span className="px-2 py-0.5 lg:px-3 lg:py-1 bg-[#EF4444]/15 text-[#EF4444] text-[10px] lg:text-xs font-bold rounded-lg border border-[#EF4444]/20 flex-shrink-0">
                   {chTotal}
                 </span>
               )}
@@ -509,16 +520,16 @@ const Chapter = ({ idChapter }) => {
             <button
               onClick={() => setShowPicker(false)}
               aria-label="Tutup daftar chapter"
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 active:scale-95 transition-all flex-shrink-0 hover:cursor-pointer"
+              className="w-8 h-8 lg:w-10 lg:h-10 flex items-center justify-center rounded-lg text-zinc-400 hover:text-white hover:bg-white/5 active:scale-95 transition-all flex-shrink-0 hover:cursor-pointer"
             >
               <FontAwesomeIcon icon={faXmark} />
             </button>
           </div>
 
           {/* series + filters */}
-          <div className="px-3 py-3 border-b border-zinc-800/70 flex flex-col gap-2.5 flex-shrink-0">
+          <div className="px-3 lg:px-4 py-3 lg:py-4 border-b border-zinc-800/70 flex flex-col gap-2.5 lg:gap-3 flex-shrink-0">
             {manhwa?.title && (
-              <p className="text-[11px] text-zinc-500 truncate">{manhwa.title}</p>
+              <p className="text-[11px] lg:text-sm text-zinc-500 truncate">{manhwa.title}</p>
             )}
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
@@ -532,13 +543,13 @@ const Chapter = ({ idChapter }) => {
                   value={chQuery}
                   onChange={(e) => onPickerSearch(e.target.value)}
                   placeholder="Cari chapter…"
-                  className="w-full pl-7 pr-3 py-2 bg-zinc-800/60 border border-zinc-700/40 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/50"
+                  className="w-full pl-7 lg:pl-9 pr-3 py-2 lg:py-2.5 bg-zinc-800/60 border border-zinc-700/40 rounded-xl text-xs lg:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/50"
                 />
               </div>
               <button
                 onClick={() => setChOrder((o) => (o === "desc" ? "asc" : "desc"))}
                 aria-label="Ubah urutan"
-                className={`flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-[11px] font-semibold border transition-all active:scale-95 flex-shrink-0 hover:cursor-pointer ${
+                className={`flex items-center gap-1.5 lg:gap-2 px-2.5 py-2 lg:px-4 lg:py-2.5 rounded-xl text-[11px] lg:text-sm font-semibold border transition-all active:scale-95 flex-shrink-0 hover:cursor-pointer ${
                   chOrder === "asc"
                     ? "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30"
                     : "bg-zinc-800/60 text-zinc-400 border-zinc-700/40 hover:text-white"
@@ -551,14 +562,14 @@ const Chapter = ({ idChapter }) => {
           </div>
 
           {/* list */}
-          <div ref={pickerScrollRef} className="relative flex-1 overflow-y-auto overscroll-contain p-2.5 flex flex-col gap-2">
+          <div ref={pickerScrollRef} className="relative flex-1 overflow-y-auto overscroll-contain p-2.5 lg:p-4 flex flex-col gap-2 lg:gap-3">
             {chapters.length === 0 ? (
               chLoading ? (
-                <div className="grid grid-cols-4 sm:grid-cols-5 gap-1.5">
+                <div className="grid grid-cols-4 sm:grid-cols-5 gap-1.5 lg:gap-2">
                   {Array(40)
                     .fill(0)
                     .map((_, i) => (
-                      <div key={i} className="h-[42px] rounded-lg bg-zinc-800/40 animate-pulse" />
+                      <div key={i} className="h-[42px] lg:h-[54px] rounded-lg bg-zinc-800/40 animate-pulse" />
                     ))}
                 </div>
               ) : (
@@ -573,7 +584,7 @@ const Chapter = ({ idChapter }) => {
                   <button
                     onClick={loadPrevPage}
                     disabled={chLoading}
-                    className="py-2 rounded-xl border border-zinc-800 bg-zinc-800/40 text-[11px] font-bold text-zinc-300 hover:text-white hover:border-[#EF4444]/40 transition-all disabled:opacity-50 flex-shrink-0 hover:cursor-pointer"
+                    className="py-2 lg:py-3 rounded-xl border border-zinc-800 bg-zinc-800/40 text-[11px] lg:text-sm font-bold text-zinc-300 hover:text-white hover:border-[#EF4444]/40 transition-all disabled:opacity-50 flex-shrink-0 hover:cursor-pointer"
                   >
                     {chLoading ? (
                       <FontAwesomeIcon icon={faSpinner} className="animate-spin text-[#EF4444]" />
@@ -586,7 +597,7 @@ const Chapter = ({ idChapter }) => {
                 {/* Number tiles rather than full-width rows: a 900-chapter series
                     is navigated by number, and 4-5 per row puts ~10x more of it
                     on screen at once. */}
-                <div className="grid grid-cols-4 sm:grid-cols-5 gap-1.5">
+                <div className="grid grid-cols-4 sm:grid-cols-5 gap-1.5 lg:gap-2">
                   {chapters.map((ch) => {
                     const active = ch.chapter_id === currentId;
                     const read = !!readMap[ch.chapter_id];
@@ -602,7 +613,7 @@ const Chapter = ({ idChapter }) => {
                         onClick={() => goTo(ch.chapter_id)}
                         title={`Chapter ${ch.chapter_number}${ch.chapter_title ? ` — ${ch.chapter_title}` : ""}`}
                         aria-current={active ? "true" : undefined}
-                        className={`relative flex flex-col items-center justify-center gap-0.5 h-[42px] px-1 rounded-lg border transition-all active:scale-95 hover:cursor-pointer ${
+                        className={`relative flex flex-col items-center justify-center gap-0.5 h-[42px] lg:h-[54px] px-1 rounded-lg lg:rounded-xl border transition-all active:scale-95 hover:cursor-pointer ${
                           active
                             ? "bg-[#EF4444] border-[#EF4444] shadow-md shadow-[#EF4444]/30"
                             : read
@@ -611,7 +622,7 @@ const Chapter = ({ idChapter }) => {
                         }`}
                       >
                         <span
-                          className={`text-[12px] font-black leading-none tabular-nums ${
+                          className={`text-[12px] lg:text-[15px] font-black leading-none tabular-nums ${
                             active ? "text-white" : read ? "text-zinc-500" : "text-zinc-100"
                           }`}
                         >
@@ -619,7 +630,7 @@ const Chapter = ({ idChapter }) => {
                         </span>
                         {fresh && (
                           <span
-                            className={`text-[8px] font-bold leading-none ${
+                            className={`text-[8px] lg:text-[10px] font-bold leading-none ${
                               active ? "text-white/85" : "text-[#EF4444]"
                             }`}
                           >
@@ -629,7 +640,7 @@ const Chapter = ({ idChapter }) => {
                         {!active && read && (
                           <FontAwesomeIcon
                             icon={faCheckCircle}
-                            className="absolute top-0.5 right-0.5 text-zinc-600 text-[7px]"
+                            className="absolute top-0.5 right-0.5 text-zinc-600 text-[7px] lg:text-[9px]"
                           />
                         )}
                       </button>
@@ -641,7 +652,7 @@ const Chapter = ({ idChapter }) => {
                   <button
                     onClick={() => setChPage((n) => n + 1)}
                     disabled={chLoading}
-                    className="py-2 rounded-xl border border-zinc-800 bg-zinc-800/40 text-[11px] font-bold text-zinc-300 hover:text-white hover:border-[#EF4444]/40 transition-all disabled:opacity-50 flex-shrink-0 hover:cursor-pointer"
+                    className="py-2 lg:py-3 rounded-xl border border-zinc-800 bg-zinc-800/40 text-[11px] lg:text-sm font-bold text-zinc-300 hover:text-white hover:border-[#EF4444]/40 transition-all disabled:opacity-50 flex-shrink-0 hover:cursor-pointer"
                   >
                     {chLoading ? (
                       <FontAwesomeIcon icon={faSpinner} className="animate-spin text-[#EF4444]" />
@@ -658,10 +669,10 @@ const Chapter = ({ idChapter }) => {
           {mangaId && (
             <a
               href={`/manhwa/${mangaId}`}
-              className="flex items-center justify-center gap-2 px-4 py-3 border-t border-zinc-800 text-[11px] font-semibold text-zinc-400 hover:text-[#EF4444] transition-colors flex-shrink-0"
+              className="flex items-center justify-center gap-2 px-4 py-3 lg:py-4 border-t border-zinc-800 text-[11px] lg:text-sm font-semibold text-zinc-400 hover:text-[#EF4444] transition-colors flex-shrink-0"
               style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
             >
-              <FontAwesomeIcon icon={faBook} className="text-[10px]" />
+              <FontAwesomeIcon icon={faBook} className="text-[10px] lg:text-xs" />
               Buka detail manhwa
             </a>
           )}

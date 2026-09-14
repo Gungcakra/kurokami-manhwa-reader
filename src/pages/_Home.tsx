@@ -36,21 +36,21 @@ const FORMATS = [
 
 /** Section heading: short red rule + icon + title, optional "see all" link. */
 const SectionHead = ({ icon, iconClass = "text-[#EF4444]", title, href, hrefLabel, children }) => (
-  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-    <div className="flex items-center gap-2.5 min-w-0">
-      <span className="w-1 h-5 bg-[#EF4444] rounded-full flex-shrink-0" />
-      {icon && <FontAwesomeIcon icon={icon} className={`${iconClass} text-sm`} />}
-      <h2 className="font-black text-sm sm:text-base tracking-tight truncate">{title}</h2>
+  <div className="flex flex-wrap items-center justify-between gap-2 mb-3 lg:mb-5">
+    <div className="flex items-center gap-2.5 lg:gap-3.5 min-w-0">
+      <span className="w-1 lg:w-1.5 h-5 lg:h-7 bg-[#EF4444] rounded-full flex-shrink-0" />
+      {icon && <FontAwesomeIcon icon={icon} className={`${iconClass} text-sm lg:text-lg`} />}
+      <h2 className="font-black text-sm sm:text-base lg:text-xl tracking-tight truncate">{title}</h2>
     </div>
     <div className="flex items-center gap-2">
       {children}
       {href && (
         <a
           href={href}
-          className="flex items-center gap-1 text-[11px] font-semibold text-zinc-500 hover:text-[#EF4444] transition-colors whitespace-nowrap"
+          className="flex items-center gap-1 lg:gap-1.5 text-[11px] lg:text-sm font-semibold text-zinc-500 hover:text-[#EF4444] transition-colors whitespace-nowrap"
         >
           {hrefLabel ?? "Lihat semua"}
-          <FontAwesomeIcon icon={faChevronRight} className="text-[8px]" />
+          <FontAwesomeIcon icon={faChevronRight} className="text-[8px] lg:text-[10px]" />
         </a>
       )}
     </div>
@@ -59,7 +59,7 @@ const SectionHead = ({ icon, iconClass = "text-[#EF4444]", title, href, hrefLabe
 
 /** Horizontal poster rail with skeleton support. */
 const Rail = ({ loading, items, count = 8, rank = false }) => (
-  <div className="flex gap-2.5 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
+  <div className="flex gap-2.5 lg:gap-4 overflow-x-auto scrollbar-hide pb-1 lg:pb-2 -mx-1 px-1">
     {loading
       ? Array(count).fill(0).map((_, i) => <CardSliderSkeleton key={i} />)
       : items?.map((m, i) => (
@@ -69,17 +69,17 @@ const Rail = ({ loading, items, count = 8, rank = false }) => (
 );
 
 const Panel = ({ children }) => (
-  <div className="bg-[#141417] rounded-2xl border border-zinc-800/60 overflow-hidden">{children}</div>
+  <div className="bg-[#141417] rounded-2xl lg:rounded-3xl border border-zinc-800/60 overflow-hidden">{children}</div>
 );
 
 const PanelHead = ({ icon, iconClass = "text-[#EF4444]", title, href }) => (
-  <div className="flex items-center justify-between px-3.5 py-3 border-b border-zinc-800/60 bg-white/[0.02]">
+  <div className="flex items-center justify-between px-3.5 py-3 lg:px-5 lg:py-4 border-b border-zinc-800/60 bg-white/[0.02]">
     <div className="flex items-center gap-2">
-      <FontAwesomeIcon icon={icon} className={`${iconClass} text-xs`} />
-      <h3 className="font-bold text-xs">{title}</h3>
+      <FontAwesomeIcon icon={icon} className={`${iconClass} text-xs lg:text-base`} />
+      <h3 className="font-bold text-xs lg:text-base">{title}</h3>
     </div>
     {href && (
-      <a href={href} className="text-[10px] font-semibold text-zinc-500 hover:text-[#EF4444] transition-colors">
+      <a href={href} className="text-[10px] lg:text-xs font-semibold text-zinc-500 hover:text-[#EF4444] transition-colors">
         Semua →
       </a>
     )}
@@ -130,7 +130,7 @@ const Home = () => {
   const GenrePills = ({ limit }) =>
     loadingGenres ? (
       Array(12).fill(0).map((_, i) => (
-        <div key={i} className="h-6 w-14 bg-zinc-800/60 rounded-lg animate-pulse" />
+        <div key={i} className="h-6 w-14 lg:h-8 lg:w-20 bg-zinc-800/60 rounded-lg animate-pulse" />
       ))
     ) : (
       <>
@@ -138,14 +138,14 @@ const Home = () => {
           <a
             key={g.taxonomy_id ?? g.slug}
             href={`/explore?genre=${g.slug}`}
-            className="px-2 py-1 text-[10px] font-medium bg-zinc-800/60 hover:bg-[#EF4444]/15 hover:text-[#EF4444] hover:border-[#EF4444]/30 text-zinc-400 border border-zinc-700/40 rounded-lg transition-all"
+            className="px-2 py-1 lg:px-3 lg:py-1.5 text-[10px] lg:text-xs font-medium bg-zinc-800/60 hover:bg-[#EF4444]/15 hover:text-[#EF4444] hover:border-[#EF4444]/30 text-zinc-400 border border-zinc-700/40 rounded-lg transition-all"
           >
             {g.name}
           </a>
         ))}
         <a
           href="/genres"
-          className="px-2 py-1 text-[10px] font-bold bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/25 rounded-lg hover:bg-[#EF4444] hover:text-white transition-all"
+          className="px-2 py-1 lg:px-3 lg:py-1.5 text-[10px] lg:text-xs font-bold bg-[#EF4444]/10 text-[#EF4444] border border-[#EF4444]/25 rounded-lg hover:bg-[#EF4444] hover:text-white transition-all"
         >
           Semua →
         </a>
@@ -156,7 +156,7 @@ const Home = () => {
     <div className="bg-[#09090b] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
       <Navbar />
 
-      <main className="max-w-screen-2xl mx-auto px-3 sm:px-4 pt-3 sm:pt-4 pb-8 sm:pb-10 w-full flex-1 flex flex-col gap-6 sm:gap-7">
+      <main className="max-w-screen-2xl mx-auto px-3 sm:px-4 lg:px-6 pt-3 sm:pt-4 lg:pt-7 pb-8 sm:pb-10 lg:pb-16 w-full flex-1 flex flex-col gap-6 sm:gap-7 lg:gap-11">
         <Hero items={featured} loading={loadingHero} />
 
         {/* ── Sponsor resmi — terakhir sebelum footer ── */}
@@ -169,15 +169,15 @@ const Home = () => {
         </section>
 
         {/* ── Update Terbaru + sidebar ── */}
-        <div className="flex flex-col lg:flex-row gap-5 items-start">
+        <div className="flex flex-col lg:flex-row gap-5 lg:gap-7 items-start">
           <div className="flex-1 min-w-0 w-full">
             <SectionHead icon={faBolt} title="Update Terbaru" href="/updates">
-              <div className="flex items-center gap-0.5 bg-zinc-800/60 border border-zinc-700/40 rounded-lg p-0.5">
+              <div className="flex items-center gap-0.5 bg-zinc-800/60 border border-zinc-700/40 rounded-lg lg:rounded-xl p-0.5 lg:p-1">
                 <button
                   onClick={() => setView("grid")}
                   aria-label="Tampilan grid"
                   aria-pressed={view === "grid"}
-                  className={`w-7 h-7 sm:w-6 sm:h-6 flex items-center justify-center rounded-md text-[10px] transition-all hover:cursor-pointer active:scale-90 ${view === "grid" ? "bg-[#EF4444] text-white" : "text-zinc-400 hover:text-white"
+                  className={`w-7 h-7 sm:w-6 sm:h-6 lg:w-9 lg:h-9 flex items-center justify-center rounded-md lg:rounded-lg text-[10px] lg:text-sm transition-all hover:cursor-pointer active:scale-90 ${view === "grid" ? "bg-[#EF4444] text-white" : "text-zinc-400 hover:text-white"
                     }`}
                 >
                   <FontAwesomeIcon icon={faTableCellsLarge} />
@@ -186,7 +186,7 @@ const Home = () => {
                   onClick={() => setView("list")}
                   aria-label="Tampilan daftar"
                   aria-pressed={view === "list"}
-                  className={`w-7 h-7 sm:w-6 sm:h-6 flex items-center justify-center rounded-md text-[10px] transition-all hover:cursor-pointer active:scale-90 ${view === "list" ? "bg-[#EF4444] text-white" : "text-zinc-400 hover:text-white"
+                  className={`w-7 h-7 sm:w-6 sm:h-6 lg:w-9 lg:h-9 flex items-center justify-center rounded-md lg:rounded-lg text-[10px] lg:text-sm transition-all hover:cursor-pointer active:scale-90 ${view === "list" ? "bg-[#EF4444] text-white" : "text-zinc-400 hover:text-white"
                     }`}
                 >
                   <FontAwesomeIcon icon={faList} />
@@ -194,12 +194,12 @@ const Home = () => {
               </div>
             </SectionHead>
 
-            <div className="flex gap-1.5 mb-3 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-1.5 lg:gap-2.5 mb-3 lg:mb-5 overflow-x-auto scrollbar-hide">
               {FORMATS.map((f) => (
                 <button
                   key={f.value}
                   onClick={() => setActiveFormat(f.value)}
-                  className={`px-3.5 py-2 sm:py-1.5 rounded-lg text-[11px] font-bold border transition-all hover:cursor-pointer active:scale-95 whitespace-nowrap ${activeFormat === f.value
+                  className={`px-3.5 py-2 sm:py-1.5 lg:px-5 lg:py-2.5 rounded-lg lg:rounded-xl text-[11px] lg:text-sm font-bold border transition-all hover:cursor-pointer active:scale-95 whitespace-nowrap ${activeFormat === f.value
                       ? "bg-[#EF4444] text-white border-[#EF4444] shadow-md shadow-[#EF4444]/20"
                       : "bg-zinc-800/60 text-zinc-400 border-zinc-700/40 hover:text-white hover:border-zinc-600"
                     }`}
@@ -210,18 +210,18 @@ const Home = () => {
             </div>
 
             {view === "grid" ? (
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-2.5">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 2xl:grid-cols-5 gap-2 sm:gap-2.5 lg:gap-4">
                 {loadingUpd
                   ? Array(18).fill(0).map((_, i) => <CardSkeleton key={i} />)
                   : updates?.data?.map((m) => <Card key={m.manga_id} manga={m} />)}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-2.5 lg:gap-4">
                 {loadingUpd
                   ? Array(9).fill(0).map((_, i) => (
                     <div
                       key={i}
-                      className="h-[104px] rounded-xl bg-[#141417] border border-zinc-800/60 animate-pulse"
+                      className="h-[104px] lg:h-[140px] rounded-xl lg:rounded-2xl bg-[#141417] border border-zinc-800/60 animate-pulse"
                     />
                   ))
                   : updates?.data?.map((m) => <UpdateRow key={m.manga_id} manga={m} />)}
@@ -229,7 +229,7 @@ const Home = () => {
             )}
           </div>
 
-          <aside className="w-full lg:w-64 flex-shrink-0 flex flex-col gap-4">
+          <aside className="w-full lg:w-[264px] xl:w-[320px] 2xl:w-[340px] flex-shrink-0 flex flex-col gap-4 lg:gap-6">
             <Panel>
               <PanelHead icon={faFire} iconClass="text-orange-400" title="Terpopuler" href="/popular" />
               {loadingPop
@@ -250,7 +250,7 @@ const Home = () => {
 
             <Panel>
               <PanelHead icon={faCompass} title="Genre" href="/genres" />
-              <div className="flex flex-wrap gap-1.5 p-3">
+              <div className="flex flex-wrap gap-1.5 lg:gap-2 p-3 lg:p-4">
                 <GenrePills limit={22} />
               </div>
             </Panel>

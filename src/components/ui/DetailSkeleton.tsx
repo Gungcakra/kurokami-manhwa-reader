@@ -4,13 +4,13 @@ const DetailSkeleton: React.FC = () => (
     <div className="relative overflow-hidden">
       <div className="absolute inset-0 bg-zinc-800/20" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#09090b]" />
-      <div className="relative max-w-screen-xl mx-auto px-4 pt-8 pb-6 flex flex-col md:flex-row gap-4 md:gap-6 items-center md:items-end">
+      <div className="relative max-w-screen-2xl mx-auto px-4 lg:px-6 pt-8 lg:pt-14 pb-6 lg:pb-10 flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-11 items-center md:items-end">
         {/* Cover */}
-        <div className="w-36 md:w-44 flex-shrink-0 mx-auto md:mx-0 rounded-2xl bg-zinc-700/50" style={{ aspectRatio: "2/3" }} />
+        <div className="w-36 md:w-44 lg:w-60 xl:w-[272px] flex-shrink-0 mx-auto md:mx-0 rounded-2xl lg:rounded-3xl bg-zinc-700/50" style={{ aspectRatio: "2/3" }} />
 
         {/* Info */}
         <div className="flex-1 pb-1 flex flex-col items-center md:items-start gap-3 w-full">
-          <div className="h-8 bg-zinc-700/40 rounded-xl w-3/4" />
+          <div className="h-8 lg:h-12 bg-zinc-700/40 rounded-xl w-3/4" />
           <div className="h-4 bg-zinc-800/60 rounded-lg w-1/2" />
           <div className="flex gap-2 flex-wrap">
             <div className="h-6 w-20 bg-zinc-700/40 rounded-full" />
@@ -25,7 +25,7 @@ const DetailSkeleton: React.FC = () => (
       </div>
     </div>
 
-    <div className="max-w-screen-xl mx-auto px-4 pb-8">
+    <div className="max-w-screen-2xl mx-auto px-4 lg:px-6 pb-8 lg:pb-14">
       {/* Genre tags */}
       <div className="flex flex-wrap gap-2 mb-5">
         {Array(7).fill(0).map((_, i) => (
