@@ -1,5 +1,5 @@
 const CardSkeleton: React.FC = () => (
-  <div className="flex flex-col rounded-xl lg:rounded-2xl overflow-hidden bg-[#18181b] border border-zinc-800/50 animate-pulse">
+  <div className="flex flex-col rounded-xl lg:rounded-2xl overflow-hidden bg-[#111111] border border-[#1c1c1c] animate-pulse">
     <div className="aspect-[2/3] bg-zinc-800" />
     <div className="p-2 lg:p-3">
       <div className="h-3 bg-zinc-700 rounded w-full mb-1" />

@@ -80,7 +80,7 @@ const BottomNav = () => {
           aria-modal="true"
           aria-label="Menu lainnya"
           onClick={(e) => e.stopPropagation()}
-          className={`absolute bottom-0 inset-x-0 bg-[#111116] border-t border-zinc-800 rounded-t-3xl shadow-2xl shadow-black/80 transition-transform duration-300 ease-out ${
+          className={`absolute bottom-0 inset-x-0 bg-[#0c0c0c] border-t border-[#1c1c1c] rounded-t-3xl shadow-2xl shadow-black/80 transition-transform duration-300 ease-out ${
             showMore ? "translate-y-0" : "translate-y-full"
           }`}
           style={{ paddingBottom: "calc(1rem + env(safe-area-inset-bottom))" }}
@@ -111,7 +111,7 @@ const BottomNav = () => {
                 className={`flex items-center gap-2.5 px-3 py-3 rounded-2xl border text-[12px] font-semibold transition-all active:scale-[0.97] ${
                   isActive(item.link)
                     ? "bg-[#EF4444]/12 border-[#EF4444]/30 text-[#EF4444]"
-                    : "bg-white/[0.03] border-zinc-800/70 text-zinc-300"
+                    : "bg-white/[0.03] border-[#1c1c1c] text-zinc-300"
                 }`}
               >
                 <span
@@ -133,7 +133,7 @@ const BottomNav = () => {
       {/* ── tab bar ── */}
       <nav
         aria-label="Navigasi utama"
-        className="fixed bottom-0 inset-x-0 z-[60] lg:hidden bg-[#0b0b0e]/[0.97] backdrop-blur-2xl border-t border-zinc-800/70 shadow-[0_-8px_24px_rgba(0,0,0,0.55)]"
+        className="glass fixed bottom-0 inset-x-0 z-[60] lg:hidden border-t border-[#1c1c1c] shadow-[0_-8px_24px_rgba(0,0,0,0.55)]"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <div className="flex items-stretch h-[58px]">
@@ -147,7 +147,7 @@ const BottomNav = () => {
                 className="relative flex-1 flex flex-col items-center justify-center gap-1 active:scale-95 transition-transform"
               >
                 {active && (
-                  <span className="absolute top-0 w-8 h-[3px] rounded-b-full bg-[#EF4444]" />
+                  <span className="absolute top-0 w-8 h-[3px] rounded-b-full bg-[#EF4444] shadow-[0_0_12px_var(--primary-glow)]" />
                 )}
                 <FontAwesomeIcon
                   icon={item.icon}
@@ -173,7 +173,7 @@ const BottomNav = () => {
             className="relative flex-1 flex flex-col items-center justify-center gap-1 active:scale-95 transition-transform"
           >
             {(moreActive || showMore) && (
-              <span className="absolute top-0 w-8 h-[3px] rounded-b-full bg-[#EF4444]" />
+              <span className="absolute top-0 w-8 h-[3px] rounded-b-full bg-[#EF4444] shadow-[0_0_12px_var(--primary-glow)]" />
             )}
             <FontAwesomeIcon
               icon={faEllipsis}

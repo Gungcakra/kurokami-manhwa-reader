@@ -27,7 +27,7 @@ const ListCard = ({ index, manga, img, title, link, chapter }) => {
   return (
     <a
       href={`/manhwa/${m.id}`}
-      className="group flex items-center gap-2.5 lg:gap-3.5 px-3 py-2.5 lg:px-4 lg:py-3.5 border-b border-zinc-800/40 hover:bg-[#EF4444]/5 transition-all duration-200 last:border-b-0"
+      className="group flex items-center gap-2.5 lg:gap-3.5 px-3 py-2.5 lg:px-4 lg:py-3.5 border-b border-[#1c1c1c] hover:bg-[#EF4444]/5 transition-all duration-200 last:border-b-0"
     >
       <span
         className={`w-5 h-5 lg:w-7 lg:h-7 flex items-center justify-center rounded-md lg:rounded-lg text-[10px] lg:text-xs font-black flex-shrink-0 ${rankStyle(

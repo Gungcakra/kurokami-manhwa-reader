@@ -14,9 +14,11 @@ import {
   faCircleInfo,
   faSpinner,
   faXmark,
+  faRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { apiService } from "../../utils/api";
 import { formatCount } from "../../utils/function";
+import { getAuth, onAuthChange } from "../../utils/auth";
 import CountryBadge from "../ui/CountryBadge";
 import logo from "../../assets/images/logos/logo.png";
 
@@ -43,12 +45,20 @@ const Navbar = () => {
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [path, setPath] = useState("");
+  const [user, setUser] = useState(null);
 
   const debounceRef = useRef(null);
   const searchRef = useRef(null);
   const inputRef = useRef(null);
 
   useEffect(() => setPath(window.location.pathname), []);
+
+  // reflect auth state; re-read whenever login/logout fires (same or other tab)
+  useEffect(() => {
+    const sync = () => setUser(getAuth());
+    sync();
+    return onAuthChange(sync);
+  }, []);
 
   // debounced live search (500ms, matching the app's other filter inputs)
   const handleSearch = (value) => {
@@ -102,7 +112,7 @@ const Navbar = () => {
 
   const SearchResults = () =>
     query.trim().length >= 2 && (searching || results.length > 0) ? (
-      <div className="absolute top-full left-0 right-0 mt-2 bg-[#141417] border border-zinc-800 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden z-50 max-h-[65vh] overflow-y-auto">
+      <div className="absolute top-full left-0 right-0 mt-2 bg-[#0c0c0c] border border-[#1c1c1c] rounded-2xl shadow-2xl shadow-black/60 overflow-hidden z-50 max-h-[65vh] overflow-y-auto">
         {searching ? (
           <div className="flex items-center justify-center gap-2 py-6 text-zinc-500 text-xs">
             <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
@@ -114,7 +124,7 @@ const Navbar = () => {
               <a
                 key={item.manga_id}
                 href={`/manhwa/${item.manga_id}`}
-                className="flex items-center gap-3 lg:gap-3.5 px-3 py-2.5 lg:px-4 lg:py-3 hover:bg-[#EF4444]/10 active:bg-[#EF4444]/15 transition-colors border-b border-zinc-800/60 last:border-b-0"
+                className="flex items-center gap-3 lg:gap-3.5 px-3 py-2.5 lg:px-4 lg:py-3 hover:bg-[#EF4444]/10 active:bg-[#EF4444]/15 transition-colors border-b border-[#1c1c1c] last:border-b-0"
               >
                 <img
                   src={item.cover_image_url}
@@ -146,33 +156,34 @@ const Navbar = () => {
     ) : null;
 
   return (
-    <header className="sticky top-0 z-50 bg-[#09090b]/95 backdrop-blur-md border-b border-zinc-800/60">
-      <div className="h-[3px] w-full bg-gradient-to-r from-[#EF4444] via-[#DC2626] to-[#EF4444]" />
-
-      <div className="max-w-screen-2xl mx-auto flex items-center gap-3 lg:gap-4 px-3 sm:px-4 lg:px-6 h-14 lg:h-[68px]">
+    <header className="glass sticky top-0 z-50 border-b border-[#1c1c1c]">
+      <div className="max-w-screen-2xl mx-auto flex items-center gap-3 lg:gap-4 px-3 sm:px-4 lg:px-6 h-14 lg:h-[72px]">
         {/* logo */}
-        <a href="/" className="flex items-center gap-2 flex-shrink-0">
-          <img src={logo.src} className="w-7 h-7 lg:w-9 lg:h-9" alt="" />
-          <span className="text-base sm:text-lg lg:text-2xl font-black tracking-tight">
-            Kuro<span className="text-[#EF4444]">kami</span>
+        <a href="/" className="flex items-center gap-2 flex-shrink-0 group">
+          <img
+            src={logo.src}
+            className="w-7 h-7 lg:w-9 lg:h-9 transition-transform group-hover:scale-105"
+            alt=""
+          />
+          <span className="text-base sm:text-lg lg:text-2xl font-extrabold tracking-tight">
+            Kuro<span className="text-grad-primary">kami</span>
           </span>
         </a>
 
         {/* desktop nav */}
-        <nav className="hidden lg:flex items-center gap-0.5 ml-2">
+        <nav className="hidden lg:flex items-center gap-1 ml-2">
           {MAIN_LINKS.map((item) => (
             <a
               key={item.link}
               href={item.link}
-              className={`relative flex items-center gap-1.5 lg:gap-2 px-3 lg:px-3.5 py-2 lg:py-2.5 text-[13px] lg:text-[15px] font-semibold transition-colors ${
-                isActive(item.link) ? "text-[#EF4444]" : "text-zinc-400 hover:text-white"
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-full text-[14px] font-semibold transition-all ${
+                isActive(item.link)
+                  ? "text-white bg-[#EF4444]/15 border border-[#EF4444]/40 shadow-[0_0_15px_var(--primary-glow)]"
+                  : "text-zinc-400 border border-transparent hover:text-white hover:bg-white/5"
               }`}
             >
-              <FontAwesomeIcon icon={item.icon} className="text-[11px] lg:text-[13px]" />
+              <FontAwesomeIcon icon={item.icon} className="text-[12px]" />
               {item.name}
-              {isActive(item.link) && (
-                <span className="absolute left-2 right-2 -bottom-px h-[2px] bg-[#EF4444] rounded-full" />
-              )}
             </a>
           ))}
         </nav>
@@ -193,7 +204,7 @@ const Navbar = () => {
             value={query}
             onChange={(e) => handleSearch(e.target.value)}
             placeholder="Cari judul…"
-            className="w-full pl-9 lg:pl-11 pr-12 lg:pr-14 py-2 lg:py-2.5 bg-[#141417] border border-zinc-800 rounded-xl text-xs lg:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/60 transition-colors"
+            className="w-full pl-9 lg:pl-11 pr-12 lg:pr-14 py-2 lg:py-2.5 bg-white/[0.04] border border-[#1c1c1c] rounded-full text-xs lg:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/50 focus:bg-white/[0.06] focus:shadow-[0_0_20px_var(--primary-glow)] transition-all"
           />
           <kbd className="absolute right-2.5 lg:right-3 top-1/2 -translate-y-1/2 text-[9px] lg:text-[11px] text-zinc-600 border border-zinc-700/60 rounded px-1 lg:px-1.5 py-0.5 pointer-events-none">
             ⌘K
@@ -209,7 +220,7 @@ const Navbar = () => {
               href={item.link}
               title={item.name}
               aria-label={item.name}
-              className={`hidden lg:flex w-11 h-11 items-center justify-center rounded-xl transition-all ${
+              className={`hidden lg:flex w-11 h-11 items-center justify-center rounded-full transition-all ${
                 isActive(item.link)
                   ? "text-[#EF4444] bg-[#EF4444]/10"
                   : "text-zinc-400 hover:text-white hover:bg-white/5"
@@ -219,6 +230,32 @@ const Navbar = () => {
             </a>
           ))}
 
+          {/* auth: avatar when signed in, otherwise a login affordance */}
+          {user ? (
+            <a
+              href="/login"
+              title={`Masuk sebagai ${user.username}`}
+              aria-label="Akun"
+              className="flex items-center justify-center w-9 h-9 lg:w-10 lg:h-10 rounded-full overflow-hidden ring-2 ring-[#EF4444]/50 hover:ring-[#EF4444] transition-all flex-shrink-0"
+            >
+              <img
+                src={user.avatar_image_url || "/android-chrome-512x512.png"}
+                alt=""
+                className="w-full h-full object-cover bg-zinc-900"
+              />
+            </a>
+          ) : (
+            <a
+              href="/login"
+              title="Masuk"
+              aria-label="Masuk"
+              className="flex items-center gap-2 h-9 w-9 justify-center lg:w-auto lg:h-10 lg:px-3.5 rounded-xl bg-[#EF4444] text-white text-sm font-bold hover:bg-[#DC2626] active:scale-95 transition-all flex-shrink-0"
+            >
+              <FontAwesomeIcon icon={faRightToBracket} className="text-xs" />
+              <span className="hidden lg:inline">Masuk</span>
+            </a>
+          )}
+
           {/* mobile: search is the only header action — navigation lives in <BottomNav /> */}
           <button
             onClick={() => {
@@ -227,7 +264,7 @@ const Navbar = () => {
             }}
             aria-label={showSearch ? "Tutup pencarian" : "Cari"}
             aria-expanded={showSearch}
-            className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.04] border border-zinc-800 text-zinc-300 active:scale-95 transition-all"
+            className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-white/[0.04] border border-[#1c1c1c] text-zinc-300 active:scale-95 transition-all"
           >
             <FontAwesomeIcon icon={showSearch ? faXmark : faSearch} className="text-sm" />
           </button>
@@ -236,7 +273,7 @@ const Navbar = () => {
 
       {/* mobile search row */}
       {showSearch && (
-        <div className="md:hidden border-t border-zinc-800/60 px-3 py-2.5">
+        <div className="md:hidden border-t border-[#1c1c1c] px-3 py-2.5">
           <form onSubmit={submit} ref={searchRef} className="relative">
             <FontAwesomeIcon
               icon={faSearch}
@@ -248,7 +285,7 @@ const Navbar = () => {
               value={query}
               onChange={(e) => handleSearch(e.target.value)}
               placeholder="Cari judul manhwa, manga, manhua…"
-              className="w-full pl-9 pr-3 py-2.5 bg-[#141417] border border-zinc-800 rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/60"
+              className="w-full pl-9 pr-3 py-2.5 bg-[#0c0c0c] border border-[#1c1c1c] rounded-xl text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/60"
             />
             <SearchResults />
           </form>

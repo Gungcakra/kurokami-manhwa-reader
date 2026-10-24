@@ -93,11 +93,11 @@ const Explore = () => {
   const totalPages = results?.meta?.total_page;
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
+    <div className="bg-[#000000] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
       <Navbar />
 
       {/* ── Sticky filter bar ── */}
-      <div className="sticky top-[60px] lg:top-[71px] z-30 bg-[#09090b]/95 backdrop-blur-md border-b border-zinc-800/50">
+      <div className="sticky top-[60px] lg:top-[71px] z-30 bg-[#000000]/95 backdrop-blur-md border-b border-[#1c1c1c]">
         <div className="max-w-screen-2xl mx-auto px-4 lg:px-6 py-3 lg:py-4 flex flex-col gap-2 lg:gap-3">
 
           {/* Row 1: search + genre toggle + reset */}
@@ -108,13 +108,13 @@ const Explore = () => {
               <input type="text" placeholder="Cari judul manga / manhwa..."
                 value={keyword}
                 onChange={(e) => { setKeyword(e.target.value); setPage(1); }}
-                className="w-full pl-9 lg:pl-11 pr-3 py-2 lg:py-3 bg-[#18181b] border border-zinc-700/40 rounded-xl text-sm lg:text-base text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/50" />
+                className="w-full pl-9 lg:pl-11 pr-3 py-2 lg:py-3 bg-[#111111] border border-zinc-700/40 rounded-xl text-sm lg:text-base text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/50" />
             </div>
             <button onClick={() => setShowGenres((p) => !p)}
               className={`flex items-center gap-1.5 lg:gap-2 px-3 py-2 lg:px-5 lg:py-3 rounded-xl text-xs lg:text-sm font-semibold border transition-all hover:cursor-pointer flex-shrink-0 ${
                 selectedGenres.length > 0
                   ? "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30"
-                  : "bg-[#18181b] text-zinc-400 border-zinc-700/40 hover:text-white"
+                  : "bg-[#111111] text-zinc-400 border-zinc-700/40 hover:text-white"
               }`}>
               <FontAwesomeIcon icon={faFilter} className="text-xs" />
               <span className="hidden sm:inline">Genre</span>
@@ -162,7 +162,7 @@ const Explore = () => {
 
           {/* Genre panel */}
           {showGenres && genres.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 lg:gap-2 pt-2 lg:pt-3 pb-1 border-t border-zinc-800/50 max-h-40 lg:max-h-56 overflow-y-auto scrollbar-hide">
+            <div className="flex flex-wrap gap-1.5 lg:gap-2 pt-2 lg:pt-3 pb-1 border-t border-[#1c1c1c] max-h-40 lg:max-h-56 overflow-y-auto scrollbar-hide">
               {genres.map((g) => (
                 <button key={g.genre_id || g.slug} onClick={() => toggleGenre(g.slug)}
                   className={`px-2.5 py-1 lg:px-4 lg:py-1.5 rounded-full text-xs lg:text-sm font-medium border transition-all hover:cursor-pointer ${
@@ -180,10 +180,10 @@ const Explore = () => {
 
       {/* ── Results ── */}
       <div className="max-w-screen-2xl mx-auto px-4 lg:px-6 py-5 lg:py-9 w-full flex-1">
-        <div className="bg-[#18181b] rounded-2xl lg:rounded-3xl border border-zinc-800/50 overflow-hidden">
+        <div className="bg-[#111111] rounded-2xl lg:rounded-3xl border border-[#1c1c1c] overflow-hidden">
 
           {/* Results header */}
-          <div className="flex flex-wrap items-center justify-between gap-2 px-4 sm:px-5 lg:px-7 py-3.5 lg:py-5 border-b border-zinc-800/50 bg-zinc-900/40">
+          <div className="flex flex-wrap items-center justify-between gap-2 px-4 sm:px-5 lg:px-7 py-3.5 lg:py-5 border-b border-[#1c1c1c] bg-zinc-900/40">
             <div className="flex items-center gap-2">
               <FontAwesomeIcon icon={faCompass} className="text-[#EF4444] text-sm lg:text-lg" />
               <h2 className="font-bold text-sm lg:text-lg">

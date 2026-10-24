@@ -85,7 +85,7 @@ const Browse = ({ type = "popular" }) => {
   const totalPages = data?.meta?.total_page;
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
+    <div className="bg-[#000000] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
       <Navbar />
 
       <main className="max-w-screen-2xl mx-auto px-3 sm:px-4 lg:px-6 py-5 lg:py-9 flex-1 w-full">

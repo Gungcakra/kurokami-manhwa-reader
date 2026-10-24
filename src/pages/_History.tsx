@@ -1,5 +1,7 @@
 // @ts-nocheck
 import React, { useEffect, useState } from "react";
+import { apiService } from "../utils/api";
+import { getAuth } from "../utils/auth";
 import { timeAgo } from "../utils/function";
 import Navbar from "../components/common/Navbar";
 import Footer from "../components/common/Footer";
@@ -10,36 +12,77 @@ import { faClockRotateLeft, faPlay, faTrash } from "@fortawesome/free-solid-svg-
 
 const History = () => {
   const [items, setItems] = useState<any[]>([]);
+  const [loggedIn] = useState(() => !!getAuth());
 
-  const load = () => {
+  const loadLocal = () => {
     const h = JSON.parse(localStorage.getItem("kurokami_history") || "{}");
     const arr = Object.values(h).sort((a: any, b: any) => (b?.ts || 0) - (a?.ts || 0));
     setItems(arr);
   };
 
+  // Signed in: history lives on the account. The manga list has no read
+  // position, so for each manga we pull its newest chapter-history entry
+  // (data[0]) to drive the "Lanjut Ch.N" button.
+  const loadServer = async () => {
+    const r = await apiService.getHistory();
+    const mangas = r?.data ?? [];
+    const rows = await Promise.all(
+      mangas.map(async (m: any) => {
+        let last: any = null;
+        try {
+          const c = await apiService.getHistoryChapters(m.manga_id);
+          last = (c?.data ?? [])[0] ?? null;
+        } catch {/* leave last null; row still links to the manga */}
+        return {
+          manga_id: m.manga_id,
+          title: m.title,
+          cover: m.cover_portrait_url || m.cover_image_url,
+          chapter_id: last?.chapter_id,
+          chapter_number: last?.chapter_number,
+          ts: Date.parse(last?.updated_at || m.updated_at) || 0,
+        };
+      })
+    );
+    rows.sort((a, b) => b.ts - a.ts);
+    setItems(rows);
+  };
+
   useEffect(() => {
-    load();
+    if (getAuth()) {
+      loadServer().catch(() => loadLocal()); // token expired/offline → local
+    } else {
+      loadLocal();
+    }
   }, []);
 
   const clearAll = () => {
-    localStorage.setItem("kurokami_history", "{}");
+    if (!loggedIn) {
+      localStorage.setItem("kurokami_history", "{}");
+      setItems([]);
+      return;
+    }
+    // Empty list = clear all on the server (mirrors the upstream web button).
+    const prev = items;
     setItems([]);
+    apiService.removeHistory().catch(() => setItems(prev));
   };
 
+  // Guests only. The server has no per-manga removal (a populated manga_id_list
+  // still clears everything), so signed-in rows hide the per-item delete.
   const removeOne = (mangaId: string) => {
     const h = JSON.parse(localStorage.getItem("kurokami_history") || "{}");
     delete h[mangaId];
     localStorage.setItem("kurokami_history", JSON.stringify(h));
-    load();
+    loadLocal();
   };
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
+    <div className="bg-[#000000] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
       <Navbar />
       <div className="max-w-screen-2xl mx-auto px-4 lg:px-6 py-5 lg:py-9 flex-1 w-full">
         <div className="flex items-center justify-between gap-2 mb-5 lg:mb-8">
           <div className="flex items-center gap-2.5">
-            <div className="w-1 lg:w-1.5 h-6 lg:h-9 bg-[#EF4444] rounded-full" />
+            <div className="accent-bar w-1 lg:w-1.5 h-6 lg:h-9 rounded-full" />
             <FontAwesomeIcon icon={faClockRotateLeft} className="text-[#EF4444] lg:text-xl" />
             <h1 className="text-xl lg:text-3xl font-black tracking-tight">Riwayat Baca</h1>
             {items.length > 0 && (
@@ -72,7 +115,7 @@ const History = () => {
             {items.map((it) => (
               <div
                 key={it.manga_id}
-                className="group flex items-center gap-3 lg:gap-5 p-2.5 sm:p-3 lg:p-4 bg-[#18181b] rounded-2xl border border-zinc-800/50 hover:border-[#EF4444]/30 transition-all"
+                className="group flex items-center gap-3 lg:gap-5 p-2.5 sm:p-3 lg:p-4 bg-[#111111] rounded-2xl border border-[#1c1c1c] hover:border-[#EF4444]/30 transition-all"
               >
                 <a href={`/manhwa/${it.manga_id}`} className="flex-shrink-0">
                   <img
@@ -89,24 +132,28 @@ const History = () => {
                   >
                     {it.title}
                   </a>
-                  <p className="text-zinc-400 text-xs lg:text-sm mt-0.5 lg:mt-1.5">Chapter {it.chapter_number}</p>
+                  {it.chapter_number != null && (
+                    <p className="text-zinc-400 text-xs lg:text-sm mt-0.5 lg:mt-1.5">Chapter {it.chapter_number}</p>
+                  )}
                   <p className="text-zinc-600 text-[11px] lg:text-xs mt-0.5 lg:mt-1">{timeAgo(it.ts)}</p>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
                   <a
-                    href={`/chapter/${it.chapter_id}`}
+                    href={it.chapter_id ? `/chapter/${it.chapter_id}` : `/manhwa/${it.manga_id}`}
                     className="flex items-center gap-1.5 lg:gap-2 px-3 py-2 lg:px-6 lg:py-3 bg-[#EF4444] hover:bg-[#DC2626] text-white rounded-xl text-xs lg:text-sm font-bold transition-all"
                   >
                     <FontAwesomeIcon icon={faPlay} className="text-[10px]" />
                     <span className="hidden sm:inline">Lanjut</span>
                   </a>
-                  <button
-                    onClick={() => removeOne(it.manga_id)}
-                    aria-label="Hapus dari riwayat"
-                    className="p-2 lg:p-3.5 rounded-xl text-zinc-500 hover:text-[#EF4444] bg-zinc-800/50 border border-zinc-700/40 hover:border-[#EF4444]/30 transition-all hover:cursor-pointer"
-                  >
-                    <FontAwesomeIcon icon={faTrash} className="text-xs" />
-                  </button>
+                  {!loggedIn && (
+                    <button
+                      onClick={() => removeOne(it.manga_id)}
+                      aria-label="Hapus dari riwayat"
+                      className="p-2 lg:p-3.5 rounded-xl text-zinc-500 hover:text-[#EF4444] bg-zinc-800/50 border border-zinc-700/40 hover:border-[#EF4444]/30 transition-all hover:cursor-pointer"
+                    >
+                      <FontAwesomeIcon icon={faTrash} className="text-xs" />
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

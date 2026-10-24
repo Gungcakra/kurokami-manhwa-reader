@@ -59,7 +59,7 @@ const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={() => onPageChange(page - 1)}
         disabled={!canPrev}
-        className="w-9 h-9 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl bg-[#18181b] border border-zinc-700/50 text-zinc-300 text-sm lg:text-lg disabled:opacity-30 hover:bg-[#EF4444] hover:border-[#EF4444] hover:text-white transition-all hover:cursor-pointer disabled:cursor-default"
+        className="w-9 h-9 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl bg-[#111111] border border-[#1c1c1c] text-zinc-300 text-sm lg:text-lg disabled:opacity-30 hover:bg-[#EF4444] hover:border-[#EF4444] hover:text-white transition-all hover:cursor-pointer disabled:cursor-default"
       >
         ←
       </button>
@@ -78,8 +78,8 @@ const Pagination: React.FC<PaginationProps> = ({
             onClick={() => onPageChange(p as number)}
             className={`w-9 h-9 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl text-sm lg:text-base font-semibold transition-all hover:cursor-pointer border ${
               p === page
-                ? "bg-[#EF4444] border-[#EF4444] text-white shadow-md shadow-[#EF4444]/20"
-                : "bg-[#18181b] border-zinc-700/50 text-zinc-300 hover:bg-zinc-700/60 hover:text-white"
+                ? "grad-primary border-[#EF4444] text-white shadow-[0_4px_16px_var(--primary-glow)]"
+                : "bg-[#111111] border-[#1c1c1c] text-zinc-300 hover:bg-zinc-700/60 hover:text-white"
             }`}
           >
             {p}
@@ -90,7 +90,7 @@ const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={() => onPageChange(page + 1)}
         disabled={!canNext}
-        className="w-9 h-9 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl bg-[#18181b] border border-zinc-700/50 text-zinc-300 text-sm lg:text-lg disabled:opacity-30 hover:bg-[#EF4444] hover:border-[#EF4444] hover:text-white transition-all hover:cursor-pointer disabled:cursor-default"
+        className="w-9 h-9 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl bg-[#111111] border border-[#1c1c1c] text-zinc-300 text-sm lg:text-lg disabled:opacity-30 hover:bg-[#EF4444] hover:border-[#EF4444] hover:text-white transition-all hover:cursor-pointer disabled:cursor-default"
       >
         →
       </button>

@@ -19,7 +19,7 @@ const Genres = () => {
   }, []);
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen pb-[58px] lg:pb-0">
+    <div className="bg-[#000000] text-white min-h-screen pb-[58px] lg:pb-0">
       <Navbar />
       <div className="max-w-screen-2xl mx-auto px-4 lg:px-6 py-5 lg:py-9">
         <div className="flex items-center gap-2.5 lg:gap-3.5 mb-5 lg:mb-8">
@@ -34,7 +34,7 @@ const Genres = () => {
               .map((_, i) => (
                 <div
                   key={i}
-                  className="h-12 sm:h-14 lg:h-20 bg-[#18181b] rounded-xl lg:rounded-2xl border border-zinc-800/40 animate-pulse"
+                  className="h-12 sm:h-14 lg:h-20 bg-[#111111] rounded-xl lg:rounded-2xl border border-[#1c1c1c] animate-pulse"
                 />
               ))}
           </div>
@@ -44,7 +44,7 @@ const Genres = () => {
               <a
                 key={genre.genre_id || genre.slug}
                 href={`/explore?genre=${genre.slug}`}
-                className="group flex items-center justify-center p-3 sm:p-4 lg:p-6 bg-[#18181b] rounded-xl lg:rounded-2xl border border-zinc-800/40 hover:border-[#EF4444]/40 hover:bg-[#EF4444]/10 hover:text-[#EF4444] text-zinc-300 transition-all duration-200 text-center font-medium text-sm lg:text-base"
+                className="group flex items-center justify-center p-3 sm:p-4 lg:p-6 bg-[#111111] rounded-xl lg:rounded-2xl border border-[#1c1c1c] hover:border-[#EF4444]/40 hover:bg-[#EF4444]/10 hover:text-[#EF4444] text-zinc-300 transition-all duration-200 text-center font-medium text-sm lg:text-base"
               >
                 {genre.name}
               </a>

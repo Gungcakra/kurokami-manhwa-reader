@@ -1,0 +1,14 @@
+---
+import "../styles/global.css";
+import Layout from "../layouts/Layout.astro";
+import Login from "./_Login";
+export const prerender = false;
+
+const title = "Masuk — Kurokami";
+const description =
+  "Masuk ke Kurokami dengan akun Shinigami kamu untuk menyinkronkan bookmark dan riwayat baca.";
+---
+
+<Layout title={title} description={description} noindex={true}>
+  <Login slot="body" client:only="react" />
+</Layout>

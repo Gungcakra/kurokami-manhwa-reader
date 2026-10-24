@@ -1,9 +1,9 @@
 const DetailSkeleton: React.FC = () => (
-  <div className="bg-[#09090b] min-h-screen animate-pulse">
+  <div className="bg-[#000000] min-h-screen animate-pulse">
     {/* Hero */}
     <div className="relative overflow-hidden">
       <div className="absolute inset-0 bg-zinc-800/20" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#09090b]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#000000]" />
       <div className="relative max-w-screen-2xl mx-auto px-4 lg:px-6 pt-8 lg:pt-14 pb-6 lg:pb-10 flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-11 items-center md:items-end">
         {/* Cover */}
         <div className="w-36 md:w-44 lg:w-60 xl:w-[272px] flex-shrink-0 mx-auto md:mx-0 rounded-2xl lg:rounded-3xl bg-zinc-700/50" style={{ aspectRatio: "2/3" }} />
@@ -40,7 +40,7 @@ const DetailSkeleton: React.FC = () => (
       </div>
 
       {/* Synopsis */}
-      <div className="bg-[#18181b] rounded-2xl p-4 mb-5 border border-zinc-800/40 space-y-2.5">
+      <div className="bg-[#111111] rounded-2xl p-4 mb-5 border border-[#1c1c1c] space-y-2.5">
         <div className="h-4 w-24 bg-zinc-700/50 rounded-md" />
         <div className="h-3.5 bg-zinc-800/60 rounded w-full" />
         <div className="h-3.5 bg-zinc-800/60 rounded w-full" />
@@ -49,9 +49,9 @@ const DetailSkeleton: React.FC = () => (
       </div>
 
       {/* Chapter list */}
-      <div className="bg-[#18181b] rounded-2xl border border-zinc-800/40">
+      <div className="bg-[#111111] rounded-2xl border border-[#1c1c1c]">
         {/* Chapter header */}
-        <div className="flex items-center justify-between p-4 border-b border-zinc-800/40">
+        <div className="flex items-center justify-between p-4 border-b border-[#1c1c1c]">
           <div className="h-5 w-36 bg-zinc-700/50 rounded-lg" />
           <div className="flex gap-2">
             <div className="h-8 w-36 bg-zinc-800/50 rounded-xl" />
@@ -62,7 +62,7 @@ const DetailSkeleton: React.FC = () => (
         {/* Chapter cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 p-4">
           {Array(6).fill(0).map((_, i) => (
-            <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-zinc-800/25 border border-zinc-800/30">
+            <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-zinc-800/25 border border-[#1c1c1c]">
               <div className="w-20 h-28 flex-shrink-0 rounded-xl bg-zinc-700/40" />
               <div className="flex flex-col gap-3 flex-1 min-w-0">
                 <div className="h-5 bg-zinc-700/40 rounded-lg w-3/4" />

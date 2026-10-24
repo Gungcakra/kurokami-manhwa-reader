@@ -94,7 +94,7 @@ const Info = () => {
   ];
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
+    <div className="bg-[#000000] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
       <Navbar />
 
       <main className="max-w-3xl lg:max-w-5xl mx-auto px-3 sm:px-4 lg:px-6 py-6 lg:py-11 flex-1 w-full flex flex-col gap-6 lg:gap-9">
@@ -120,7 +120,7 @@ const Info = () => {
               <Tag
                 key={s.label}
                 href={s.href}
-                className={`flex flex-col items-center gap-1 lg:gap-2 p-3 sm:p-4 lg:p-6 bg-[#141417] rounded-xl lg:rounded-2xl border border-zinc-800/60 transition-all ${
+                className={`flex flex-col items-center gap-1 lg:gap-2 p-3 sm:p-4 lg:p-6 bg-[#0c0c0c] rounded-xl lg:rounded-2xl border border-[#1c1c1c] transition-all ${
                   s.href ? "hover:border-[#EF4444]/40" : ""
                 }`}
               >
@@ -139,8 +139,8 @@ const Info = () => {
             return (
               <div
                 key={c.id}
-                className={`bg-[#141417] rounded-xl border overflow-hidden transition-colors ${
-                  isOpen ? "border-[#EF4444]/40" : "border-zinc-800/60"
+                className={`bg-[#0c0c0c] rounded-xl border overflow-hidden transition-colors ${
+                  isOpen ? "border-[#EF4444]/40" : "border-[#1c1c1c]"
                 }`}
               >
                 <button
@@ -160,7 +160,7 @@ const Info = () => {
                   />
                 </button>
                 {isOpen && (
-                  <div className="px-4 pb-4 lg:px-6 lg:pb-6 pt-0 flex flex-col gap-2 border-t border-zinc-800/60">
+                  <div className="px-4 pb-4 lg:px-6 lg:pb-6 pt-0 flex flex-col gap-2 border-t border-[#1c1c1c]">
                     {c.body.map((p, i) => (
                       <p key={i} className="text-zinc-400 text-xs lg:text-base leading-relaxed pt-2 first:pt-3">
                         {p}
@@ -174,7 +174,7 @@ const Info = () => {
         </div>
 
         {/* danger zone */}
-        <div className="bg-[#141417] rounded-xl lg:rounded-2xl border border-zinc-800/60 p-4 lg:p-6 flex flex-col sm:flex-row sm:items-center gap-3 lg:gap-5">
+        <div className="bg-[#0c0c0c] rounded-xl lg:rounded-2xl border border-[#1c1c1c] p-4 lg:p-6 flex flex-col sm:flex-row sm:items-center gap-3 lg:gap-5">
           <div className="flex-1 min-w-0">
             <p className="font-bold text-sm lg:text-lg">Hapus data lokal</p>
             <p className="text-zinc-500 text-[11px] lg:text-sm mt-0.5 lg:mt-1.5 leading-relaxed">

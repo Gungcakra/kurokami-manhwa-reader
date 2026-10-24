@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { useEffect, useState } from "react";
 import { apiService } from "../utils/api";
+import { getAuth } from "../utils/auth";
 import { timeAgo } from "../utils/function";
 import CountryBadge from "../components/ui/CountryBadge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -58,6 +59,19 @@ const Detail = ({ id }: DetailProps) => {
     setBookmarked(bm.includes(id));
     setReadMap(JSON.parse(localStorage.getItem("kurokami_read_chapters") || "{}"));
 
+    // When signed in, the server is the source of truth. Reconcile this manga's
+    // state (and refresh the local mirror other pages read) in the background.
+    if (getAuth()) {
+      apiService
+        .getBookmarks()
+        .then((r) => {
+          const ids = (r?.data ?? []).map((m: any) => m.manga_id);
+          localStorage.setItem("kurokami_bookmarks", JSON.stringify(ids));
+          setBookmarked(ids.includes(id));
+        })
+        .catch(() => {/* offline / token expired — keep the local view */});
+    }
+
     const lastId = localStorage.getItem(`kurokami_last_read_${id}`);
     setLastReadId(lastId);
     // The reader writes the chapter number into history, so "Lanjut Ch.N" works
@@ -93,10 +107,24 @@ const Detail = ({ id }: DetailProps) => {
   }, [id, page, reversed, search]);
 
   const toggleBookmark = () => {
+    const wasBookmarked = bookmarked;
     const bm = JSON.parse(localStorage.getItem("kurokami_bookmarks") || "[]");
-    const next = bookmarked ? bm.filter((b: string) => b !== id) : [...bm, id];
+    const next = wasBookmarked ? bm.filter((b: string) => b !== id) : [...bm, id];
+
+    // Optimistic: flip the UI + local mirror immediately.
     localStorage.setItem("kurokami_bookmarks", JSON.stringify(next));
-    setBookmarked(!bookmarked);
+    setBookmarked(!wasBookmarked);
+
+    // When signed in, persist to the account; roll back if the server rejects.
+    if (getAuth()) {
+      const call = wasBookmarked
+        ? apiService.removeBookmark(id)
+        : apiService.addBookmark(id);
+      call.catch(() => {
+        localStorage.setItem("kurokami_bookmarks", JSON.stringify(bm));
+        setBookmarked(wasBookmarked);
+      });
+    }
   };
 
   const markRead = (cid: string, num?: number) => {
@@ -115,7 +143,7 @@ const Detail = ({ id }: DetailProps) => {
   const genres     = manhwa?.taxonomy?.Genre ?? [];
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
+    <div className="bg-[#000000] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
       <Navbar />
       {loading ? <DetailSkeleton /> : (
         <>
@@ -123,8 +151,8 @@ const Detail = ({ id }: DetailProps) => {
           <section className="relative overflow-hidden">
             <div className="absolute inset-0 bg-cover bg-center scale-110 blur-3xl opacity-[0.15]"
               style={{ backgroundImage: `url(${manhwa.cover_portrait_url || manhwa.cover_image_url})` }} />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#09090b]/50 via-transparent to-[#09090b]" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#09090b] via-[#09090b]/55 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#000000]/50 via-transparent to-[#000000]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#000000] via-[#000000]/55 to-transparent" />
 
             <div className="relative max-w-screen-2xl mx-auto px-3 sm:px-4 lg:px-6 py-6 sm:py-12 lg:py-16">
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-7 lg:gap-11">
@@ -253,7 +281,7 @@ const Detail = ({ id }: DetailProps) => {
                   <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-2 lg:gap-3 pt-1 lg:pt-3 w-full">
                     {lastReadId ? (
                       <a href={`/chapter/${lastReadId}`} onClick={() => markRead(lastReadId, lastReadNum)}
-                        className="flex items-center justify-center sm:justify-start gap-2 w-full sm:w-auto px-5 py-3 sm:py-2.5 lg:px-8 lg:py-4 bg-[#EF4444] hover:bg-[#DC2626] active:scale-[0.98] text-white rounded-xl lg:rounded-2xl text-sm lg:text-base font-black transition-all shadow-lg shadow-[#EF4444]/25">
+                        className="flex items-center justify-center sm:justify-start gap-2 w-full sm:w-auto px-5 py-3 sm:py-2.5 lg:px-8 lg:py-4 grad-primary hover:brightness-110 active:scale-[0.98] text-white rounded-full text-sm lg:text-base font-black transition-all shadow-[0_6px_24px_var(--primary-glow)]">
                         <FontAwesomeIcon icon={faPlay} className="text-xs lg:text-sm" />
                         {lastReadNum != null ? `Lanjut Ch.${lastReadNum}` : "Lanjutkan Baca"}
                       </a>
@@ -263,7 +291,7 @@ const Detail = ({ id }: DetailProps) => {
                         aria-disabled={!firstCh}
                         className={`flex items-center justify-center sm:justify-start gap-2 w-full sm:w-auto px-5 py-3 sm:py-2.5 lg:px-8 lg:py-4 rounded-xl lg:rounded-2xl text-sm lg:text-base font-black transition-all shadow-lg ${
                           firstCh
-                            ? "bg-[#EF4444] hover:bg-[#DC2626] active:scale-[0.98] text-white shadow-[#EF4444]/25"
+                            ? "grad-primary hover:brightness-110 active:scale-[0.98] text-white shadow-[0_6px_24px_var(--primary-glow)]"
                             : "bg-[#EF4444]/40 text-white/70 shadow-none pointer-events-none"
                         }`}>
                         <FontAwesomeIcon icon={faPlay} className="text-xs lg:text-sm" />
@@ -306,7 +334,7 @@ const Detail = ({ id }: DetailProps) => {
 
             {/* Synopsis — di atas chapter list, text justify */}
             {synopsis && (
-              <div className="bg-[#18181b] rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-8 mb-5 lg:mb-8 border border-zinc-800/50">
+              <div className="bg-[#111111] rounded-2xl lg:rounded-3xl p-4 sm:p-5 lg:p-8 mb-5 lg:mb-8 border border-[#1c1c1c]">
                 <h3 className="text-sm lg:text-xl font-bold text-white mb-2.5 lg:mb-4">Sinopsis</h3>
                 <p className="text-zinc-300 text-[13px] sm:text-sm lg:text-base leading-relaxed text-justify break-words">{showSyn}</p>
                 {longSyn && (
@@ -319,10 +347,10 @@ const Detail = ({ id }: DetailProps) => {
             )}
 
             {/* Chapter list */}
-            <div className="bg-[#18181b] rounded-2xl lg:rounded-3xl border border-zinc-800/50 overflow-hidden">
+            <div className="bg-[#111111] rounded-2xl lg:rounded-3xl border border-[#1c1c1c] overflow-hidden">
 
               {/* header */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3 px-3.5 sm:px-5 lg:px-7 py-3.5 lg:py-5 border-b border-zinc-800/50 bg-zinc-900/40">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3 px-3.5 sm:px-5 lg:px-7 py-3.5 lg:py-5 border-b border-[#1c1c1c] bg-zinc-900/40">
                 <div className="flex items-center gap-2">
                   <FontAwesomeIcon icon={faLayerGroup} className="text-[#EF4444] text-sm lg:text-lg" />
                   <h3 className="font-bold text-sm sm:text-base lg:text-xl">Daftar Chapter</h3>
@@ -378,8 +406,8 @@ const Detail = ({ id }: DetailProps) => {
                         onClick={() => markRead(ch.chapter_id, ch.chapter_number)}
                         className={`group relative flex items-center gap-3 lg:gap-4 p-3 sm:p-3.5 lg:p-4 rounded-2xl border transition-all duration-200 overflow-hidden ${
                           read
-                            ? "bg-zinc-900/60 border-zinc-800/30 hover:border-zinc-700/50"
-                            : "bg-zinc-800/20 border-zinc-800/50 hover:bg-[#EF4444]/5 hover:border-[#EF4444]/30 hover:shadow-md hover:shadow-[#EF4444]/8"
+                            ? "bg-zinc-900/60 border-[#1c1c1c] hover:border-zinc-700/50"
+                            : "bg-zinc-800/20 border-[#1c1c1c] hover:bg-[#EF4444]/5 hover:border-[#EF4444]/30 hover:shadow-md hover:shadow-[#EF4444]/8"
                         }`}>
 
                         <div className={`absolute left-0 inset-y-0 w-[3px] ${read ? "bg-zinc-700/40" : "bg-[#EF4444]"}`} />

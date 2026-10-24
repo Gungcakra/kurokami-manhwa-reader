@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React, { useEffect, useState } from "react";
 import { apiService } from "../utils/api";
+import { getAuth } from "../utils/auth";
 import Card from "../components/ui/Card";
 import CardSkeleton from "../components/ui/CardSkeleton";
 import Navbar from "../components/common/Navbar";
@@ -15,7 +16,29 @@ const Bookmark = () => {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [loggedIn] = useState(() => !!getAuth());
+
   useEffect(() => {
+    // Signed in: the account list already carries full manga objects, so no
+    // per-id detail lookups. Also refresh the local mirror other pages read.
+    if (getAuth()) {
+      apiService
+        .getBookmarks()
+        .then((r) => {
+          const data = r?.data ?? [];
+          setItems(data);
+          setIds(data.map((m: any) => m.manga_id));
+          localStorage.setItem(
+            "kurokami_bookmarks",
+            JSON.stringify(data.map((m: any) => m.manga_id))
+          );
+        })
+        .catch(() => {/* fall through to whatever is cached locally */})
+        .finally(() => setLoading(false));
+      return;
+    }
+
+    // Guest: ids live in localStorage, hydrate each via detail.
     const bm = JSON.parse(localStorage.getItem("kurokami_bookmarks") || "[]");
     setIds(bm);
     if (bm.length === 0) {
@@ -33,18 +56,22 @@ const Bookmark = () => {
   }, []);
 
   const clearAll = () => {
+    // Remove every bookmark from the account too when signed in.
+    if (loggedIn) {
+      ids.forEach((id) => apiService.removeBookmark(id).catch(() => {}));
+    }
     localStorage.setItem("kurokami_bookmarks", "[]");
     setIds([]);
     setItems([]);
   };
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
+    <div className="bg-[#000000] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
       <Navbar />
       <div className="max-w-screen-2xl mx-auto px-4 lg:px-6 py-5 lg:py-9 flex-1 w-full">
         <div className="flex items-center justify-between gap-2 mb-5 lg:mb-8">
           <div className="flex items-center gap-2.5">
-            <div className="w-1 lg:w-1.5 h-6 lg:h-9 bg-[#EF4444] rounded-full" />
+            <div className="accent-bar w-1 lg:w-1.5 h-6 lg:h-9 rounded-full" />
             <FontAwesomeIcon icon={faBookmark} className="text-[#EF4444] lg:text-xl" />
             <h1 className="text-xl lg:text-3xl font-black tracking-tight">Bookmark</h1>
             {ids.length > 0 && (

@@ -7,7 +7,7 @@ const ChapterSkeleton: React.FC = () => (
     {PAGE_HEIGHTS.map((h, i) => (
       <div
         key={i}
-        className="w-full bg-zinc-800/30 border-b border-[#09090b] flex-shrink-0"
+        className="w-full bg-zinc-800/30 border-b border-[#000000] flex-shrink-0"
         style={{ height: `${h}px` }}
       />
     ))}

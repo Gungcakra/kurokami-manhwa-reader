@@ -18,7 +18,7 @@ const UpdateRow = ({ manga }) => {
       : [];
 
   return (
-    <div className="flex gap-3 lg:gap-4 p-3 lg:p-4 rounded-xl lg:rounded-2xl bg-[#141417] border border-zinc-800/60 hover:border-[#EF4444]/40 transition-all duration-200">
+    <div className="flex gap-3 lg:gap-4 p-3 lg:p-4 rounded-2xl bg-[#0c0c0c] border border-[#1c1c1c] hover:border-[#EF4444]/40 transition-all duration-200">
       <a href={`/manhwa/${m.id}`} className="relative flex-shrink-0 group">
         <img
           src={m.cover}

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { apiService } from "../utils/api";
+import { getAuth } from "../utils/auth";
 import { timeAgoShort, isRecent } from "../utils/function";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -119,6 +120,12 @@ const Chapter = ({ idChapter }) => {
       localStorage.setItem("kurokami_history", JSON.stringify(hist));
     } catch {
       /* localStorage unavailable — reading still works */
+    }
+
+    // When signed in, also record progress on the account (fire-and-forget;
+    // a failure just means this view stays local-only).
+    if (getAuth()) {
+      apiService.addHistory(mangaId, currentId).catch(() => {});
     }
   }, [chapter, manhwa, currentId, mangaId]);
 
@@ -328,7 +335,7 @@ const Chapter = ({ idChapter }) => {
       disabled={disabled}
       aria-label={label}
       title={label}
-      className="w-12 md:w-16 aspect-square rounded-full bg-[#141417]/95 border border-zinc-800/70 text-white flex items-center justify-center shadow-lg shadow-black/50 backdrop-blur-sm transition-all hover:border-[#EF4444]/60 hover:text-[#EF4444] active:scale-95 hover:cursor-pointer disabled:opacity-30 disabled:pointer-events-none"
+      className="glass w-12 md:w-16 aspect-square rounded-full border border-[#1c1c1c] text-white flex items-center justify-center shadow-lg shadow-black/50 transition-all hover:border-[#EF4444]/60 hover:text-[#EF4444] hover:shadow-[0_0_20px_var(--primary-glow)] active:scale-95 hover:cursor-pointer disabled:opacity-30 disabled:pointer-events-none"
     >
       <FontAwesomeIcon icon={icon} className="text-base md:text-xl" />
     </button>
@@ -345,11 +352,11 @@ const Chapter = ({ idChapter }) => {
   };
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen flex flex-col">
+    <div className="bg-[#000000] text-white min-h-screen flex flex-col">
       {/* reading progress — a hairline above everything else */}
       <div className="fixed top-0 inset-x-0 z-[130] h-[3px] bg-zinc-900/70">
         <div
-          className="h-full bg-[#EF4444] transition-[width] duration-150"
+          className="h-full grad-primary transition-[width] duration-150 shadow-[0_0_10px_var(--primary-glow)]"
           style={{ width: `${progress}%` }}
         />
       </div>
@@ -361,7 +368,7 @@ const Chapter = ({ idChapter }) => {
         }`}
       >
         <div className="max-w-5xl mx-auto w-full">
-          <div className="flex justify-between items-center gap-4 rounded-xl px-2 py-1 sm:px-6 sm:py-3 bg-[#141417]/95 border border-zinc-800/70 shadow-xl shadow-black/50 backdrop-blur-md">
+          <div className="glass flex justify-between items-center gap-4 rounded-2xl px-2 py-1 sm:px-6 sm:py-3 border border-[#1c1c1c] shadow-xl shadow-black/50">
             <a
               href={mangaId ? `/manhwa/${mangaId}` : "/"}
               aria-label="Kembali ke detail manhwa"
@@ -436,6 +443,60 @@ const Chapter = ({ idChapter }) => {
             </div>
           )}
 
+          {/* ── end-of-chapter navigation ── */}
+          {!loading && images.length > 0 && (
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="max-w-[760px] mx-auto w-full px-4 pt-10 pb-6 flex flex-col items-center gap-5 animate-fade-up"
+            >
+              <div className="flex items-center gap-2 text-zinc-400 text-sm">
+                <FontAwesomeIcon icon={faCheckCircle} className="text-[#EF4444]" />
+                <span>
+                  Selesai membaca{" "}
+                  <span className="text-white font-bold">Chapter {chapterNum ?? "…"}</span>
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 w-full max-w-md">
+                <button
+                  onClick={() => goTo(prevId)}
+                  disabled={!prevId}
+                  className="glass flex items-center justify-center gap-2 py-3 rounded-full border border-[#1c1c1c] text-sm font-bold text-white transition-all hover:border-[#EF4444]/50 active:scale-[0.98] disabled:opacity-30 disabled:pointer-events-none hover:cursor-pointer"
+                >
+                  <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
+                  Sebelumnya
+                </button>
+                <button
+                  onClick={() => goTo(nextId)}
+                  disabled={!nextId}
+                  className="grad-primary flex items-center justify-center gap-2 py-3 rounded-full text-sm font-bold text-white transition-all hover:brightness-110 active:scale-[0.98] shadow-[0_6px_24px_var(--primary-glow)] disabled:opacity-30 disabled:pointer-events-none hover:cursor-pointer"
+                >
+                  Selanjutnya
+                  <FontAwesomeIcon icon={faChevronRight} className="text-xs" />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setShowPicker(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/[0.04] border border-[#1c1c1c] text-xs lg:text-sm font-semibold text-zinc-300 hover:text-white hover:border-[#EF4444]/40 active:scale-95 transition-all hover:cursor-pointer"
+                >
+                  <FontAwesomeIcon icon={faListUl} className="text-[11px]" />
+                  Daftar Chapter
+                </button>
+                {mangaId && (
+                  <a
+                    href={`/manhwa/${mangaId}`}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/[0.04] border border-[#1c1c1c] text-xs lg:text-sm font-semibold text-zinc-300 hover:text-white hover:border-[#EF4444]/40 active:scale-95 transition-all"
+                  >
+                    <FontAwesomeIcon icon={faBook} className="text-[11px]" />
+                    Detail Manhwa
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
 
@@ -474,7 +535,7 @@ const Chapter = ({ idChapter }) => {
       </div>
 
       {/* ── footer ── */}
-      <footer className="bg-[#111116] border-t border-zinc-800/60 pt-8 lg:pt-12 pb-32 md:pb-36">
+      <footer className="bg-[#0c0c0c] border-t border-[#1c1c1c] pt-8 lg:pt-12 pb-32 md:pb-36">
         <div className="flex flex-col items-center justify-center gap-5 px-4 text-center">
           <a href="/" className="flex items-center gap-2.5">
             <img src={logo.src} className="w-9 h-9" alt="" />
@@ -502,12 +563,12 @@ const Chapter = ({ idChapter }) => {
           aria-modal="true"
           aria-label="Pilih chapter"
           onClick={(e) => e.stopPropagation()}
-          className={`absolute right-0 top-0 h-full w-[340px] sm:w-[420px] lg:w-[520px] max-w-[88vw] bg-[#0e0e11] border-l border-zinc-800 flex flex-col shadow-2xl shadow-black/80 transition-transform duration-300 ease-out ${
+          className={`absolute right-0 top-0 h-full w-[340px] sm:w-[420px] lg:w-[520px] max-w-[88vw] bg-[#0c0c0c] border-l border-[#1c1c1c] flex flex-col shadow-2xl shadow-black/80 transition-transform duration-300 ease-out ${
             showPicker ? "translate-x-0" : "translate-x-full"
           }`}
         >
           {/* header */}
-          <div className="flex items-center justify-between gap-2 px-4 lg:px-5 h-14 lg:h-[68px] border-b border-zinc-800 flex-shrink-0">
+          <div className="flex items-center justify-between gap-2 px-4 lg:px-5 h-14 lg:h-[68px] border-b border-[#1c1c1c] flex-shrink-0">
             <div className="flex items-center gap-2 min-w-0">
               <FontAwesomeIcon icon={faListUl} className="text-[#EF4444] text-sm lg:text-lg flex-shrink-0" />
               <h2 className="font-bold text-sm lg:text-lg truncate">Daftar Chapter</h2>
@@ -527,7 +588,7 @@ const Chapter = ({ idChapter }) => {
           </div>
 
           {/* series + filters */}
-          <div className="px-3 lg:px-4 py-3 lg:py-4 border-b border-zinc-800/70 flex flex-col gap-2.5 lg:gap-3 flex-shrink-0">
+          <div className="px-3 lg:px-4 py-3 lg:py-4 border-b border-[#1c1c1c] flex flex-col gap-2.5 lg:gap-3 flex-shrink-0">
             {manhwa?.title && (
               <p className="text-[11px] lg:text-sm text-zinc-500 truncate">{manhwa.title}</p>
             )}
@@ -543,16 +604,16 @@ const Chapter = ({ idChapter }) => {
                   value={chQuery}
                   onChange={(e) => onPickerSearch(e.target.value)}
                   placeholder="Cari chapter…"
-                  className="w-full pl-7 lg:pl-9 pr-3 py-2 lg:py-2.5 bg-zinc-800/60 border border-zinc-700/40 rounded-xl text-xs lg:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/50"
+                  className="w-full pl-7 lg:pl-9 pr-3 py-2 lg:py-2.5 bg-white/[0.04] border border-[#1c1c1c] rounded-full text-xs lg:text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[#EF4444]/50 focus:bg-white/[0.06]"
                 />
               </div>
               <button
                 onClick={() => setChOrder((o) => (o === "desc" ? "asc" : "desc"))}
                 aria-label="Ubah urutan"
-                className={`flex items-center gap-1.5 lg:gap-2 px-2.5 py-2 lg:px-4 lg:py-2.5 rounded-xl text-[11px] lg:text-sm font-semibold border transition-all active:scale-95 flex-shrink-0 hover:cursor-pointer ${
+                className={`flex items-center gap-1.5 lg:gap-2 px-2.5 py-2 lg:px-4 lg:py-2.5 rounded-full text-[11px] lg:text-sm font-semibold border transition-all active:scale-95 flex-shrink-0 hover:cursor-pointer ${
                   chOrder === "asc"
                     ? "bg-[#EF4444]/15 text-[#EF4444] border-[#EF4444]/30"
-                    : "bg-zinc-800/60 text-zinc-400 border-zinc-700/40 hover:text-white"
+                    : "bg-white/[0.04] text-zinc-400 border-[#1c1c1c] hover:text-white"
                 }`}
               >
                 <FontAwesomeIcon icon={faArrowDownUpAcrossLine} className="text-[10px]" />
@@ -569,7 +630,7 @@ const Chapter = ({ idChapter }) => {
                   {Array(40)
                     .fill(0)
                     .map((_, i) => (
-                      <div key={i} className="h-[42px] lg:h-[54px] rounded-lg bg-zinc-800/40 animate-pulse" />
+                      <div key={i} className="h-[42px] lg:h-[54px] rounded-lg bg-white/[0.04] animate-pulse" />
                     ))}
                 </div>
               ) : (
@@ -584,7 +645,7 @@ const Chapter = ({ idChapter }) => {
                   <button
                     onClick={loadPrevPage}
                     disabled={chLoading}
-                    className="py-2 lg:py-3 rounded-xl border border-zinc-800 bg-zinc-800/40 text-[11px] lg:text-sm font-bold text-zinc-300 hover:text-white hover:border-[#EF4444]/40 transition-all disabled:opacity-50 flex-shrink-0 hover:cursor-pointer"
+                    className="py-2 lg:py-3 rounded-full border border-[#1c1c1c] bg-white/[0.04] text-[11px] lg:text-sm font-bold text-zinc-300 hover:text-white hover:border-[#EF4444]/40 transition-all disabled:opacity-50 flex-shrink-0 hover:cursor-pointer"
                   >
                     {chLoading ? (
                       <FontAwesomeIcon icon={faSpinner} className="animate-spin text-[#EF4444]" />
@@ -615,10 +676,10 @@ const Chapter = ({ idChapter }) => {
                         aria-current={active ? "true" : undefined}
                         className={`relative flex flex-col items-center justify-center gap-0.5 h-[42px] lg:h-[54px] px-1 rounded-lg lg:rounded-xl border transition-all active:scale-95 hover:cursor-pointer ${
                           active
-                            ? "bg-[#EF4444] border-[#EF4444] shadow-md shadow-[#EF4444]/30"
+                            ? "grad-primary border-[#EF4444] shadow-[0_4px_16px_var(--primary-glow)]"
                             : read
-                            ? "bg-zinc-900/60 border-zinc-800/50 hover:border-zinc-700"
-                            : "bg-zinc-800/40 border-zinc-700/40 hover:bg-[#EF4444]/10 hover:border-[#EF4444]/40"
+                            ? "bg-white/[0.015] border-[#1c1c1c] hover:border-zinc-700"
+                            : "bg-white/[0.03] border-[#1c1c1c] hover:bg-[#EF4444]/10 hover:border-[#EF4444]/40"
                         }`}
                       >
                         <span
@@ -652,7 +713,7 @@ const Chapter = ({ idChapter }) => {
                   <button
                     onClick={() => setChPage((n) => n + 1)}
                     disabled={chLoading}
-                    className="py-2 lg:py-3 rounded-xl border border-zinc-800 bg-zinc-800/40 text-[11px] lg:text-sm font-bold text-zinc-300 hover:text-white hover:border-[#EF4444]/40 transition-all disabled:opacity-50 flex-shrink-0 hover:cursor-pointer"
+                    className="py-2 lg:py-3 rounded-full border border-[#1c1c1c] bg-white/[0.04] text-[11px] lg:text-sm font-bold text-zinc-300 hover:text-white hover:border-[#EF4444]/40 transition-all disabled:opacity-50 flex-shrink-0 hover:cursor-pointer"
                   >
                     {chLoading ? (
                       <FontAwesomeIcon icon={faSpinner} className="animate-spin text-[#EF4444]" />
@@ -669,7 +730,7 @@ const Chapter = ({ idChapter }) => {
           {mangaId && (
             <a
               href={`/manhwa/${mangaId}`}
-              className="flex items-center justify-center gap-2 px-4 py-3 lg:py-4 border-t border-zinc-800 text-[11px] lg:text-sm font-semibold text-zinc-400 hover:text-[#EF4444] transition-colors flex-shrink-0"
+              className="flex items-center justify-center gap-2 px-4 py-3 lg:py-4 border-t border-[#1c1c1c] text-[11px] lg:text-sm font-semibold text-zinc-400 hover:text-[#EF4444] transition-colors flex-shrink-0"
               style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
             >
               <FontAwesomeIcon icon={faBook} className="text-[10px] lg:text-xs" />

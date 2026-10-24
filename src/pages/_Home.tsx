@@ -38,7 +38,7 @@ const FORMATS = [
 const SectionHead = ({ icon, iconClass = "text-[#EF4444]", title, href, hrefLabel, children }) => (
   <div className="flex flex-wrap items-center justify-between gap-2 mb-3 lg:mb-5">
     <div className="flex items-center gap-2.5 lg:gap-3.5 min-w-0">
-      <span className="w-1 lg:w-1.5 h-5 lg:h-7 bg-[#EF4444] rounded-full flex-shrink-0" />
+      <span className="accent-bar w-1 lg:w-1.5 h-5 lg:h-7 rounded-full flex-shrink-0" />
       {icon && <FontAwesomeIcon icon={icon} className={`${iconClass} text-sm lg:text-lg`} />}
       <h2 className="font-black text-sm sm:text-base lg:text-xl tracking-tight truncate">{title}</h2>
     </div>
@@ -69,11 +69,11 @@ const Rail = ({ loading, items, count = 8, rank = false }) => (
 );
 
 const Panel = ({ children }) => (
-  <div className="bg-[#141417] rounded-2xl lg:rounded-3xl border border-zinc-800/60 overflow-hidden">{children}</div>
+  <div className="bg-[#0c0c0c] rounded-2xl lg:rounded-3xl border border-[#1c1c1c] overflow-hidden">{children}</div>
 );
 
 const PanelHead = ({ icon, iconClass = "text-[#EF4444]", title, href }) => (
-  <div className="flex items-center justify-between px-3.5 py-3 lg:px-5 lg:py-4 border-b border-zinc-800/60 bg-white/[0.02]">
+  <div className="flex items-center justify-between px-3.5 py-3 lg:px-5 lg:py-4 border-b border-[#1c1c1c] bg-white/[0.02]">
     <div className="flex items-center gap-2">
       <FontAwesomeIcon icon={icon} className={`${iconClass} text-xs lg:text-base`} />
       <h3 className="font-bold text-xs lg:text-base">{title}</h3>
@@ -153,7 +153,7 @@ const Home = () => {
     );
 
   return (
-    <div className="bg-[#09090b] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
+    <div className="bg-[#000000] text-white min-h-screen flex flex-col pb-[58px] lg:pb-0">
       <Navbar />
 
       <main className="max-w-screen-2xl mx-auto px-3 sm:px-4 lg:px-6 pt-3 sm:pt-4 lg:pt-7 pb-8 sm:pb-10 lg:pb-16 w-full flex-1 flex flex-col gap-6 sm:gap-7 lg:gap-11">
@@ -221,7 +221,7 @@ const Home = () => {
                   ? Array(9).fill(0).map((_, i) => (
                     <div
                       key={i}
-                      className="h-[104px] lg:h-[140px] rounded-xl lg:rounded-2xl bg-[#141417] border border-zinc-800/60 animate-pulse"
+                      className="h-[104px] lg:h-[140px] rounded-xl lg:rounded-2xl bg-[#0c0c0c] border border-[#1c1c1c] animate-pulse"
                     />
                   ))
                   : updates?.data?.map((m) => <UpdateRow key={m.manga_id} manga={m} />)}

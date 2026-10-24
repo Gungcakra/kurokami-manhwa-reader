@@ -1,27 +1,49 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────
-   Kurokami — Red / Black theme
-   (referencing komikcast & shinigami)
+   Kurokami — Modern dark design system
+   Pure-black surfaces + vivid red accent.
+   Design language references kuronime / kurojav;
+   accent kept as Kurokami red.
    ───────────────────────────────────────────── */
 :root {
   /* Accent — vivid red */
-  --color-primary: #EF4444;
-  --color-primary-light: #F87171;
-  --color-primary-dark: #DC2626;
+  --color-primary: #ef4444;
+  --color-primary-light: #f87171;
+  --color-primary-dark: #dc2626;
+  --primary-glow: rgba(239, 68, 68, 0.35);
 
-  /* Surfaces — near-black */
-  --bg-primary: #09090b;   /* page background */
-  --bg-secondary: #141417;
-  --bg-elevated: #18181b;  /* cards / panels */
-  --bg-soft: #232328;
+  /* Surfaces — pure black */
+  --bg-primary: #000000;   /* page background */
+  --bg-secondary: #0c0c0c; /* inputs / secondary panels */
+  --bg-elevated: #111111;  /* cards / popovers */
+  --bg-card-hover: #161616;
+  --bg-soft: #1a1a1a;
+  --bg-glass: rgba(8, 8, 8, 0.72);
 
   --text-primary: #ffffff;
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
 
-  --border-soft: rgba(63, 63, 70, 0.5);
+  --border-subtle: #1c1c1c;
+  --border-soft: rgba(63, 63, 70, 0.4);
   --border-muted: rgba(39, 39, 42, 0.5);
+
+  /* Radius scale */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  /* Elevation */
+  --shadow-card: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 28px var(--primary-glow);
+
+  --transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
 
   color-scheme: dark;
 }
@@ -30,6 +52,9 @@ html,
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 /* ── Color utility overrides (legacy class names) ── */
@@ -37,7 +62,7 @@ body {
   color: var(--color-primary);
 }
 .text-secondary {
-  color: #141417;
+  color: var(--bg-secondary);
 }
 .bg-primary {
   background-color: var(--bg-soft);
@@ -52,16 +77,85 @@ body {
   background-color: var(--color-primary);
 }
 
+/* ── Reusable modern surfaces ── */
+/* Frosted bar/panel — used by the navbar & floating chrome. */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+/* Card shell with a soft lift + accent glow on hover. */
+.card-modern {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-smooth),
+    border-color var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+.card-modern:hover {
+  transform: translateY(-4px);
+  border-color: rgba(239, 68, 68, 0.45);
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+}
+
+/* Gradient red brand/accent fills. */
+.grad-primary {
+  background-image: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+}
+.text-grad-primary {
+  background-image: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* Section heading accent bar (left ticker). */
+.accent-bar {
+  background-image: linear-gradient(to bottom, var(--color-primary-light), var(--color-primary-dark));
+  box-shadow: 0 0 14px var(--primary-glow);
+}
+
+/* ── FontAwesome base sizing ──
+   The icons are inline SVGs rendered by client-only React, so FontAwesome's own
+   stylesheet is injected at runtime — one hydration tick late. Until then an
+   unsized <svg> blows up to its container width (huge-icon flash on first load).
+   Shipping FA's essential sizing here, in the <head> stylesheet, makes icons
+   render at the right size immediately. */
+.svg-inline--fa {
+  display: var(--fa-display, inline-block);
+  height: 1em;
+  overflow: visible;
+  vertical-align: -0.125em;
+}
+.svg-inline--fa.fa-fw {
+  width: 1.25em;
+}
+.svg-inline--fa.fa-xs { font-size: 0.75em; }
+.svg-inline--fa.fa-sm { font-size: 0.875em; }
+.svg-inline--fa.fa-lg { font-size: 1.25em; }
+.svg-inline--fa.fa-xl { font-size: 1.5em; }
+.svg-inline--fa.fa-2x { font-size: 2em; }
+.svg-inline--fa.fa-3x { font-size: 3em; }
+.fa-spin {
+  animation: fa-spin 2s linear infinite;
+}
+@keyframes fa-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* ── Red text selection ── */
 ::selection {
   background-color: rgba(239, 68, 68, 0.35);
   color: #ffffff;
 }
 
-/* ── Slim dark scrollbar (like komikcast/shinigami) ── */
+/* ── Slim scrollbar — subtle, red on hover ── */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #EF4444 transparent;
+  scrollbar-color: #2a2a2a transparent;
 }
 *::-webkit-scrollbar {
   width: 8px;
@@ -71,74 +165,34 @@ body {
   background: transparent;
 }
 *::-webkit-scrollbar-thumb {
-  background-color: #3f3f46;
+  background-color: #2a2a2a;
   border-radius: 9999px;
 }
 *::-webkit-scrollbar-thumb:hover {
-  background-color: #EF4444;
+  background-color: var(--color-primary);
 }
 
-/* ── Hidden scrollbar helper (horizontal sliders) ── */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* ─────────────────────────────────────────────
-   Mobile behaviour
-   ───────────────────────────────────────────── */
-
-/* Grey flash on every tap looks broken next to the app's own :active states. */
-* {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* iOS bumps font sizes on rotate unless this is pinned. */
-html {
-  -webkit-text-size-adjust: 100%;
-  scroll-behavior: smooth;
-}
-
-/* Nothing should be able to push a phone viewport sideways. */
-body {
-  overflow-x: hidden;
-}
-
-/* Long titles from the API have no spaces to break on in some locales. */
-h1,
-h2,
-h3 {
-  overflow-wrap: anywhere;
-}
-
-/* Scrollbars are pointer affordances; on touch they just eat 8px of gutter. */
-@media (hover: none) {
-  *::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+/* ── Subtle, reusable entrance animation ── */
+@keyframes kk-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
   }
-  * {
-    scrollbar-width: none;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
+.animate-fade-up {
+  animation: kk-fade-up 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  *,
-  *::before,
-  *::after {
+  * {
     animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-/* Respects the notch/home-indicator on the fixed mobile chrome. */
-.pb-safe {
-  padding-bottom: env(safe-area-inset-bottom);
+  .card-modern:hover {
+    transform: none;
+  }
 }

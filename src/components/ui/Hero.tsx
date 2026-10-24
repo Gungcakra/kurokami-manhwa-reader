@@ -47,7 +47,7 @@ const Hero = ({ items = [], loading }) => {
 
   if (loading) {
     return (
-      <div className="w-full h-[220px] sm:h-[300px] md:h-[360px] lg:h-[420px] xl:h-[470px] rounded-2xl lg:rounded-3xl bg-[#141417] border border-zinc-800/60 animate-pulse" />
+      <div className="w-full h-[220px] sm:h-[300px] md:h-[360px] lg:h-[420px] xl:h-[470px] rounded-2xl lg:rounded-3xl bg-[#0c0c0c] border border-[#1c1c1c] animate-pulse" />
     );
   }
   if (list.length === 0) return null;
@@ -55,7 +55,7 @@ const Hero = ({ items = [], loading }) => {
   const m = normalizeManga(list[idx]);
 
   return (
-    <section className="relative w-full h-[220px] sm:h-[300px] md:h-[360px] lg:h-[420px] xl:h-[470px] rounded-2xl lg:rounded-3xl overflow-hidden border border-zinc-800/60 group">
+    <section className="relative w-full h-[220px] sm:h-[300px] md:h-[360px] lg:h-[420px] xl:h-[470px] rounded-2xl lg:rounded-3xl overflow-hidden border border-[#1c1c1c] group">
       {/* backdrop */}
       <img
         key={m.id}
@@ -63,8 +63,8 @@ const Hero = ({ items = [], loading }) => {
         alt=""
         className="absolute inset-0 w-full h-full object-cover scale-105 blur-[2px] opacity-60"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#09090b] via-[#09090b]/80 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#000000] via-[#000000]/80 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#000000] via-transparent to-transparent" />
 
       <div className="relative h-full flex items-center gap-4 sm:gap-6 lg:gap-9 px-4 sm:px-8 lg:px-12">
         {/* poster */}
@@ -79,7 +79,7 @@ const Hero = ({ items = [], loading }) => {
         {/* copy */}
         <div className="flex flex-col gap-2 lg:gap-3 min-w-0 max-w-xl lg:max-w-2xl">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="px-2 py-0.5 lg:px-3 lg:py-1 rounded lg:rounded-md bg-[#EF4444] text-white text-[9px] sm:text-[10px] lg:text-xs font-black uppercase tracking-widest">
+            <span className="grad-primary px-2.5 py-0.5 lg:px-3 lg:py-1 rounded-full text-white text-[9px] sm:text-[10px] lg:text-xs font-black uppercase tracking-widest shadow-[0_2px_12px_var(--primary-glow)]">
               Featured
             </span>
             {m.format && (
@@ -92,7 +92,7 @@ const Hero = ({ items = [], loading }) => {
 
           <a
             href={`/manhwa/${m.id}`}
-            className="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black leading-tight line-clamp-2 hover:text-[#EF4444] transition-colors"
+            className="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-extrabold tracking-tight leading-tight line-clamp-2 hover:text-[#EF4444] transition-colors [text-shadow:0_2px_12px_rgba(0,0,0,0.6)]"
           >
             {m.title}
           </a>
@@ -116,14 +116,14 @@ const Hero = ({ items = [], loading }) => {
           <div className="flex items-center gap-2 lg:gap-3 mt-1 lg:mt-2">
             <a
               href={firstChapterId ? `/chapter/${firstChapterId}` : `/manhwa/${m.id}`}
-              className="flex items-center gap-2 px-4 py-2 lg:px-7 lg:py-3.5 bg-[#EF4444] hover:bg-[#DC2626] active:scale-[0.98] text-white rounded-xl lg:rounded-2xl text-xs sm:text-sm lg:text-base font-black transition-all shadow-lg shadow-[#EF4444]/25"
+              className="grad-primary flex items-center gap-2 px-4 py-2 lg:px-7 lg:py-3.5 hover:brightness-110 active:scale-[0.98] text-white rounded-full text-xs sm:text-sm lg:text-base font-black transition-all shadow-[0_6px_24px_var(--primary-glow)]"
             >
               <FontAwesomeIcon icon={faPlay} className="text-[10px] lg:text-xs" />
               Mulai Baca
             </a>
             <a
               href={`/manhwa/${m.id}`}
-              className="px-4 py-2 lg:px-7 lg:py-3.5 bg-white/10 hover:bg-white/20 border border-white/10 text-white rounded-xl lg:rounded-2xl text-xs sm:text-sm lg:text-base font-semibold transition-all"
+              className="px-4 py-2 lg:px-7 lg:py-3.5 bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 backdrop-blur-md text-white rounded-full text-xs sm:text-sm lg:text-base font-semibold transition-all"
             >
               Detail
             </a>
@@ -155,7 +155,7 @@ const Hero = ({ items = [], loading }) => {
             onClick={() => go(i)}
             aria-label={`Slide ${i + 1}`}
             className={`h-1.5 lg:h-2 rounded-full transition-all hover:cursor-pointer ${
-              i === idx ? "w-5 lg:w-8 bg-[#EF4444]" : "w-1.5 lg:w-2 bg-white/40 hover:bg-white/70"
+              i === idx ? "w-5 lg:w-8 bg-[#EF4444] shadow-[0_0_10px_var(--primary-glow)]" : "w-1.5 lg:w-2 bg-white/40 hover:bg-white/70"
             }`}
           />
         ))}

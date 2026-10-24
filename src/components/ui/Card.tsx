@@ -6,6 +6,8 @@ import {
   formatCount,
 } from "../../utils/function";
 import CountryBadge from "./CountryBadge";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 /**
  * Poster card used across every grid.
@@ -32,7 +34,7 @@ const Card = ({ manga, img, title, link, chapter }) => {
   return (
     <a
       href={`/manhwa/${m.id}`}
-      className="group flex flex-col rounded-xl lg:rounded-2xl overflow-hidden bg-[#141417] border border-zinc-800/60 hover:border-[#EF4444]/50 hover:shadow-lg hover:shadow-[#EF4444]/10 transition-all duration-300"
+      className="card-modern group flex flex-col overflow-hidden"
     >
       <div className="relative aspect-[2/3] overflow-hidden bg-zinc-900">
         <img
@@ -63,16 +65,14 @@ const Card = ({ manga, img, title, link, chapter }) => {
         {/* bottom-left: rating */}
         {m.rating && (
           <span className="absolute bottom-1.5 left-1.5 lg:bottom-2.5 lg:left-2.5 flex items-center gap-0.5 lg:gap-1 px-1.5 py-0.5 lg:px-2 lg:py-1 rounded-md bg-black/70 backdrop-blur-sm">
-            <svg className="w-2.5 h-2.5 lg:w-3.5 lg:h-3.5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-            </svg>
+            <FontAwesomeIcon icon={faStar} className="text-yellow-400 text-[9px] lg:text-xs" />
             <span className="text-white text-[9px] lg:text-[11px] font-bold leading-none">{m.rating}</span>
           </span>
         )}
 
         {/* bottom-right: latest chapter */}
         {m.chapterNumber != null && (
-          <span className="absolute bottom-1.5 right-1.5 lg:bottom-2.5 lg:right-2.5 px-1.5 py-0.5 lg:px-2 lg:py-1 rounded-md bg-[#EF4444]/90 backdrop-blur-sm text-white text-[9px] lg:text-[11px] font-black leading-none">
+          <span className="grad-primary absolute bottom-1.5 right-1.5 lg:bottom-2.5 lg:right-2.5 px-1.5 py-0.5 lg:px-2 lg:py-1 rounded-md text-white text-[9px] lg:text-[11px] font-black leading-none shadow-[0_2px_10px_var(--primary-glow)]">
             Ch {m.chapterNumber}
           </span>
         )}

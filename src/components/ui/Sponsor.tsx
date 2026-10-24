@@ -19,7 +19,7 @@ const Sponsor = () => (
       </h2>
     </div>
 
-    <div className="relative overflow-hidden rounded-2xl lg:rounded-3xl border border-[#EF4444]/25 bg-[#141417]">
+    <div className="relative overflow-hidden rounded-2xl lg:rounded-3xl border border-[#EF4444]/25 bg-[#0c0c0c]">
       {/* warm glow behind the brand mark */}
       <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-72 h-72 rounded-full bg-[#EF4444]/12 blur-3xl" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#EF4444] to-transparent" />
