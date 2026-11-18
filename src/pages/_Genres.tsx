@@ -42,7 +42,7 @@ const Genres = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3 lg:gap-4">
             {genres.map((genre) => (
               <a
-                key={genre.genre_id || genre.slug}
+                key={genre.taxonomy_id ?? genre.genre_id ?? genre.slug}
                 href={`/explore?genre=${genre.slug}`}
                 className="group flex items-center justify-center p-3 sm:p-4 lg:p-6 bg-[#111111] rounded-xl lg:rounded-2xl border border-[#1c1c1c] hover:border-[#EF4444]/40 hover:bg-[#EF4444]/10 hover:text-[#EF4444] text-zinc-300 transition-all duration-200 text-center font-medium text-sm lg:text-base"
               >

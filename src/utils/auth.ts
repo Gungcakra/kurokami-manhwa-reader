@@ -5,7 +5,7 @@
  * Shinigami's login is behind a Cloudflare challenge, so instead of proxying
  * credentials the user pastes their `__session_v2` cookie into our
  * `/api/auth/import` route (see `src/pages/api/auth/import.ts`). On success we keep the public profile + the
- * izanami token in localStorage so the browser can call api.shngm.io with a
+ * izanami token in localStorage so the browser can call api.shinigami.io with a
  * Bearer token, and the server also holds an httpOnly copy for reload recovery.
  */
 
@@ -89,7 +89,7 @@ export async function logout(): Promise<void> {
   clear();
 }
 
-/** Headers for an authenticated api.shngm.io request. */
+/** Headers for an authenticated api.shinigami.io request. */
 export function authHeader(): Record<string, string> {
   const u = getAuth();
   return u?.token ? { Authorization: `Bearer ${u.token}` } : {};

@@ -88,8 +88,10 @@ const Explore = () => {
   };
 
   const hasFilters = keyword || format || status !== "" || selectedGenres.length > 0;
-  // the API reports real totals in `meta` — use them for the count and pagination
-  const resultCount = results?.meta?.total_record ?? results?.data?.length ?? 0;
+  // The API no longer reports totals, only `has_next`: show the count seen so
+  // far, with a "+" when there are more pages
+  const resultCount = results?.meta?.total_record ?? ((page - 1) * 24 + (results?.data?.length ?? 0));
+  const moreResults = results?.meta?.total_record == null && !!results?.meta?.has_next;
   const totalPages = results?.meta?.total_page;
 
   return (
@@ -191,7 +193,7 @@ const Explore = () => {
               </h2>
               {!loading && resultCount > 0 && (
                 <span className="px-2 py-0.5 lg:px-3 lg:py-1 bg-[#EF4444]/15 text-[#EF4444] text-xs lg:text-sm font-bold rounded-lg border border-[#EF4444]/20">
-                  {resultCount.toLocaleString()}
+                  {resultCount.toLocaleString()}{moreResults ? "+" : ""}
                 </span>
               )}
             </div>
@@ -258,7 +260,7 @@ const Explore = () => {
             <div className="px-4 lg:px-6 pb-5 lg:pb-7">
               <Pagination page={page} onPageChange={setPage}
                 totalPages={totalPages}
-                hasNext={!!results?.data?.length && results.data.length >= 24} />
+                hasNext={results?.meta?.has_next ?? (!!results?.data?.length && results.data.length >= 24)} />
             </div>
           )}
         </div>

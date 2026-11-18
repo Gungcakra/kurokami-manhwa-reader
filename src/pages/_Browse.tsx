@@ -149,7 +149,7 @@ const Browse = ({ type = "popular" }) => {
             page={page}
             onPageChange={setPage}
             totalPages={totalPages}
-            hasNext={data.data.length >= PAGE_SIZE}
+            hasNext={data?.meta?.has_next ?? data.data.length >= PAGE_SIZE}
           />
         )}
       </main>

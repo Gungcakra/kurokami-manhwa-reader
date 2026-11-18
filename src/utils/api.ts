@@ -1,6 +1,8 @@
 import { authHeader } from "./auth";
 
-const API_BASE_URL = 'https://api.shngm.io';
+// Shinigami moved its API from api.shngm.io (list/chapter routes now 502)
+// to api.shinigami.io; the version prefix is part of the base.
+const API_BASE_URL = 'https://api.shinigami.io/v1';
 
 const fetchData = async (endpoint: string) => {
   try {
@@ -12,6 +14,60 @@ const fetchData = async (endpoint: string) => {
     console.error(`API Error [${endpoint}]:`, error);
     return null;
   }
+};
+
+/**
+ * The list endpoints page with `offset` + `limit` now (`page`/`page_size` are
+ * ignored) and only report `meta.has_next`, no totals. Callers keep thinking
+ * in pages; `meta.page` / `meta.has_next` come back for the paginators.
+ */
+const fetchList = async (path: string, params: Record<string, any>, page = 1, pageSize = 24) => {
+  const qs = new URLSearchParams();
+  for (const [k, v] of Object.entries(params)) {
+    if (v === undefined || v === null || v === "") continue;
+    for (const item of Array.isArray(v) ? v : [v]) qs.append(k, String(item));
+  }
+  qs.set("limit", String(pageSize));
+  qs.set("offset", String((page - 1) * pageSize));
+  const res = await fetchData(`${path}?${qs}`);
+  if (!res) return null;
+  return { ...res, meta: { ...res.meta, page, page_size: pageSize, has_next: !!res.meta?.has_next } };
+};
+
+/**
+ * Chapter lists are cursor-based now (`next_cursor`, no totals), which can't
+ * jump to page N. A series is at most a few thousand chapters, so the whole
+ * list is loaded once per manga + direction and paged / searched locally —
+ * that also brings back exact `total_page` / `total_record`.
+ */
+const chapterListCache = new Map<string, Promise<any[] | null>>();
+
+const loadAllChapters = (mangaId: string, order: string) => {
+  const key = `${mangaId}:${order}`;
+  const cached = chapterListCache.get(key);
+  if (cached) return cached;
+  const req = (async () => {
+    const all: any[] = [];
+    let cursor = "";
+    for (let i = 0; i < 20; i++) {
+      const res = await fetchData(
+        `/chapter/${mangaId}/list?limit=2000&sort_by=chapter_number&sort_order=${order}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`
+      );
+      if (!res) throw new Error("chapter-list");
+      all.push(...(res.data ?? []));
+      cursor = res.meta?.next_cursor ?? "";
+      if (!res.meta?.has_next || !cursor) break;
+    }
+    return all;
+  })().catch(() => {
+    // don't cache failures, or the list stays empty for the whole session
+    chapterListCache.delete(key);
+    return null;
+  });
+  chapterListCache.set(key, req);
+  // keep chapter lists fresh for new releases
+  setTimeout(() => chapterListCache.delete(key), 5 * 60 * 1000);
+  return req;
 };
 
 /**
@@ -43,46 +99,30 @@ const firstChapterCache = new Map<string, Promise<any>>();
 
 export const apiService = {
   getNewUpdate: (page = 1, pageSize = 30, format = "all") =>
-    fetchData(
-      `/v1/manga/list?${format !== "all" ? `format=${format}&` : ""}type=project&page=${page}&page_size=${pageSize}&is_update=true&sort=latest&sort_order=desc`
-    ),
+    fetchList("/manga/list", { format: format !== "all" ? format : "", type: "project", is_update: true, sort: "latest", sort_order: "desc" }, page, pageSize),
 
   getPopular: (page = 1, pageSize = 24) =>
-    fetchData(
-      `/v1/manga/list?page=${page}&page_size=${pageSize}&genre_include_mode=or&genre_exclude_mode=or&sort=popularity&sort_order=desc`
-    ),
+    fetchList("/manga/list", { sort: "popularity", sort_order: "desc" }, page, pageSize),
 
   getTop: (page = 1, pageSize = 24) =>
-    fetchData(
-      `/v1/manga/list?page=${page}&page_size=${pageSize}&genre_include_mode=or&genre_exclude_mode=or&sort=rating&sort_order=desc`
-    ),
+    fetchList("/manga/list", { sort: "rating", sort_order: "desc" }, page, pageSize),
 
   getRecommend: (page = 1, pageSize = 8) =>
-    fetchData(
-      `/v1/manga/list?page=${page}&page_size=${pageSize}&category=explore-list-2`
-    ),
+    fetchList("/manga/list", { category: "explore-list-2" }, page, pageSize),
 
   getCompleted: (page = 1, pageSize = 24) =>
-    fetchData(
-      `/v1/manga/list?page=${page}&page_size=${pageSize}&genre_include_mode=or&genre_exclude_mode=or&status=completed&sort=latest&sort_order=desc`
-    ),
+    fetchList("/manga/list", { status: "completed", sort: "latest", sort_order: "desc" }, page, pageSize),
 
   getManhwa: (page = 1, pageSize = 10) =>
-    fetchData(
-      `/v1/manga/list?format=manhwa&page=${page}&page_size=${pageSize}&is_recommended=true&sort=latest&sort_order=desc`
-    ),
+    fetchList("/manga/list", { format: "manhwa", is_recommended: true, sort: "latest", sort_order: "desc" }, page, pageSize),
 
   getManga: (page = 1, pageSize = 10) =>
-    fetchData(
-      `/v1/manga/list?format=manga&page=${page}&page_size=${pageSize}&is_recommended=true&sort=latest&sort_order=desc`
-    ),
+    fetchList("/manga/list", { format: "manga", is_recommended: true, sort: "latest", sort_order: "desc" }, page, pageSize),
 
   getManhua: (page = 1, pageSize = 10) =>
-    fetchData(
-      `/v1/manga/list?format=manhua&page=${page}&page_size=${pageSize}&is_recommended=true&sort=latest&sort_order=desc`
-    ),
+    fetchList("/manga/list", { format: "manhua", is_recommended: true, sort: "latest", sort_order: "desc" }, page, pageSize),
 
-  getDetail: (manhwaId: string) => fetchData(`/v1/manga/detail/${manhwaId}`),
+  getDetail: (manhwaId: string) => fetchData(`/manga/detail/${manhwaId}`),
 
   getChapterList: (
     manhwaId: string,
@@ -91,19 +131,34 @@ export const apiService = {
     order = "desc",
     search = ""
   ) =>
-    fetchData(
-      `/v1/chapter/${manhwaId}/list?page=${page}&page_size=${pageSize}&sort_by=chapter_number&sort_order=${order}${search ? `&search=${search}` : ""}`
-    ),
+    loadAllChapters(manhwaId, order === "asc" ? "asc" : "desc").then((all) => {
+      if (!all) return null;
+      const q = String(search ?? "").trim().toLowerCase();
+      const rows = q
+        ? all.filter((c) => String(c.chapter_number).includes(q) || String(c.chapter_title ?? "").toLowerCase().includes(q))
+        : all;
+      return {
+        retcode: 0,
+        data: rows.slice((page - 1) * pageSize, page * pageSize),
+        meta: {
+          page,
+          page_size: pageSize,
+          total_record: rows.length,
+          total_page: Math.max(1, Math.ceil(rows.length / pageSize)),
+          has_next: page * pageSize < rows.length,
+        },
+      };
+    }),
 
   getChapterDetail: (chapterId: string) =>
-    fetchData(`/v1/chapter/detail/${chapterId}`),
+    fetchData(`/chapter/detail/${chapterId}`),
 
   /** Chapter 1 of a series — the target of every "Mulai Baca" button. */
   getFirstChapter: (manhwaId: string): Promise<any> => {
     const cached = firstChapterCache.get(manhwaId);
     if (cached) return cached;
     const req = fetchData(
-      `/v1/chapter/${manhwaId}/list?page=1&page_size=1&sort_by=chapter_number&sort_order=asc`
+      `/chapter/${manhwaId}/list?limit=1&sort_by=chapter_number&sort_order=asc`
     )
       .then((r) => r?.data?.[0] ?? null)
       // a failed lookup must not be cached, or the button stays broken for the
@@ -117,13 +172,14 @@ export const apiService = {
   },
 
   searchManga: (keyword: string, page = 1, pageSize = 8) =>
-    fetchData(`/v1/manga/list?page=${page}&page_size=${pageSize}&q=${keyword}`),
+    fetchList("/manga/list", { q: keyword }, page, pageSize),
 
-  getGenres: () => fetchData("/v1/genre/list"),
+  // /genre/list is gone; genres are a taxonomy type now
+  getGenres: () => fetchData("/taxonomy/list?type=genre&limit=100"),
 
   /** Authenticated user's profile. Only `user_id` is required by the API. */
   getUserProfile: (userId: string) =>
-    fetchData(`/v1/user/profile?user_id=${encodeURIComponent(userId)}`),
+    fetchData(`/user/profile?user_id=${encodeURIComponent(userId)}`),
 
   getExplore: ({
     page = 1,
@@ -144,21 +200,20 @@ export const apiService = {
     sortOrder?: string;
     keyword?: string;
   }) => {
-    const genreParams =
-      genres.length > 0
-        ? genres.map((g) => `genre_include=${encodeURIComponent(g)}`).join("&")
-        : "";
-
-    let url = `/v1/manga/list?page=${page}&page_size=${pageSize}`;
-    if (genreParams) url += `&${genreParams}`;
-    if (status) url += `&status=${status}`;
-    if (format && format !== "all") url += `&format=${format}`;
-    if (sort) url += `&sort=${sort}`;
-    url += `&sort_order=${sortOrder}`;
-    if (keyword) url += `&q=${encodeURIComponent(keyword)}`;
-    url += `&genre_include_mode=or&genre_exclude_mode=or`;
-
-    return fetchData(url);
+    return fetchList(
+      "/manga/list",
+      {
+        genre_include: genres,
+        genre_include_mode: genres.length ? "or" : "",
+        status,
+        format: format !== "all" ? format : "",
+        sort,
+        sort_order: sortOrder,
+        q: keyword,
+      },
+      page,
+      pageSize
+    );
   },
 
   // ── Bookmarks (per-account, server-side) ──────────────────────────────
@@ -169,7 +224,7 @@ export const apiService = {
     const auth = authHeader();
     if (!auth.Authorization) throw new Error("not-authenticated");
     const res = await fetch(
-      `${API_BASE_URL}/v1/bookmark/list?page=${page}&page_size=${pageSize}`,
+      `${API_BASE_URL}/bookmark/list?limit=${pageSize}&offset=${(page - 1) * pageSize}`,
       { headers: auth }
     );
     if (!res.ok) throw new Error(`bookmark/list -> ${res.status}`);
@@ -179,10 +234,10 @@ export const apiService = {
   // Note the asymmetric payloads the upstream expects: add takes a single
   // `manga_id`, remove takes a `manga_id_list` array.
   addBookmark: (mangaId: string) =>
-    postAuth("/v1/bookmark/add", { manga_id: mangaId }),
+    postAuth("/bookmark/add", { manga_id: mangaId }),
 
   removeBookmark: (mangaId: string) =>
-    postAuth("/v1/bookmark/remove", { manga_id_list: [mangaId] }),
+    postAuth("/bookmark/remove", { manga_id_list: [mangaId] }),
 
   // ── Reading history (per-account, server-side) ────────────────────────
   // History is grouped per manga on the upstream: this lists the manga you
@@ -191,10 +246,11 @@ export const apiService = {
     const auth = authHeader();
     if (!auth.Authorization) throw new Error("not-authenticated");
     const res = await fetch(
-      `${API_BASE_URL}/v1/history/list/manga?page=${page}&page_size=${pageSize}&sort_by=updated_at&sort_order=desc`,
+      // was /history/list/manga (404 now)
+      `${API_BASE_URL}/history/list?limit=${pageSize}&offset=${(page - 1) * pageSize}&sort_by=updated_at&sort_order=desc`,
       { headers: auth }
     );
-    if (!res.ok) throw new Error(`history/list/manga -> ${res.status}`);
+    if (!res.ok) throw new Error(`history/list -> ${res.status}`);
     return res.json();
   },
 
@@ -204,16 +260,17 @@ export const apiService = {
     const auth = authHeader();
     if (!auth.Authorization) throw new Error("not-authenticated");
     const res = await fetch(
-      `${API_BASE_URL}/v1/history/list/chapter/${mangaId}?sort_by=updated_at&sort_order=desc`,
+      // was /history/list/chapter/:id
+      `${API_BASE_URL}/chapter/${mangaId}/history?sort_by=updated_at&sort_order=desc`,
       { headers: auth }
     );
-    if (!res.ok) throw new Error(`history/list/chapter -> ${res.status}`);
+    if (!res.ok) throw new Error(`chapter/history -> ${res.status}`);
     return res.json();
   },
 
   // Record (upsert) reading progress for a chapter. Throws if not signed in.
   addHistory: (mangaId: string, chapterId: string, pageNumber = 1) =>
-    postAuth("/v1/history/add", {
+    postAuth("/history/add", {
       manga_id: mangaId,
       chapter_id: chapterId,
       page_number: pageNumber,
@@ -222,5 +279,5 @@ export const apiService = {
   // Clear ALL history. The upstream only supports clear-all: a populated
   // `manga_id_list` still wipes everything (verified), so there is no per-manga
   // removal — callers always send an empty list.
-  removeHistory: () => postAuth("/v1/history/remove", { manga_id_list: [] }),
+  removeHistory: () => postAuth("/history/remove", { manga_id_list: [] }),
 };
