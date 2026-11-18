@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "php -S localhost:8080 -t dist scripts/php-router.php",
     "astro": "astro"
   },
   "dependencies": {

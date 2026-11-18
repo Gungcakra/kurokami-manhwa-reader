@@ -7,23 +7,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```sh
 npm run dev       # Start dev server at localhost:4321
 npm run build     # Build for production (outputs to ./dist/)
-npm run preview   # Preview the production build locally
+npm run preview   # Serve dist/ + the PHP API with php -S (localhost:8080)
 ```
 
 There are no tests or linting scripts configured.
 
 ## Architecture
 
-This is an **Astro + React** manhwa reader app deployed to **Vercel Serverless** (`output: 'server'`). All pages use SSR (`prerender = false`).
+This is an **Astro + React** manhwa reader app built as a **static site** (`output: 'static'`) for PHP-only hosting (Hostinger). The only server code is `public/api/index.php` (the `/api/auth/*` session routes); `public/.htaccess` serves the `/manhwa/_` and `/chapter/_` shells for every id.
 
 ### Page-Component Pattern
 
 Every route follows a two-file pattern:
 
-- **`.astro` page** — handles SSR: fetches data for the `<title>` tag, then renders a React component via `client:only="react"` (or `client:load` on the home page)
+- **`.astro` page** — static layout + default meta, renders a React component via `client:only="react"` (or `client:load` on the home page)
 - **`_Component.tsx`** — the actual React component that fetches its own data client-side
 
-Example: `/manhwa/[id].astro` fetches the manga title server-side for SEO, then passes `id` to `<Detail id={id} client:only="react" />` which independently fetches all its data in the browser.
+Example: `/manhwa/[id].astro` is built once as `/manhwa/_`; `<Detail client:only="react" />` reads the id from the URL (`idFromPath` in `src/utils/seo.ts`), fetches its data in the browser and sets title/meta/JSON-LD with `applySeo`.
 
 ### Routes
 
@@ -36,7 +36,7 @@ Example: `/manhwa/[id].astro` fetches the manga title server-side for SEO, then 
 
 ### Data Layer
 
-All API calls are in `src/utils/api.ts`. The app exclusively uses the **Shinigami API** at `https://api.shngm.io/v1/`. Legacy functions calling `/api/...` endpoints in the same file are unused.
+All API calls are in `src/utils/api.ts`. The app exclusively uses the **Shinigami API** at `https://api.shinigami.io/v1` (offset/limit paging, `meta.has_next`; chapter lists are cursor-based and loaded in full, then paged locally). Legacy functions calling `/api/...` endpoints in the same file are unused.
 
 Key API functions in active use:
 - `fetchTopShinigami` / `fetchNewShinigami` / `fetchRecommendShinigami` — home page lists

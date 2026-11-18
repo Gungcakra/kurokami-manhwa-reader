@@ -1,117 +1,18 @@
 ---
 import "../../styles/global.css";
 import Layout from "../../layouts/Layout.astro";
-import { apiService } from "../../utils/api";
-import { metaDescription } from "../../utils/function";
 import Detail from "../_Detail";
-export const prerender = false;
 
-const { id = "" } = Astro.params;
-
-let manhwa: any = null;
-try {
-  const res = await apiService.getDetail(id);
-  manhwa = res?.data ?? null;
-} catch (error) {
-  console.error("Failed to fetch manhwa details:", error);
-}
-
-const manhwaTitle = manhwa?.title ?? "";
-const altTitle = manhwa?.alternative_title ?? "";
-const genres = (manhwa?.taxonomy?.Genre ?? []).map((g: any) => g.name);
-const authors = (manhwa?.taxonomy?.Author ?? []).map((a: any) => a.name);
-const artists = (manhwa?.taxonomy?.Artist ?? []).map((a: any) => a.name);
-const format = manhwa?.taxonomy?.Format?.[0]?.name ?? manhwa?.taxonomy?.Type?.[0]?.name ?? "Manhwa";
-const cover = manhwa?.cover_portrait_url || manhwa?.cover_image_url || undefined;
-const statusLabel = manhwa?.status === 1 ? "Ongoing" : "Tamat";
-
-const title = manhwaTitle
-  ? `Baca ${manhwaTitle} Bahasa Indonesia — Kurokami`
-  : "Detail Komik — Kurokami";
-
-// The synopsis is the best description we have; fall back to a generated one
-// when the API returns an empty description.
-const synopsis = metaDescription(manhwa?.description, 155);
-const description = manhwaTitle
-  ? synopsis
-    ? `${synopsis} Baca ${manhwaTitle} bahasa Indonesia gratis di Kurokami.`
-    : `Baca ${manhwaTitle} bahasa Indonesia gratis di Kurokami. ${format} ${statusLabel}${
-        genres.length ? ` bergenre ${genres.slice(0, 3).join(", ")}` : ""
-      }, update chapter terbaru tiap hari dengan kualitas gambar HD.`
-  : "Detail komik di Kurokami — baca manhwa, manga, dan manhua bahasa Indonesia gratis.";
-
-const keywords = manhwaTitle
-  ? [
-      `baca ${manhwaTitle}`,
-      `${manhwaTitle} bahasa indonesia`,
-      `${manhwaTitle} chapter terbaru`,
-      altTitle,
-      ...genres.slice(0, 5),
-      "kurokami",
-    ]
-      .filter(Boolean)
-      .join(", ")
-  : undefined;
-
-const jsonLd = manhwa
-  ? [
-      {
-        "@context": "https://schema.org",
-        "@type": "Book",
-        name: manhwaTitle,
-        alternateName: altTitle || undefined,
-        url: new URL(Astro.url.pathname, Astro.url.origin).href,
-        image: cover,
-        description: metaDescription(manhwa?.description, 500) || description,
-        bookFormat: "https://schema.org/GraphicNovel",
-        inLanguage: "id-ID",
-        genre: genres.length ? genres : undefined,
-        author: authors.length
-          ? authors.map((n: string) => ({ "@type": "Person", name: n }))
-          : undefined,
-        illustrator: artists.length
-          ? artists.map((n: string) => ({ "@type": "Person", name: n }))
-          : undefined,
-        datePublished: manhwa?.release_year ? String(manhwa.release_year) : undefined,
-        aggregateRating:
-          manhwa?.user_rate && manhwa?.view_count
-            ? {
-                "@type": "AggregateRating",
-                ratingValue: manhwa.user_rate,
-                bestRating: 10,
-                ratingCount: manhwa.bookmark_count || manhwa.view_count,
-              }
-            : undefined,
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Beranda",
-            item: Astro.url.origin,
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: manhwaTitle,
-            item: new URL(Astro.url.pathname, Astro.url.origin).href,
-          },
-        ],
-      },
-    ]
-  : undefined;
+// Static build: a single `_` shell that .htaccess serves for every
+// /manhwa/<id>; the component reads the id from the URL and sets the title,
+// description and JSON-LD once the series has loaded (utils/seo.ts).
+export const getStaticPaths = () => [{ params: { id: "_" } }];
 ---
 
 <Layout
-  title={title}
-  description={description}
-  image={cover}
+  title="Detail Komik — Kurokami"
+  description="Detail komik di Kurokami — baca manhwa, manga, dan manhua bahasa Indonesia gratis."
   type="book"
-  keywords={keywords}
-  jsonLd={jsonLd}
 >
-  <Detail slot="body" id={id} client:only="react" />
+  <Detail slot="body" client:only="react" />
 </Layout>

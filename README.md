@@ -39,10 +39,21 @@ All commands are run from the root of the project, from a terminal:
 | `npm install`             | Installs dependencies                            |
 | `npm run dev`             | Starts local dev server at `localhost:4321`      |
 | `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
+| `npm run preview`         | Preview `dist/` + PHP API via `php -S` (`:8080`)  |
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
 
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+## Deploy ke Hostinger (PHP saja)
+
+Situs dibangun sebagai **static build** (`dist/`). Data diambil langsung dari browser ke `api.shinigami.io`; hanya sesi login (`/api/auth/import|me|logout`) yang berjalan sebagai PHP dari `public/api/`.
+
+1. Isi `SITE_URL=https://domainmu` di `.env` (untuk canonical / Open Graph), lalu `npm run build`.
+2. Zip **isi** `dist/` beserta dotfile-nya: `cd dist && zip -r ../site.zip . && cd ..` (cek `unzip -l site.zip | grep htaccess` → harus ada 2).
+3. Upload ke `public_html/` lalu Extract. `index.html`, `.htaccess`, dan `api/.htaccess` harus langsung ada di dalam `public_html`.
+4. Purge cache di hPanel, lalu buka di tab incognito.
+
+`/manhwa/[id]` dan `/chapter/[id]` di-build sekali sebagai shell `_`; `.htaccess` menyajikannya untuk id apa pun, lalu id dibaca dari URL dan judul/meta/JSON-LD diisi di browser (`src/utils/seo.ts`). Untuk preview lokal: `npm run build && npm run preview`.

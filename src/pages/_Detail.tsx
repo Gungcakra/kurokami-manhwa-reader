@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { useEffect, useState } from "react";
 import { apiService } from "../utils/api";
+import { applySeo, detailSeo, idFromPath } from "../utils/seo";
 import { getAuth } from "../utils/auth";
 import { timeAgo } from "../utils/function";
 import CountryBadge from "../components/ui/CountryBadge";
@@ -34,10 +35,12 @@ const fmt = (n: number) => {
 };
 const isNew7 = (d: string) => Date.now() - new Date(d).getTime() < 7 * 86_400_000;
 
-interface DetailProps { id: string }
+interface DetailProps { id?: string }
 const PAGE_SIZE = 24;
 
-const Detail = ({ id }: DetailProps) => {
+const Detail = ({ id: idProp }: DetailProps) => {
+  // Static build: the page is the /manhwa/_ shell, the real id is in the URL
+  const id = idProp && idProp !== "_" ? idProp : idFromPath();
   const [manhwa,      setManhwa]      = useState<any>(null);
   const [chapters,    setChapters]    = useState<any[]>([]);
   const [loading,     setLoading]     = useState(true);
@@ -95,6 +98,10 @@ const Detail = ({ id }: DetailProps) => {
   useEffect(() => {
     apiService.getDetail(id).then((r) => { setManhwa(r?.data ?? null); setLoading(false); });
   }, [id]);
+
+  useEffect(() => {
+    if (manhwa?.title) applySeo(detailSeo(manhwa));
+  }, [manhwa]);
 
   useEffect(() => {
     setLoadingCh(true);

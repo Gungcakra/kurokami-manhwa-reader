@@ -2,8 +2,8 @@
 import "../styles/global.css";
 import Layout from "../layouts/Layout.astro";
 import Home from "./_Home";
-export const prerender = false;
 
+const origin = (Astro.site ?? Astro.url).origin;
 const title = "Kurokami — Baca Manhwa, Manga & Manhua Bahasa Indonesia Gratis";
 const description =
   "Baca manhwa, manga, dan manhua bahasa Indonesia gratis di Kurokami. Ribuan judul populer, update chapter terbaru tiap hari, kualitas gambar HD, dan nyaman dibaca langsung dari HP tanpa perlu daftar.";
@@ -14,14 +14,14 @@ const jsonLd = [
     "@type": "WebSite",
     name: "Kurokami",
     alternateName: "Kurokami Reader",
-    url: Astro.url.origin,
+    url: origin,
     description,
     inLanguage: "id-ID",
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `${Astro.url.origin}/explore?q={search_term_string}`,
+        urlTemplate: `${origin}/explore?q={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },
@@ -30,8 +30,8 @@ const jsonLd = [
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Kurokami",
-    url: Astro.url.origin,
-    logo: new URL("/android-chrome-512x512.png", Astro.url.origin).href,
+    url: origin,
+    logo: new URL("/android-chrome-512x512.png", origin).href,
   },
 ];
 ---

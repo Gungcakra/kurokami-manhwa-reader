@@ -30,9 +30,9 @@ const {
   jsonLd,
 } = Astro.props;
 
-// Astro.url is the real request URL on Vercel, so canonicals stay correct
-// across preview deployments and the production domain without hardcoding one.
-const origin = Astro.url.origin;
+// Static build: the origin comes from SITE_URL (astro.config.mjs `site`). The
+// /manhwa/_ and /chapter/_ shells fix canonical/og:url in the browser (utils/seo.ts).
+const origin = (Astro.site ?? Astro.url).origin;
 const canonical = new URL(Astro.url.pathname, origin).href;
 const ogImage = new URL(image ?? "/android-chrome-512x512.png", origin).href;
 

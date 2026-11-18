@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { apiService } from "../utils/api";
+import { applySeo, chapterSeo, idFromPath } from "../utils/seo";
 import { getAuth } from "../utils/auth";
 import { timeAgoShort, isRecent } from "../utils/function";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -37,7 +38,8 @@ const PICKER_PAGE_SIZE = 120;
  * scroll up, or on the space bar.
  */
 const Chapter = ({ idChapter }) => {
-  const [currentId, setCurrentId] = useState(idChapter);
+  // Static build: the page is the /chapter/_ shell, the real id is in the URL
+  const [currentId, setCurrentId] = useState(() => (idChapter && idChapter !== "_" ? idChapter : idFromPath()));
   const [chapter, setChapter] = useState(null);
   const [manhwa, setManhwa] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -98,6 +100,10 @@ const Chapter = ({ idChapter }) => {
     mangaIdRef.current = mangaId;
     apiService.getDetail(mangaId).then((d) => setManhwa(d?.data ?? null));
   }, [mangaId]);
+
+  useEffect(() => {
+    if (chapter?.data && manhwa) applySeo(chapterSeo(chapter.data, manhwa));
+  }, [chapter, manhwa]);
 
   // ── persist reading history + read-chapter marker ──
   useEffect(() => {

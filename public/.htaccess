@@ -1,0 +1,25 @@
+# Kurokami — static build (dist/) + PHP session API (api/) on Apache / LiteSpeed (Hostinger).
+Options -Indexes -MultiViews
+DirectoryIndex index.html index.php
+
+RewriteEngine On
+RewriteBase /
+
+# Force HTTPS
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+# /manhwa/<id> and /chapter/<id> are built once as a `_` shell; serve it for
+# any real id (the page reads the id from the URL). Real files are left alone.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(manhwa|chapter)/[^/]+/?$ $1/_/index.html [L]
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|woff2?|webp|png|svg)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
